@@ -1,0 +1,8 @@
+[package]
+name = "OXI_PROTOCOL"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+actix-web = "4"
+openssl = { version = "0.10", features = ["vendored"] }

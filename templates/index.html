@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OXI Protocol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="main-tokens-value">
+                <div id="data-in-load-tokens", class="data-in-load-tokens">connect...</div>
+            </div>
+            <div class="circle"></div>
+            <!-- <button id="clickerButton">Click Me!</button> -->
+        </div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand()
+
+        async function fetchData() {
+            const dataContainer = document.getElementById('data-in-load-tokens');
+            try {
+                // const response = await fetch('https://dmraise.ru/getdata', {
+                //     method: 'GET',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'X-TELEGRAM-ID': tg.initData
+                //     }
+                // });
+                // if (!response.ok) {
+                //     throw new Error('HTTP error! Status: ${response.status}');
+                // }
+                const url = `https://dmraise.ru/getdata?${tg.initData}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                displayData(data);
+            } catch (error) {
+                console.error('Ошибка при получении данных:', error);
+                dataContainer.innerHTML = `<p>Server Error</p>`;
+            }
+        }
+
+        function displayData(data) {
+            const dataContainer = document.getElementById('data-in-load-tokens');
+            const formatedData = data.toLocaleString('en-US');
+            dataContainer.textContent = formatedData + " OXI";
+        }
+        window.onload = fetchData;
+    </script>
+
+</body>
+</html>
