@@ -12,11 +12,10 @@ html, body {
 
 .container {
     display: flex;
-    justify-content: center;
-    align-items: center;
     height: 100%;
     width: 100%;
     background-color: rgb(34, 36, 41);
+    background-color: #152133;
 }
 
 .content {
@@ -24,63 +23,417 @@ html, body {
     height: 90%;
     border-top: 2px solid #2c58e9;
     margin-top: 15%;
-    background-color: #353434;;
+    position: absolute;
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;
+    background-image: linear-gradient(to bottom, #090b0f, #0d1622 25%, rgb(17, 0, 255)); 
+    box-shadow: 0 -10px 20px rgba(3, 33, 199, 0.7);
 }
 
 .main-tokens-value {
     width: 100%;
     height: 20%;
-    border-bottom: 1px solid #2c2c2c;
-    /* background-color: #353434; */
+    border-bottom: 12px solid #2c2c2c;
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;
     display: flex;
     justify-content: center;
     align-items: center; 
-    background-image: url("../images/background.jpg");
 }
 
 .data-in-load-tokens {
     color: #f6f7f8;
-    font-size: 35px;
+    font-size: 50px;
     display: flex;
     justify-content: center; 
     align-items: center; 
-    height: 100%; 
+    height: 30%; 
     text-align: center;
+    font-weight: 700;
 }
 
-button {
-    padding: 10px 20px;
-    font-size: 1em;
+.version {
+    width: 70px;
+    height: 10px;
+    color: #3588db;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 4%;
+    font-size: 15px;
+}
+
+.planet {
+    position: absolute;
+    right: 5%;
+    top: 3%;
+    color: #f6f7f8;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.panels-main {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 12%;
+    top: 10%;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.panel-1 {
+    width: 100%;
+    height: 100%;
+    top: 40%;
+    background-color: #003afa;
+    border-radius: 20px;
+    display: flex;
+    border: 1px solid #0088f8;
+}
+
+.vault-level {
+    right: 7%;
+    color: #ffffff;
+    font-weight: 500;
+    top: 7%;
+    position: absolute;
+    width: 50px;
+    height: 25px;
+    font-size: 15px;
+    background-color: #f18202;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.vault-text {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 500;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right: 2px solid #ffffff;
+    padding-left: 10%;
+}
+
+.main-menu-buttons {
+    bottom: 0;
+    position: absolute;
+    width: 90%;
+    height: 10%;
+    background-color: #152133;
+    left: 5%;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+#active-button-menu {
+    width: 25%;
+    height: 110%;
+}
+
+.button-menu-buttons {
+    background-color: #0c1325;
+    width: 20%;
+    height: 100%;
+    margin-left: 3px;
+    border-radius: 20px;
+    color: #757575;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    padding-bottom: 10px;
+    font-weight: 600;
+    font-size: 13px;
     cursor: pointer;
 }
 
-.circle {
-    width: 100px;
-    height: 100px;
-    padding: 20px;
-    background-color: gold;
-    border-radius: 50%;
-    /* background-image: url("../images/circle.png"); */
+.claim-tokens-button {
+    width: 90%;
+    left: 5%;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3),
-                0 0 10px rgba(0, 0, 0, 0.5);
+    bottom: 0;
+    height: 7%;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f6f7f8;
+    background-color: #0562f8;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    bottom: 12%;
+    border: 1px solid #0088f8;
 }
 
-.circle::before {
-    content: '';
+.tokens-value-vault {
+    color: #f6f7f8;
+    font-size: 30px;
+    font-weight: 500;
+    display: flex;
+    width: 50%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.tokens-value-vault-text {
+    padding-left: 5px;
+    font-size: 16px;
+    padding-top: 7px;
+}
+
+.progress-bar {
+    height: 30px;
+    width: 0;
+    background-color: #003afa;
+    border-radius: 25px;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+    transition: width 0.25s;
+}
+
+.claim-tokens-button:active {
+    background-color: #003afa;
+    border-radius: 20px;
+}
+
+.container-friends {
+    background-color: #152133;
+    width: 100%;
+    height: 100%;
+    border-top: 2px solid #2c58e9;
     position: absolute;
-    top: -5px;
-    left: -5px;
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #d4af37, #ffd700);
-    z-index: -1
+    background-image: linear-gradient(to bottom, #090b0f, #0d1622 25%, rgb(17, 0, 255)); 
+    box-shadow: 0 -10px 20px rgba(3, 33, 199, 0.7);
+    display: flex;
+}
+
+.text-friends {
+    position: absolute;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+    top: 15%;
+    color: #f6f7f8;
+    font-weight: 600;
+    font-size: 32px;
+}
+
+.friends-add {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 84%;
+    height: 30%;
+    left: 8%;
+    top: 25%;
+    color: #f6f7f8;
+    font-weight: 600;
+    font-size: 32px;
+    background-color: #063580;
+    border-radius: 15px;
+}
+
+.text-friends-text {
+    position: absolute;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+    top: 21%;
+    color: #f6f7f8;
+    font-size: 20px;
+}
+
+.moneta-main-balance {
+    width: 70px;
+    height: 70px;
+    margin-right: 1%;
+}
+
+/* .tasks {
+    position: absolute;
+    right: 0;
+    width: 200px;
+    padding: 4px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    background-color: #003afa;
+    top: 22%;
+    color: #ffffff;
+    display: flex;
+    font-size: large;
+    font-weight: 600;
+    text-align: center;
+    justify-content: center;
+} */
+
+.friends-all {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 25%;
+    padding-left: 10%;
+    border-bottom: 2px solid #3701fa;
+}
+
+.add-from-friends {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 25%;
+    padding-left: 10%;
+    border-bottom: 2px solid #3701fa;
+}
+
+.friends-add-value {
+    width: 20%;
+    height: 12%;
+    background-color: #0065fc;
+    display: flex;
+    right: 10%;
+    position: absolute;
+    border-radius: 12px;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.partners {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 25%;
+    padding-left: 10%;
+    border-bottom: 2px solid #3701fa;
+}
+
+.moneta-navigation-bar {
+   width: 35px;
+   height: 35px;
+   position: absolute;
+   top: 10%;
+}
+
+#active-navigation-bar {
+    background-color: #2b3041;
+}
+
+.friends-navigation-bar {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: 20%;
+    filter: invert(1);
+}
+
+.upgrade-navigation-bar {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 15%;
+    filter: invert(1);
+}
+
+.progress-container {
+    width: 8%;
+    height: 80%;
+    position: absolute;
+    background-color: #f3f3f3;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 7px;
+    margin: 2%;
+}
+
+.progress-bar {
+    width: 100%;
+    border-radius: 0;
+    height: 0;
+    /* background-color: #0059ff; */
+    background-color: #ff9900;
+    transition: height 0.3s;
+} 
+
+.factor-oxi-add {
+    width: 25%;
+    background-color: #f58608;
+    border-radius: 15px;
+    margin-left: 2px;
+}
+
+.league {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 500;
+    position: absolute;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    top: 1%;
+}
+
+.container-upgrades {
+    background-color: #152133;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-image: linear-gradient(to bottom, #090b0f, #0d1622 25%, rgb(17, 0, 255)); 
+    box-shadow: 0 -10px 20px rgba(3, 33, 199, 0.7);
+    display: flex;
+}
+
+.content-containre-upgrades {
+    width: 90%;
+    height: 60%;
+    background-color: #152133;
+    top: 20%;
+    left: 5%;
+    position: absolute;
+    border-radius: 15px;
+}
+
+.container-upgardes-menu {
+    width: 100%;
+    height: 15%;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ffffff;
+}
+
+.button-upgrades {
+    background-color: #323233;
+    color: #ffffff;
+    width: 30%;
+    margin-left: 3%;
+    height: 40%;
+    border-radius: 10px;
+    display: flex;
+    font-weight: 600;
+    justify-content: center;
+    align-items: center;
 }

@@ -6,53 +6,182 @@
     <title>OXI Protocol</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="C:\dev\OXIGame\Core(Python)\server\static\css\main.css">
 </head>
 <body>
     <div class="container">
+        <div class="version">V 0.0.4 beta</div>
+        <div class="planet">Planet XR-1</div>
         <div class="content">
-            <div class="main-tokens-value">
-                <div id="data-in-load-tokens", class="data-in-load-tokens">connect...</div>
+            <div class="league">Diamond ></div>
+            <div id="data-in-load-tokens", class="data-in-load-tokens">
+                <img src="/static/images/moneta.png" alt="", class="moneta-main-balance">
+                <div id="main-balance">100,000,000</div>
             </div>
-            <div class="circle"></div>
-            <!-- <button id="clickerButton">Click Me!</button> -->
+            <div class="panels-main"> 
+                <div class="panel-1", id="panel-1-coins">
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <div class="vault-text">
+                        Хранилище
+                        <div class="add-vault-time">+1k</div>
+                    </div>
+                    <div class="vault-level">lvl 1</div>
+                    <div class="tokens-value-vault">
+                        <div id="tokens-value-vault">0</div>
+                        <div class="tokens-value-vault-text">OXI</div>
+                    </div>
+                </div>
+            </div>
+            <div class="claim-tokens-button", id="claim-tokens-button">Собрать OXI</div>
+            <div class="main-menu-buttons">
+                <div class="button-menu-buttons", id="active-navigation-bar">
+                    <img src="/static/images/moneta.png" alt="", class="moneta-navigation-bar">
+                    Токены
+                </div>
+                <div class="button-menu-buttons", onclick='location.href="https://oxiprotocol.ru/friends";'>
+                    <img src="/static/images/friends.png" alt="", class="friends-navigation-bar">
+                    Друзья
+                </div>
+                <div class="button-menu-buttons", id="active-button-menu">
+                    <img src="/static/images/upgrade.png" alt="", class="upgrade-navigation-bar">
+                    Улучшения
+                </div>
+                <div class="button-menu-buttons">
+                    <img src="/static/images/zamok.png" alt="", class="friends-navigation-bar">
+                    Рынок
+                </div>
+                <div class="button-menu-buttons">
+                    <img src="/static/images/zamok.png" alt="", class="friends-navigation-bar">
+                    Атака
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
+        function vault_progress_bar(percentage) {
+            const progressBar = document.getElementById('progress-bar');
+            if (percentage == 0) {
+                percentage = 1;
+            }
+
+            setProgress(percentage);
+
+            function setProgress(percentage) {
+                if (percentage < 0) percentage = 0;
+                if (percentage > 100) percentage = 100;
+                progressBar.style.height = percentage + '%';
+            }
+        };
+
         let tg = window.Telegram.WebApp;
         tg.expand()
 
+        let data_local;
+
         async function fetchData() {
-            const dataContainer = document.getElementById('data-in-load-tokens');
+            const dataContainer = document.getElementById('main-balance');
             try {
-                // const response = await fetch('https://dmraise.ru/getdata', {
-                //     method: 'GET',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //         'X-TELEGRAM-ID': tg.initData
-                //     }
-                // });
-                // if (!response.ok) {
-                //     throw new Error('HTTP error! Status: ${response.status}');
-                // }
-                const url = `https://dmraise.ru/getdata?${tg.initData}`;
+                const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
                 const response = await fetch(url);
                 const data = await response.json();
-                displayData(data);
+                data_local = data;
+                displayData(data['oxi_tokens_value'], data['added_tokens']);
+                vault_progress_bar(data['vault_use']);
             } catch (error) {
                 console.error('Ошибка при получении данных:', error);
-                dataContainer.innerHTML = `<p>Server Error</p>`;
+                dataContainer.textContent = 'Server Error';
             }
         }
 
-        function displayData(data) {
-            const dataContainer = document.getElementById('data-in-load-tokens');
-            const formatedData = data.toLocaleString('en-US');
-            dataContainer.textContent = formatedData + " OXI";
-        }
-        window.onload = fetchData;
-    </script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const myDiv = document.getElementById("claim-tokens-button");
+            const counter = document.getElementById('main-balance');
+            const counterVault = document.getElementById('tokens-value-vault');
 
+            myDiv.addEventListener('click', async () => {
+                const url = `https://oxiprotocol.ru/claim_tokens?${tg.initData}`;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    myDiv.textContent = "Server Error";
+                }
+                const data = await response.json();
+                const formatedData = data['oxi_tokens_value'].toLocaleString('en-US');
+                // counter.textContent = formatedData;
+                animate_main_counter(data['oxi_tokens_value']);
+                vault_progress_bar(0);
+                counterVault.textContent = 0;
+                data_local = data;
+            });
+        });
+        
+        function vault_update() {
+            const vault = document.getElementById("tokens-value-vault");
+            const progress_bar = document.getElementById("progress-container");
+            const current_time = Math.floor(Date.now() / 1000);
+            const time_difference = current_time - data_local['last_time_update'];
+            const time_different_in_hours = time_difference / 3600;
+            const added_tokens = Math.trunc(time_different_in_hours * 5000);
+            const vault_size = data_local['vault_size'];
+            const percentage = Math.trunc(added_tokens / vault_size * 100);
+            if (added_tokens < vault_size) {
+                if (added_tokens < 0) {
+                    vault.textContent = 0;
+                    vault_progress_bar(percentage);
+                } else {
+                    vault.textContent = added_tokens;
+                    vault_progress_bar(percentage);
+                }
+            } else {
+                vault.textContent = vault_size;
+                vault_progress_bar(percentage);
+            }
+        }
+
+        function displayData(data, tokensVault) {
+            const dataContainer = document.getElementById('main-balance');
+            const formatedData = data.toLocaleString('en-US');
+            dataContainer.textContent = formatedData;
+
+            const vault = document.getElementById('tokens-value-vault');
+            const formatedDataVault = tokensVault.toLocaleString('en-US');
+            vault.textContent = formatedDataVault;
+        }
+
+        window.onload = fetchData;
+        const intervalId = setInterval(vault_update, 1000);
+        
+        function parseNumber(number) {
+            return Number(number.replace(/,/g, ''));
+        }
+
+        function animate_main_counter(targetCount) {
+            const counterElement = document.getElementById('main-balance');
+            function animateCounter(startValue, endValue, duration) {
+                const startTime = performance.now();
+
+                function updateCounter(currentTime) {
+                    const elapsedTime = currentTime - startTime;
+                    const progress = Math.min(elapsedTime / duration, 1); // Прогресс анимации от 0 до 1
+                    const currentCount = Math.floor(startValue + progress * (endValue - startValue));
+                    counterElement.textContent = currentCount.toLocaleString('en-US');
+
+                    if (progress < 1) {
+                        requestAnimationFrame(updateCounter); // Продолжаем анимацию
+                    } else {
+                        console.log('Анимация завершена');
+                    }
+                }
+                requestAnimationFrame(updateCounter);
+            }
+            
+            const duration = 800; // Продолжительность анимации в миллисекундах
+            // Вызов функции анимации с текущим значением, целевым значением и длительностью
+            animateCounter(parseNumber(counterElement.textContent), targetCount, duration);
+        };
+    </script>  
 </body>
 </html>
