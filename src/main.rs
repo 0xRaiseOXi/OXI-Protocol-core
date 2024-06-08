@@ -149,8 +149,9 @@ async fn main() -> std::io::Result<()> {
             .route("/get_counter", web::get().to(get_counter))
             .route("/update_counter", web::get().to(update_counter))
             .route("/claim_tokens", web::get().to(claim_tokens))
+            .service(actix_files::Files::new("/static", "./static").show_files_listing())
     })
-    .bind(("0.0.0.0", 8080))?
+    .bind(("127.0.0.1", 8080))?
     .run()
     .await
 }
