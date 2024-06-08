@@ -66,11 +66,11 @@ impl AppState {
 }
 
 async fn index() -> impl Responder {
-    NamedFile::open_async("../templates/index.html").await.unwrap()
+    NamedFile::open_async("./templates/index.html").await.unwrap()
 }
 
 async fn friends() -> impl Responder {
-    NamedFile::open_async("../templates/friends.html").await.unwrap()
+    NamedFile::open_async("./templates/friends.html").await.unwrap()
 }
 
 async fn get_data(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<String, String>>) -> impl Responder {
@@ -150,7 +150,7 @@ async fn main() -> std::io::Result<()> {
             .route("/update_counter", web::get().to(update_counter))
             .route("/claim_tokens", web::get().to(claim_tokens))
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("0.0.0.0", 8080))?
     .run()
     .await
 }
