@@ -105,7 +105,7 @@
                 const data = await response.json();
 
                 const dataContainer = document.getElementById('main-balance');
-                const formatedData = data.toLocaleString('en-US');
+                const formatedData = data['oxi_tokens_value'].toLocaleString('en-US');
                 dataContainer.textContent = formatedData;
 
                 // data_local = data;
