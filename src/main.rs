@@ -130,7 +130,8 @@ async fn create_new_account(
 
     match state.token_collection.insert_one(token_data, None).await {
         Ok(_) => {},
-        Err(_) => {
+        Err(err) => {
+            println!("{}", err);
             let error = ErrorResponse { error: "Failed to insert data in database".to_string() };
             return HttpResponse::InternalServerError().json(error);
         }
@@ -138,7 +139,8 @@ async fn create_new_account(
 
     match state.datauser_collection.insert_one(user_data, None).await {
         Ok(_) => {},
-        Err(_) => {
+        Err(err) => {
+            println!("{}", err);
             let error = ErrorResponse { error: "Failed to insert data in database".to_string() };
             return HttpResponse::InternalServerError().json(error);
         }
