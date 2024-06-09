@@ -6,7 +6,7 @@ use std::sync::Mutex;
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::collections::HashMap;
 use serde_json::Value;
-use std::any::type_name;
+
 // #[derive(Serialize, Deserialize)]
 // struct DataOXITokens {
 //     _id: u128,
@@ -83,7 +83,7 @@ async fn get_data(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<S
         println!("{}", id);
     } else {
         println("Ключа нет!");
-        return
+        return HttpResponse::Ok()
     }
     let state = state.lock().unwrap();
     let data = state.token_collection.find_one(doc! { "_id": id }, None).await.unwrap().unwrap();
