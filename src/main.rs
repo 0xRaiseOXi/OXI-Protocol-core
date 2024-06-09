@@ -419,6 +419,7 @@ async fn main() -> std::io::Result<()> {
             .route("/get_counter", web::get().to(get_counter))
             .route("/update_counter", web::get().to(update_counter))
             .route("/claim_tokens", web::get().to(claim_tokens))
+            .route("/newaccount", web::post().to(create_new_account))
             .service(actix_files::Files::new("/static", "./static").show_files_listing())
     })
     .bind(("127.0.0.1", 8080))?
