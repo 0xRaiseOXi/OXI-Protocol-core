@@ -79,13 +79,12 @@ async fn get_data(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<S
     println!("{}", json_str);
     let json_val: Value = serde_json::from_str(json_str).expect("Не удалось распарсить json!");
     println!("{}", json_val);
-    let id2 = json_val.get("id").expect("КЛЮЧА НЕТ");
-    println!("{}", id2);
-    let id = id2.as_str().unwrap();
+    let id = json_val.get("id").expect("КЛЮЧА НЕТ").as_u64().expect("Это не число").to_string();
+    println!("{}", id);
     let state = state.lock().unwrap();
-    let data = state.token_collection.find_one(doc! { "_id": id }, None).await.unwrap().unwrap();
+    let data = state.token_collection.find_one(doc! { "_id": &id }, None).await.unwrap().unwrap();
 
-    let added_tokens = state.update_tokens_value_vault(id).await;
+    let added_tokens = state.update_tokens_value_vault(&id).await;
     let mut data = data;
     data.oxi_tokens_value += added_tokens as u128;
     
