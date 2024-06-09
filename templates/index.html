@@ -105,9 +105,12 @@
                 const data = await response.json();
 
                 const dataContainer = document.getElementById('main-balance');
-                const formatedData = data['oxi_tokens_value'].toLocaleString('en-US');
-                dataContainer.textContent = formatedData;
-
+                if (data['oxi_tokens_value'] == 0) {
+                    dataContainer.textContent = 0;
+                } else {
+                    const formatedData = data['oxi_tokens_value'].toLocaleString('en-US');
+                    dataContainer.textContent = formatedData;
+                }
                 // data_local = data;
                 // displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
                 // vault_progress_bar(data['dynamic_fields']['vault_use']);
