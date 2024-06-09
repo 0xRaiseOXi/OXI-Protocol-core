@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::collections::HashMap;
+use serde_json::Value;
 
 // #[derive(Serialize, Deserialize)]
 // struct DataOXITokens {
@@ -74,7 +75,9 @@ async fn friends() -> impl Responder {
 }
 
 async fn get_data(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<String, String>>) -> impl Responder {
-    let id = &query.get("user").unwrap();
+    let json_str = &query.get("user").unwrap();
+    let json_val: Value = serde_json::from_str(json_str).unwrap();
+    let id = &json_val[0]["id"];
     let state = state.lock().unwrap();
     let data = state.token_collection.find_one(doc! { "_id": id }, None).await.unwrap().unwrap();
 
@@ -86,7 +89,9 @@ async fn get_data(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<S
 }
 
 async fn get_counter(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<String, String>>) -> impl Responder {
-    let id = &query.get("user").unwrap();
+    let json_str = &query.get("user").unwrap();
+    let json_val: Value = serde_json::from_str(json_str).unwrap();
+    let id = &json_val[0]["id"];
     let state = state.lock().unwrap();
     let added_tokens = state.update_tokens_value_vault(id).await;
     
@@ -94,7 +99,9 @@ async fn get_counter(state: web::Data<Mutex<AppState>>, query: web::Query<HashMa
 }
 
 async fn update_counter(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<String, String>>) -> impl Responder {
-    let id = &query.get("user").unwrap();
+    let json_str = &query.get("user").unwrap();
+    let json_val: Value = serde_json::from_str(json_str).unwrap();
+    let id = &json_val[0]["id"];
     let state = state.lock().unwrap();
     let data = state.token_collection.find_one(doc! { "_id": id }, None).await.unwrap().unwrap();
     
@@ -102,7 +109,9 @@ async fn update_counter(state: web::Data<Mutex<AppState>>, query: web::Query<Has
 }
 
 async fn claim_tokens(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<String, String>>) -> impl Responder {
-    let id = &query.get("user").unwrap();
+    let json_str = &query.get("user").unwrap();
+    let json_val: Value = serde_json::from_str(json_str).unwrap();
+    let id = &json_val[0]["id"];
     let state = state.lock().unwrap();
     let filter = doc! { "_id": id };
     let mut data = state.token_collection.find_one(filter.clone(), None).await.unwrap().unwrap();
