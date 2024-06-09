@@ -2,11 +2,10 @@ use actix_web::{web, App, HttpServer, Responder, HttpResponse};
 use actix_files::NamedFile;
 use mongodb::{Client, options::ClientOptions, bson::{doc, Bson}};
 use serde::{Deserialize, Serialize};
-use std::sync::Mutex;
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::collections::HashMap;
 use serde_json::Value;
-use tokio::sync::Mutex as FuturesMutex;
+use tokio::sync::Mutex;
 use actix_web::web::Data;
 // #[derive(Serialize, Deserialize)]
 // struct DataOXITokens {
@@ -138,7 +137,7 @@ struct ErrorResponse {
 }
 
 async fn get_data(
-    state: web::Data<FuturesMutex<AppState>>, 
+    state: web::Data<Mutex<AppState>>, 
     query: web::Query<HashMap<String, String>>
 ) -> impl Responder {
     let json_str = match query.get("user") {
@@ -202,7 +201,7 @@ async fn get_data(
 }
 
 async fn get_counter(
-    state: web::Data<FuturesMutex<AppState>>, 
+    state: web::Data<Mutex<AppState>>, 
     query: web::Query<HashMap<String, String>>
 ) -> impl Responder {
     let json_str = match query.get("user") {
@@ -243,7 +242,7 @@ async fn get_counter(
 }
 
 async fn update_counter(
-    state: web::Data<FuturesMutex<AppState>>, 
+    state: web::Data<Mutex<AppState>>, 
     query: web::Query<HashMap<String, String>>
 ) -> impl Responder {
     let json_str = match query.get("user") {
@@ -285,7 +284,7 @@ async fn update_counter(
 }
 
 async fn claim_tokens(
-    state: web::Data<FuturesMutex<AppState>>, 
+    state: web::Data<Mutex<AppState>>, 
     query: web::Query<HashMap<String, String>>
 ) -> impl Responder {
     let json_str = match query.get("user") {
@@ -383,7 +382,7 @@ async fn claim_tokens(
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
-    
+
     let client_options = ClientOptions::parse("mongodb://localhost:27017").await.unwrap();
     let db_client = Client::with_options(client_options).unwrap();
     let db = db_client.database("OXI");
