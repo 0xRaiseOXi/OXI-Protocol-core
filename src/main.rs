@@ -11,7 +11,7 @@ use tokio::sync::Mutex;
 struct UserData {
     _id: String,
     user_name: String,
-    register_in_game: u128,
+    register_in_game: u64,
     vault: u8,
 }
 
@@ -19,9 +19,9 @@ struct UserData {
 struct TokenData {
     _id: String,
     language: String,
-    oxi_tokens_value: u128,
-    last_time_update: f64,
-    tokens_hour: u128,
+    oxi_tokens_value: u64,
+    last_time_update: u64,
+    tokens_hour: u64,
 }
 
 struct AppState {
@@ -87,7 +87,7 @@ struct POSTRequest {
     password: String,
     id: u64,
     user_name: String, 
-    register_in_game: u128,
+    register_in_game: u64,
     language: String,
 }
 
