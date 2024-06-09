@@ -76,7 +76,7 @@ async fn friends() -> impl Responder {
 
 async fn get_data(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<String, String>>) -> impl Responder {
     let json_str = &query.get("user").unwrap();
-    println!(json_str);
+    println!("{}", json_str);
     let json_val: Value = serde_json::from_str(json_str).unwrap();
     let id = &json_val[0]["id"].as_str().unwrap();
     let state = state.lock().unwrap();
