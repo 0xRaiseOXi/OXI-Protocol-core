@@ -439,6 +439,6 @@ html, body {
     align-items: center;
 }
 
-#main-balance {
-    font-size: 17px;
+.test {
+    color: #ffffff;
 }
