@@ -12,6 +12,7 @@
         <div class="version">V 0.0.4 beta</div>
         <div class="planet">Planet XR-1</div>
         <div id="test"></div>
+        <div id="test2"></div>
         <div class="content">
             <div class="league">Diamond ></div>
             <div id="data-in-load-tokens", class="data-in-load-tokens">
@@ -101,6 +102,7 @@
         async function fetchData() {
             const dataContainer = document.getElementById('main-balance');
             const test = document.getElementById('test');
+            const test2 = document.getElementById('test2');
             try {
                 const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
                 const response = await fetch(url);
@@ -118,7 +120,8 @@
                 // vault_progress_bar(data['dynamic_fields']['vault_use']);
             } catch (error) {
                 console.error('Ошибка при получении данных:', error);
-                test.textContent = 'Server Error ' + error + " " + data;
+                test.textContent = 'Server Error ' + error;
+                test2.textContent = data;
             }
         }
 
