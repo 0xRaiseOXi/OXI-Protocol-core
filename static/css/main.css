@@ -65,6 +65,7 @@ html, body {
     font-size: 15px;
 }
 
+
 .planet {
     position: absolute;
     right: 5%;
@@ -436,4 +437,8 @@ html, body {
     font-weight: 600;
     justify-content: center;
     align-items: center;
+}
+
+#main-balance {
+    font-size: 17px;
 }
