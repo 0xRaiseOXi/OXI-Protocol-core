@@ -77,11 +77,14 @@ async fn friends() -> impl Responder {
 async fn get_data(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<String, String>>) -> impl Responder {
     let json_str = &query.get("user").unwrap();
     println!("{}", json_str);
-    println!("Type of main_map: {}", type_name::<decltype(&json_str)>());
-    let json_val: Value = serde_json::from_str(json_str).unwrap();
+    let json_val: Value = serde_json::from_str(json_str).expect("Не удалось распарсить json!");
     println!("{}", json_val);
-    let id = &json_val["id"].as_str().unwrap();
-    println!("{}", id);
+    if let Some(id) = json_val.get("id") {
+        println!("{}", id);
+    } else {
+        println("Ключа нет!");
+        return
+    }
     let state = state.lock().unwrap();
     let data = state.token_collection.find_one(doc! { "_id": id }, None).await.unwrap().unwrap();
 
