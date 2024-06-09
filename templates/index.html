@@ -108,22 +108,13 @@
                 const response = await fetch(url);
 
                 const data = await response.json();
-                test2.textContent = JSON.stringify(data, null, 2);
-                
-                const dataContainer = document.getElementById('main-balance');
-                if (data['oxi_tokens_value'] == 0) {
-                    dataContainer.textContent = 0;
-                } else {
-                    const formatedData = data['oxi_tokens_value'].toLocaleString('en-US');
-                    dataContainer.textContent = formatedData;
-                }
-                // data_local = data;
-                // displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
-                // vault_progress_bar(data['dynamic_fields']['vault_use']);
+
+                data_local = data;
+                displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
+                vault_progress_bar(data['dynamic_fields']['vault_use']);
             } catch (error) {
                 console.error('Ошибка при получении данных:', error);
-                // test.textContent = 'Server Error ' + error;
-     
+                test.textContent = 'Server Error ';
             }
         }
 
