@@ -106,9 +106,9 @@
             try {
                 const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
                 const response = await fetch(url);
-                test2.textContent = response;
-                const data = await response.json();
 
+                const data = await response.json();
+                test2.textContent = data;
                 const dataContainer = document.getElementById('main-balance');
                 if (data['oxi_tokens_value'] == 0) {
                     dataContainer.textContent = 0;
