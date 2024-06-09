@@ -1,6 +1,6 @@
 use actix_web::{web, App, HttpServer, Responder, HttpResponse};
 use actix_files::NamedFile;
-use mongodb::{Client, options::ClientOptions, bson::{doc, Bson}};
+use mongodb::{Client, options::ClientOptions, bson::{doc}};
 use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::collections::HashMap;
@@ -22,6 +22,7 @@ struct TokenData {
     oxi_tokens_value: u64,
     last_time_update: f64,
     tokens_hour: u64,
+    dynamic_fields: Option<HashMap<String, String>>,
 }
 
 struct AppState {
@@ -123,7 +124,8 @@ async fn create_new_account(
         language: data.language.clone(),
         oxi_tokens_value: 0,
         last_time_update: last_time_update,
-        tokens_hour: 1000
+        tokens_hour: 1000,
+        dynamic_fields: None
     };
 
     let state = state.lock().await;
@@ -184,7 +186,19 @@ async fn get_data(
 
     let state = state.lock().await;
 
-    let data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
+    let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
+        Ok(Some(d)) => d,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+
+    let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
         Ok(Some(d)) => d,
         Ok(None) => {
             let error = ErrorResponse { error: "User not found".to_string() };
@@ -204,8 +218,15 @@ async fn get_data(
         }
     };
 
-    let mut data = data;
-    data.oxi_tokens_value += added_tokens;
+    // let mut data = data;
+    // data.oxi_tokens_value += added_tokens;
+    let mut dynamic_data = HashMap::new();
+    dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
+
+    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
+    dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
+
+    data.dynamic_fields = Some(dynamic_data);
 
     HttpResponse::Ok().json(data)
 }
@@ -334,17 +355,17 @@ async fn claim_tokens(
         }
     };
 
-    let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
-        Ok(Some(d)) => d,
-        Ok(None) => {
-            let error = ErrorResponse { error: "User not found".to_string() };
-            return HttpResponse::NotFound().json(error);
-        }
-        Err(_) => {
-            let error = ErrorResponse { error: "Database query failed".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
+    // let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
+    //     Ok(Some(d)) => d,
+    //     Ok(None) => {
+    //         let error = ErrorResponse { error: "User not found".to_string() };
+    //         return HttpResponse::NotFound().json(error);
+    //     }
+    //     Err(_) => {
+    //         let error = ErrorResponse { error: "Database query failed".to_string() };
+    //         return HttpResponse::InternalServerError().json(error);
+    //     }
+    // };
     
     let added_tokens = match state.update_tokens_value_vault(&id).await {
         Ok(tokens) => tokens,
@@ -364,7 +385,7 @@ async fn claim_tokens(
     };
     data.last_time_update = last_time_update;
 
-    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
+    // let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
 
     match state.token_collection.replace_one(doc! { "_id": &id }, &data, None).await {
         Ok(_) => {}
@@ -375,8 +396,8 @@ async fn claim_tokens(
     }
 
     let response = match serde_json::to_value(data) {
-        Ok(mut value) => {
-            value.as_object_mut().unwrap().insert("vault_use".to_string(), Bson::Int32(vault_use).into());
+        Ok(value) => {
+            // value.as_object_mut().unwrap().insert("vault_use".to_string(), Bson::Int32(vault_use).into());
             value
         }
         Err(_) => {
