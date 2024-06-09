@@ -20,7 +20,7 @@ struct TokenData {
     _id: String,
     language: String,
     oxi_tokens_value: u64,
-    last_time_update: u64,
+    last_time_update: f64,
     tokens_hour: u64,
 }
 
@@ -37,7 +37,7 @@ enum UpdateError {
 }
 
 impl AppState {
-    async fn update_tokens_value_vault(&self, id: &str) -> Result<u32, UpdateError> {
+    async fn update_tokens_value_vault(&self, id: &str) -> Result<u64, UpdateError> {
         let filter = doc! { "_id": id };
   
         let data_result = self.token_collection.find_one(filter.clone(), None).await;
@@ -58,8 +58,8 @@ impl AppState {
         let current_time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs_f64();
         let time_difference = current_time - last_time_update;
         let time_difference_in_hours = time_difference / 3600.0;
-        let added_tokens = (time_difference_in_hours * 1000.0) as u32;
-        let vault_size = self.vault_size_constant[&data_user_2.vault];
+        let added_tokens = (time_difference_in_hours * 1000.0) as u64;
+        let vault_size = self.vault_size_constant[&data_user_2.vault] as u64;
     
         if added_tokens > vault_size {
             return Ok(vault_size);
@@ -205,7 +205,7 @@ async fn get_data(
     };
 
     let mut data = data;
-    data.oxi_tokens_value += added_tokens as u128;
+    data.oxi_tokens_value += added_tokens;
 
     HttpResponse::Ok().json(data)
 }
@@ -354,7 +354,7 @@ async fn claim_tokens(
         }
     };
 
-    data.oxi_tokens_value += added_tokens as u128;
+    data.oxi_tokens_value += added_tokens as u64;
     let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(duration) => duration.as_secs_f64(),
         Err(_) => {
@@ -364,7 +364,7 @@ async fn claim_tokens(
     };
     data.last_time_update = last_time_update;
 
-    let vault_use = (data.oxi_tokens_value as f64 / state.vault_size_constant[&data_user_improvements.vault] as f64 * 100.0) as i32;
+    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
 
     match state.token_collection.replace_one(doc! { "_id": &id }, &data, None).await {
         Ok(_) => {}
