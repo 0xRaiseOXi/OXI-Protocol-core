@@ -79,8 +79,9 @@ async fn get_data(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<S
     println!("{}", json_str);
     let json_val: Value = serde_json::from_str(json_str).expect("Не удалось распарсить json!");
     println!("{}", json_val);
-    let id= json_val.get("id").expect("КЛЮЧА НЕТ").as_str().unwrap();
+    let id = json_val.get("id").expect("КЛЮЧА НЕТ");
     println!("{}", id);
+    id = id.as_str().unwrap();
     let state = state.lock().unwrap();
     let data = state.token_collection.find_one(doc! { "_id": id }, None).await.unwrap().unwrap();
 
