@@ -82,8 +82,8 @@ async fn get_data(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<S
     if let Some(id) = json_val.get("id") {
         println!("{}", id);
     } else {
-        println("Ключа нет!");
-        return HttpResponse::Ok()
+        println!("Ключа нет!");
+        HttpResponse::Ok().json("{id: 'Error'}")
     }
     let state = state.lock().unwrap();
     let data = state.token_collection.find_one(doc! { "_id": id }, None).await.unwrap().unwrap();
