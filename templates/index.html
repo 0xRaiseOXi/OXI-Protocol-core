@@ -108,7 +108,8 @@
                 const response = await fetch(url);
 
                 const data = await response.json();
-                test2.textContent = data;
+                test2.textContent = JSON.stringify(data, null, 2);
+                
                 const dataContainer = document.getElementById('main-balance');
                 if (data['oxi_tokens_value'] == 0) {
                     dataContainer.textContent = 0;
