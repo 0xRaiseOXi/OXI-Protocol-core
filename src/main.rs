@@ -381,6 +381,9 @@ async fn claim_tokens(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    std::env::set_var("RUST_LOG", "debug");
+    env_logger::init();
+    
     let client_options = ClientOptions::parse("mongodb://localhost:27017").await.unwrap();
     let db_client = Client::with_options(client_options).unwrap();
     let db = db_client.database("OXI");
