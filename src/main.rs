@@ -6,43 +6,27 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use std::collections::HashMap;
 use serde_json::Value;
 use tokio::sync::Mutex;
-use actix_web::web::Data;
-// #[derive(Serialize, Deserialize)]
-// struct DataOXITokens {
-//     _id: u128,
-//     language: String,
-//     user_name: String,
-//     oxi_tokens_value: u128,
-//     last_time_update: u128
-// }
 
-// struct Main {
-//     client: Client,
-//     db: Database,
-//     collections_TOKENS: Collection<DataOXITokens>,
-//     collections_IMPROVEMENTS: Collection<DataOXIImprovemets>,
-//     collections_USER: Collection<>,
-//     vaultSize: HashMap<u8, u32>,
-// }
-
+#[derive(Debug, Deserialize, Serialize)]
+struct UserData {
+    _id: String,
+    user_name: String,
+    register_in_game: u128,
+    vault: u8,
+}
 
 #[derive(Debug, Deserialize, Serialize)]
 struct TokenData {
     _id: String,
-    last_time_update: f64,
+    language: String,
     oxi_tokens_value: u128,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-struct ImprovementData {
-    _id: String,
-    storage: u8,
-    vault: u8,
+    last_time_update: f64,
+    tokens_hour: u128,
 }
 
 struct AppState {
     token_collection: mongodb::Collection<TokenData>,
-    improvement_collection: mongodb::Collection<ImprovementData>,
+    datauser_collection: mongodb::Collection<UserData>,
     vault_size_constant: HashMap<u8, u32>,
 }
 
@@ -53,28 +37,9 @@ enum UpdateError {
 }
 
 impl AppState {
-    // async fn update_tokens_value_vault(&self, id: &str) -> u32 {
-    //     let filter = doc! { "_id": id };
-    //     let data = self.token_collection.find_one(filter.clone(), None).await.unwrap().unwrap();
-    //     let data_user_2 = self.improvement_collection.find_one(filter, None).await.unwrap().unwrap();
-
-    //     let last_time_update = data.last_time_update;
-    //     let current_time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs_f64();
-    //     let time_difference = current_time - last_time_update;
-    //     let time_difference_in_hours = time_difference / 3600.0;
-    //     let added_tokens = (time_difference_in_hours * 1000.0) as u32;
-    //     let vault_size = self.vault_size_constant[&data_user_2.vault];
-
-    //     if added_tokens > vault_size {
-    //         return vault_size;
-    //     }
-    //     added_tokens
-    // }
-
     async fn update_tokens_value_vault(&self, id: &str) -> Result<u32, UpdateError> {
         let filter = doc! { "_id": id };
-        
-        // Обработка ошибок при запросе данных из базы данных
+  
         let data_result = self.token_collection.find_one(filter.clone(), None).await;
         let data = match data_result {
             Ok(Some(doc)) => doc,
@@ -82,8 +47,7 @@ impl AppState {
             Err(_) => return Err(UpdateError::DatabaseError),
         };
     
-        // Аналогично для self.improvement_collection.find_one
-        let data_result = self.improvement_collection.find_one(filter.clone(), None).await;
+        let data_result = self.datauser_collection.find_one(filter.clone(), None).await;
         let data_user_2 = match data_result {
             Ok(Some(doc)) => doc,
             Ok(None) => return Err(UpdateError::NotFound),
@@ -107,29 +71,81 @@ impl AppState {
 }
 
 async fn index() -> impl Responder {
-    NamedFile::open_async("./templates/index.html").await.unwrap()
+    NamedFile::open_async("./templates/loading.html").await.unwrap()
 }
 
 async fn friends() -> impl Responder {
     NamedFile::open_async("./templates/friends.html").await.unwrap()
 }
 
-// async fn get_data(state: web::Data<Mutex<AppState>>, query: web::Query<HashMap<String, String>>) -> impl Responder {
-//     let json_str = &query.get("user").unwrap();
-//     println!("{}", json_str);
-//     let json_val: Value = serde_json::from_str(json_str).expect("Не удалось распарсить json!");
-//     println!("{}", json_val);
-//     let id = json_val.get("id").expect("КЛЮЧА НЕТ").as_u64().expect("Это не число").to_string();
-//     println!("{}", id);
-//     let state = state.lock().unwrap();
-//     let data = state.token_collection.find_one(doc! { "_id": &id }, None).await.unwrap().unwrap();
+async fn main_page() -> impl Responder {
+    NamedFile::open_async("./templates/index.html").await.unwrap()
+}
 
-//     let added_tokens = state.update_tokens_value_vault(&id).await;
-//     let mut data = data;
-//     data.oxi_tokens_value += added_tokens as u128;
-    
-//     HttpResponse::Ok().json(data)
-// }
+#[derive(Debug, Deserialize, Serialize)]
+struct POSTRequest {
+    password: String,
+    id: u64,
+    user_name: String, 
+    register_in_game: u128,
+    language: String,
+}
+
+
+async fn create_new_account(
+    state: web::Data<Mutex<AppState>>, 
+    data: web::Json<POSTRequest>
+) -> impl Responder {
+
+    let password = "123";
+    if data.password != password {
+        let error = ErrorResponse { error: "Auth error".to_string() };
+        return HttpResponse::BadRequest().json(error);
+    }
+
+    let user_data = UserData {
+        _id: data.id.to_string(),
+        user_name: data.user_name.clone(),
+        register_in_game: data.register_in_game.clone(),
+        vault: 1
+    };
+
+    let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(duration) => duration.as_secs_f64(),
+        Err(_) => {
+            let error = ErrorResponse { error: "Failed to get current time".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+
+    let token_data = TokenData {
+        _id: data.id.to_string(),
+        language: data.language.clone(),
+        oxi_tokens_value: 0,
+        last_time_update: last_time_update,
+        tokens_hour: 1000
+    };
+
+    let state = state.lock().await;
+
+    match state.token_collection.insert_one(token_data, None).await {
+        Ok(_) => {},
+        Err(_) => {
+            let error = ErrorResponse { error: "Failed to insert data in database".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+
+    match state.datauser_collection.insert_one(user_data, None).await {
+        Ok(_) => {},
+        Err(_) => {
+            let error = ErrorResponse { error: "Failed to insert data in database".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+
+    HttpResponse::Ok().body("OK")
+}
 
 #[derive(Debug, Serialize)]
 struct ErrorResponse {
@@ -163,14 +179,6 @@ async fn get_data(
             return HttpResponse::BadRequest().json(error);
         }
     };
-
-    // let state = match state.lock().await {
-    //     Ok(s) => s,
-    //     Err(_) => {
-    //         let error = ErrorResponse { error: "Failed to lock state".to_string() };
-    //         return HttpResponse::InternalServerError().json(error);
-    //     }
-    // };
 
     let state = state.lock().await;
 
@@ -324,7 +332,7 @@ async fn claim_tokens(
         }
     };
 
-    let data_user_improvements = match state.improvement_collection.find_one(doc! { "_id": &id }, None).await {
+    let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
         Ok(Some(d)) => d,
         Ok(None) => {
             let error = ErrorResponse { error: "User not found".to_string() };
@@ -387,7 +395,7 @@ async fn main() -> std::io::Result<()> {
     let db_client = Client::with_options(client_options).unwrap();
     let db = db_client.database("OXI");
     let token_collection = db.collection::<TokenData>("OXI_tokens");
-    let improvement_collection = db.collection::<ImprovementData>("OXI_improvements");
+    let datauser_collection = db.collection::<UserData>("OXI_improvements");
 
     let vault_size_constant = HashMap::from([
         (1, 5000), (2, 12000), (3, 50000), (4, 120000), 
@@ -397,7 +405,7 @@ async fn main() -> std::io::Result<()> {
 
     let state = web::Data::new(Mutex::new(AppState { 
         token_collection, 
-        improvement_collection, 
+        datauser_collection, 
         vault_size_constant 
     }));
 
@@ -405,6 +413,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(state.clone())
             .route("/", web::get().to(index))
+            .route("/main", web::get().to(main_page))
             .route("/friends", web::get().to(friends))
             .route("/getdata", web::get().to(get_data))
             .route("/get_counter", web::get().to(get_counter))
