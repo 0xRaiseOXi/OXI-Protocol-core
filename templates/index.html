@@ -118,7 +118,7 @@
                 // vault_progress_bar(data['dynamic_fields']['vault_use']);
             } catch (error) {
                 console.error('Ошибка при получении данных:', error);
-                test.textContent = 'Server Error ' + error;
+                test.textContent = 'Server Error ' + error + " " + data['oxi_tokens_value'];
             }
         }
 
