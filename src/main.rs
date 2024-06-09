@@ -403,7 +403,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            .app_data(Data::new(state.clone()))
+            .app_data(state.clone())
             .route("/", web::get().to(index))
             .route("/friends", web::get().to(friends))
             .route("/getdata", web::get().to(get_data))
