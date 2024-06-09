@@ -106,6 +106,7 @@
             try {
                 const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
                 const response = await fetch(url);
+                test2.textContent = response;
                 const data = await response.json();
 
                 const dataContainer = document.getElementById('main-balance');
@@ -120,8 +121,8 @@
                 // vault_progress_bar(data['dynamic_fields']['vault_use']);
             } catch (error) {
                 console.error('Ошибка при получении данных:', error);
-                test.textContent = 'Server Error ' + error;
-                test2.textContent = data;
+                // test.textContent = 'Server Error ' + error;
+     
             }
         }
 
