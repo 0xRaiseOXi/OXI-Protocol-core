@@ -113,19 +113,15 @@
                 const response = await fetch(url);
                 test2.textContent = 3;
                 const data2 = await response.text();
-                test2.innerText = data2;
-                const initDataText = typeof tg.initData == 'object' ? JSON.stringify(tg.initData, null, 2) : tg.initData;
-                test2.innerText = initDataText;
+                test2.innerText = url;
+                test3.textContent = data2;
                 const data = await response.json();
                 displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
                 test2.textContent = 5;
                 vault_progress_bar(data['dynamic_fields']['vault_use']);
                 test2.textContent = 6;
             } catch (error) {
-                test3.textContent = "10";
-                test.textContent = 'Server Error';
-                test.textContent = 'Server Error' + tg.initData;
-                test.textContent = tg.initData;
+                // test3.textContent = "10";
             }
         }
 
