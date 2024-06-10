@@ -155,6 +155,10 @@ async fn create_new_account(
 struct ErrorResponse {
     error: String,
 }
+#[derive(Deserialize)]
+struct QueryData {
+    init_data: String,
+}
 
 async fn get_data(
     state: web::Data<Mutex<AppState>>, 

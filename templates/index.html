@@ -84,44 +84,19 @@
 
         let data_local;
 
-        // async function fetchData() {
-        //     const dataContainer = document.getElementById('main-balance');
-        //     try {
-        //         // const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
-        //         const url = "https://oxiprotocol.ru/getdata?user={'id':1070221127}";
-        //         const response = await fetch(url);
-        //         const data = await response.json();
-        //         data_local = data;
-        //         displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
-        //         vault_progress_bar(data['dynamic_fields']['vault_use']);
-        //     } catch (error) {
-        //         console.error('Ошибка при получении данных:', error);
-        //         dataContainer.textContent = 'Server Error';
-        //     }
-        // }
-
         async function fetchData() {
             const dataContainer = document.getElementById('main-balance');
-            const test = document.getElementById('test');
-            const test2 = document.getElementById('test2');
-            const test3 = document.getElementById('test3');
+            const dataContainer2 = document.getElementById('test2');
             try {
-                test2.textContent = 1;
-
                 const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
-                test2.textContent = 2;
+                dataContainer2.textContent = `Fetching data from: ${url}`; 
                 const response = await fetch(url);
-                test2.textContent = 3;
-                const data2 = await response.text();
-                test2.innerText = url;
-                test3.textContent = data2;
+
                 const data = await response.json();
                 displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
-                test2.textContent = 5;
                 vault_progress_bar(data['dynamic_fields']['vault_use']);
-                test2.textContent = 6;
             } catch (error) {
-                // test3.textContent = "10";
+                // dataContainer.textContent = "Server Error";
             }
         }
 
