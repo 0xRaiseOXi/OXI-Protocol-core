@@ -166,7 +166,7 @@ async fn get_data(
 ) -> impl Responder {
     println!("{}", query);
 
-    let json_value: Value = match serde_json::from_str(&query.user) {
+    let json_value: Value = match serde_json::from_str(&query) {
         Ok(val) => val,
         Err(_) => {
             let error = ErrorResponse { error: "Failed to parse JSON!".to_string() };
