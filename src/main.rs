@@ -162,8 +162,10 @@ struct QueryData {
 
 async fn get_data(
     state: web::Data<Mutex<AppState>>, 
-    query: web::Query<QueryData>
+    query: web::Query<String>
 ) -> impl Responder {
+    println!("{}", query);
+
     let json_value: Value = match serde_json::from_str(&query.user) {
         Ok(val) => val,
         Err(_) => {
@@ -212,7 +214,7 @@ async fn get_data(
             return HttpResponse::InternalServerError().json(error);
         }
     };
-    
+
     let mut dynamic_data = HashMap::new();
     let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
     dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
