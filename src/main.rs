@@ -196,6 +196,7 @@ async fn get_data(
             return HttpResponse::BadRequest().json(error);
         }
     };
+    println!("{}", json_value);
 
     let id = match json_value.get("id") {
         Some(id) => id.to_string(),
@@ -204,7 +205,8 @@ async fn get_data(
             return HttpResponse::BadRequest().json(error);
         }
     };
-
+    println!("{}", id);
+    
     let state = state.lock().await;
     let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
         Ok(Some(d)) => d,
@@ -217,7 +219,6 @@ async fn get_data(
             return HttpResponse::InternalServerError().json(error);
         }
     };
-
 
     let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
         Ok(Some(d)) => d,
@@ -247,7 +248,7 @@ async fn get_data(
     dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
 
     data.dynamic_fields = Some(dynamic_data);
-
+    println!("OK");
     HttpResponse::Ok().json(data)
 }
 
@@ -331,6 +332,7 @@ async fn update_counter(
             return HttpResponse::InternalServerError().json(error);
         }
     };
+
     HttpResponse::Ok().body(data.oxi_tokens_value.to_string())
 }
 
