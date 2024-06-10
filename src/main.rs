@@ -157,10 +157,10 @@ struct ErrorResponse {
 }
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryData {
-    query_id: String,
-    user: HashMap<String, String>,
-    auth_date: String,
-    hash: String,
+    // query_id: String,
+    user: String,
+    // auth_date: String,
+    // hash: String,
 }
 
 async fn get_data(
