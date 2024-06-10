@@ -63,14 +63,57 @@
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
+        let tg = window.Telegram.WebApp;
+        let data_local;
+        tg.expand();
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const claimTokensButton = document.getElementById("claim-tokens-button");
+            const counterVault = document.getElementById('tokens-value-vault');
+
+            claimTokensButton.addEventListener('click', async () => {
+                const url = `https://oxiprotocol.ru/claim_tokens?${tg.initData}`;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    claimTokensButton.textContent = "Server Error";
+                }
+                const data = await response.json();
+                const formatedData = data['oxi_tokens_value'].toLocaleString('en-US');
+
+                animate_main_counter(data['oxi_tokens_value']);
+                vault_progress_bar(0);
+
+                counterVault.textContent = 0;
+                data_local = data;
+            });
+
+            await fetchData();
+        });
+
+        const intervalId = setInterval(vault_update, 1000);
+
+        async function fetchData() {
+            const dataContainer = document.getElementById('main-balance');
+            const vault = document.getElementById('tokens-value-vault');
+            try {
+                const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                data_local = data;
+                dataContainer.textContent = data.toLocaleString('en-US');
+                vault.textContent = tokensVault.toLocaleString('en-US');
+                vault_update();
+            } catch (error) {
+                dataContainer.textContent = 'Server Error';
+            }
+        }
+
         function vault_progress_bar(percentage) {
             const progressBar = document.getElementById('progress-bar');
             if (percentage == 0) {
                 percentage = 1;
             }
-
             setProgress(percentage);
-
             function setProgress(percentage) {
                 if (percentage < 0) percentage = 0;
                 if (percentage > 100) percentage = 100;
@@ -78,49 +121,6 @@
             }
         };
 
-        let tg = window.Telegram.WebApp;
-        tg.expand()
-
-        let data_local;
-
-        async function fetchData() {
-            const dataContainer = document.getElementById('main-balance');
-            const test = document.getElementById('test');
-            try {
-                const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
-                const response = await fetch(url);
-                const data = await response.json();
-                test.innerText = JSON.stringify(data);
-                data_local = data;
-                displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
-                vault_progress_bar(data['dynamic_fields']['vault_use']);
-            } catch (error) {
-                console.error('Ошибка при получении данных:', error);
-                dataContainer.textContent = 'Server Error';
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const myDiv = document.getElementById("claim-tokens-button");
-            const counter = document.getElementById('main-balance');
-            const counterVault = document.getElementById('tokens-value-vault');
-
-            myDiv.addEventListener('click', async () => {
-                const url = `https://oxiprotocol.ru/claim_tokens?${tg.initData}`;
-                const response = await fetch(url);
-                if (!response.ok) {
-                    myDiv.textContent = "Server Error";
-                }
-                const data = await response.json();
-                const formatedData = data['oxi_tokens_value'].toLocaleString('en-US');
-                // counter.textContent = formatedData;
-                animate_main_counter(data['oxi_tokens_value']);
-                vault_progress_bar(0);
-                counterVault.textContent = 0;
-                data_local = data;
-            });
-        });
-        
         function vault_update() {
             const vault = document.getElementById("tokens-value-vault");
             const progress_bar = document.getElementById("progress-container");
@@ -144,19 +144,6 @@
             }
         }
 
-        function displayData(data, tokensVault) {
-            const dataContainer = document.getElementById('main-balance');
-            const formatedData = data.toLocaleString('en-US');
-            dataContainer.textContent = formatedData;
-
-            const vault = document.getElementById('tokens-value-vault');
-            const formatedDataVault = tokensVault.toLocaleString('en-US');
-            vault.textContent = formatedDataVault;
-        }
-
-        window.onload = fetchData;
-        const intervalId = setInterval(vault_update, 1000);
-        
         function parseNumber(number) {
             return Number(number.replace(/,/g, ''));
         }
@@ -165,13 +152,11 @@
             const counterElement = document.getElementById('main-balance');
             function animateCounter(startValue, endValue, duration) {
                 const startTime = performance.now();
-
                 function updateCounter(currentTime) {
                     const elapsedTime = currentTime - startTime;
                     const progress = Math.min(elapsedTime / duration, 1); // Прогресс анимации от 0 до 1
                     const currentCount = Math.floor(startValue + progress * (endValue - startValue));
                     counterElement.textContent = currentCount.toLocaleString('en-US');
-
                     if (progress < 1) {
                         requestAnimationFrame(updateCounter); // Продолжаем анимацию
                     } else {
@@ -180,9 +165,7 @@
                 }
                 requestAnimationFrame(updateCounter);
             }
-            
-            const duration = 800; // Продолжительность анимации в миллисекундах
-            // Вызов функции анимации с текущим значением, целевым значением и длительностью
+            const duration = 800;
             animateCounter(parseNumber(counterElement.textContent), targetCount, duration);
         };
     </script>  

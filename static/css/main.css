@@ -43,7 +43,7 @@ html, body {
 
 .data-in-load-tokens {
     color: #f6f7f8;
-    font-size: 17px;
+    font-size: 50px;
     display: flex;
     justify-content: center; 
     align-items: center; 
@@ -64,7 +64,6 @@ html, body {
     height: 4%;
     font-size: 15px;
 }
-
 
 .planet {
     position: absolute;
@@ -139,15 +138,30 @@ html, body {
     padding: 5px;
 }
 
-#active-button-menu {
-    width: 25%;
-    height: 110%;
+#active-button-menu-bar {
+    background-color: #29304d;
 }
 
 .button-menu-buttons {
     background-color: #0c1325;
     width: 20%;
     height: 100%;
+    margin-left: 3px;
+    border-radius: 20px;
+    color: #757575;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    padding-bottom: 10px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.button-menu-buttons-big {
+    background-color: #0c1325;
+    width: 25%;
+    height: 110%;
     margin-left: 3px;
     border-radius: 20px;
     color: #757575;
@@ -423,7 +437,7 @@ html, body {
     height: 15%;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #ffffff;
+    border-bottom: 1px solid #0059fd;
 }
 
 .button-upgrades {
@@ -439,10 +453,79 @@ html, body {
     align-items: center;
 }
 
-#test2 {
-    color: #ffffff;
+.main-element-upgrades {
+    width: 96%;
+    height: 15%;
+    background-color: #0059fd;
+    margin: 2%;
+    border-radius: 15px;
+    display: flex;
+    position: relative;
 }
 
-#test3 {
+.main-text-tokens-upgrades {
+    width: 100%;
+    position: absolute;
+    height: 18%;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    background-color: #004ffa;
+    display: flex; 
+    justify-content: center;
+    align-items: center; 
+}
+
+.miner-png {
+    filter: invert(1);
+    width: 20%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3%;
+    margin-left: 1%;
+    border-right: 2px solid #000000;
+}
+
+.miner-text {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: 7%;
+    font-weight: 600;
+    color: #fcfcfc;
+    font-size: 18px;
+}
+
+.level-miner {
     color: #ffffff;
+    font-weight: 500;
+    position: absolute;
+    width: 15%;
+    right: 3%;
+    top: 10%;
+    height: 25px;
+    font-size: 15px;
+    background-color: #f18202;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.update-miner {
+    width: 32%;
+    position: absolute;
+    height: 35%;
+    bottom: 10%;
+    right: 3%;
+    border-radius: 10px;
+    background-color: #3198ec;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 15px;
 }

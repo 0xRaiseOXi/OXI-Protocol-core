@@ -246,6 +246,7 @@ async fn get_data(
 
     let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
     dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
+    dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
 
     data.dynamic_fields = Some(dynamic_data);
     println!("OK");
