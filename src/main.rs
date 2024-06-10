@@ -156,30 +156,42 @@ struct ErrorResponse {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+struct QueryUserData {
+    id: u64,
+    first_name: String,
+    last_name: String,
+    username: String,
+    language_code: String,
+    is_premium: bool,
+    allows_write_to_pm: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 struct QueryData {
-    user: String,
+    user: QueryUserData,
 }
 
 async fn get_data(
     state: web::Data<Mutex<AppState>>, 
     query: web::Query<QueryData>
 ) -> impl Responder {
-    let json_value: Value = match serde_json::from_str(&query.user) {
-        Ok(val) => val,
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to parse JSON!".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
+    // let json_value: Value = match serde_json::from_str(&query.user) {
+    //     Ok(val) => val,
+    //     Err(_) => {
+    //         let error = ErrorResponse { error: "Failed to parse JSON!".to_string() };
+    //         return HttpResponse::BadRequest().json(error);
+    //     }
+    // };
 
-    let id = match json_value.get("id") {
-        Some(id) => id.to_string(),
-        None => {
-            let error = ErrorResponse { error: "Mising or invalid 'id' in JSON data".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
-    
+    // let id = match json_value.get("id") {
+    //     Some(id) => id.to_string(),
+    //     None => {
+    //         let error = ErrorResponse { error: "Mising or invalid 'id' in JSON data".to_string() };
+    //         return HttpResponse::BadRequest().json(error);
+    //     }
+    // };
+    let id = query.user.id.to_string();
+     
     let state = state.lock().await;
     let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
         Ok(Some(d)) => d,
