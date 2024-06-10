@@ -113,11 +113,11 @@
                 const response = await fetch(url);
                 test2.textContent = 3;
                 const data = await response.json();
-
-                data_local = data;
                 test2.textContent = 4;
                 displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
+                test2.textContent = 5;
                 vault_progress_bar(data['dynamic_fields']['vault_use']);
+                test2.textContent = 6;
             } catch (error) {
                 test3.textContent = "10";
                 test.textContent = 'Server Error';
