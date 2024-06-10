@@ -68,7 +68,6 @@ impl AppState {
         
         Ok(added_tokens)
     }
-
 }
 
 async fn index() -> impl Responder {
@@ -156,33 +155,9 @@ struct ErrorResponse {
     error: String,
 }
 
-
-// #[derive(Debug, Serialize, Deserialize)]
-// struct QueryUserData {
-//     id: u64,
-//     first_name: String,
-//     last_name: String,
-//     username: String,
-//     language_code: String,
-//     is_premium: bool,
-//     allows_write_to_pm: bool,
-// }
-
-// #[derive(Debug, Serialize, Deserialize)]
-// struct QueryData {
-//     // query_id: String,
-//     user: QueryUserData,
-//     // auth_date: String,
-//     // hash: String,
-// }
-
-
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryData {
-    // query_id: String,
     user: String,
-    // auth_date: u64,
-    // hash: String,
 }
 
 async fn get_data(
@@ -196,7 +171,6 @@ async fn get_data(
             return HttpResponse::BadRequest().json(error);
         }
     };
-    println!("{}", json_value);
 
     let id = match json_value.get("id") {
         Some(id) => id.to_string(),
@@ -205,7 +179,6 @@ async fn get_data(
             return HttpResponse::BadRequest().json(error);
         }
     };
-    println!("{}", id);
     
     let state = state.lock().await;
     let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
@@ -239,17 +212,15 @@ async fn get_data(
             return HttpResponse::InternalServerError().json(error);
         }
     };
-    // let mut data = data;
-    // data.oxi_tokens_value += added_tokens;
+    
     let mut dynamic_data = HashMap::new();
-    dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
-
     let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
+    dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
     dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
     dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
 
     data.dynamic_fields = Some(dynamic_data);
-    println!("OK");
+
     HttpResponse::Ok().json(data)
 }
 
@@ -378,17 +349,17 @@ async fn claim_tokens(
         }
     };
 
-    // let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
-    //     Ok(Some(d)) => d,
-    //     Ok(None) => {
-    //         let error = ErrorResponse { error: "User not found".to_string() };
-    //         return HttpResponse::NotFound().json(error);
-    //     }
-    //     Err(_) => {
-    //         let error = ErrorResponse { error: "Database query failed".to_string() };
-    //         return HttpResponse::InternalServerError().json(error);
-    //     }
-    // };
+    let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
+        Ok(Some(d)) => d,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
     
     let added_tokens = match state.update_tokens_value_vault(&id).await {
         Ok(tokens) => tokens,
@@ -417,19 +388,15 @@ async fn claim_tokens(
             return HttpResponse::InternalServerError().json(error);
         }
     }
+    let mut dynamic_data = HashMap::new();
+    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
+    dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
+    dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
+    dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
 
-    let response = match serde_json::to_value(data) {
-        Ok(value) => {
-            // value.as_object_mut().unwrap().insert("vault_use".to_string(), Bson::Int32(vault_use).into());
-            value
-        }
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to serialize response data".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
-
-    HttpResponse::Ok().json(response)
+    data.dynamic_fields = Some(dynamic_data);
+    
+    HttpResponse::Ok().json(data)
 }
 
 #[actix_web::main]
