@@ -26,7 +26,6 @@
                     </div>
                     <div class="vault-text">
                         Хранилище
-                        <div class="add-vault-time">+1k</div>
                     </div>
                     <div class="vault-level">lvl 1</div>
                     <div class="tokens-value-vault">
@@ -78,13 +77,11 @@
                     claimTokensButton.textContent = "Server Error";
                 }
                 const data = await response.json();
-                const formatedData = data['oxi_tokens_value'].toLocaleString('en-US');
-
                 animate_main_counter(data['oxi_tokens_value']);
                 vault_progress_bar(0);
 
                 counterVault.textContent = 0;
-                data_local = data;
+                // data_local = data;
             });
 
             await fetchData();
