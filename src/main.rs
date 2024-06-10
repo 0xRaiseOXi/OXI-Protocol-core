@@ -159,7 +159,7 @@ struct ErrorResponse {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryUserData {
-    id: Option<i64>,
+    id: i64,
     first_name: String,
     last_name: String,
     username: String,
@@ -180,13 +180,14 @@ async fn get_data(
     state: web::Data<Mutex<AppState>>, 
     query: web::Query<QueryData>
 ) -> impl Responder {
-    let id = match query.user.id {
-        Some(s) => s.to_string(),
-        None => {
-            let error = ErrorResponse { error: "Missing 'id' key query parameter".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
+    // let id = match query.user.id {
+    //     Some(s) => s.to_string(),
+    //     None => {
+    //         let error = ErrorResponse { error: "Missing 'id' key query parameter".to_string() };
+    //         return HttpResponse::BadRequest().json(error);
+    //     }
+    // };
+    let id = query.user.id.to_string();
 
     let state = state.lock().await;
     let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
