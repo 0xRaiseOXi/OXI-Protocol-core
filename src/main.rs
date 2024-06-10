@@ -155,10 +155,23 @@ async fn create_new_account(
 struct ErrorResponse {
     error: String,
 }
+
+
+#[derive(Debug, Serialize, Deserialize)]
+struct QueryUserData {
+    id: Option<i64>,
+    first_name: String,
+    last_name: String,
+    username: String,
+    language_code: String,
+    is_premium: bool,
+    allows_write_to_pm: bool,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryData {
     // query_id: String,
-    user: HashMap<String, String>,
+    user: QueryUserData,
     // auth_date: String,
     // hash: String,
 }
@@ -167,34 +180,15 @@ async fn get_data(
     state: web::Data<Mutex<AppState>>, 
     query: web::Query<QueryData>
 ) -> impl Responder {
-    let json_str = match query.user.get("id") {
-        Some(s) => s,
+    let id = match query.user.id {
+        Some(s) => s.to_string(),
         None => {
-            let error = ErrorResponse { error: "Missing 'user' query parameter".to_string() };
+            let error = ErrorResponse { error: "Missing 'id' key query parameter".to_string() };
             return HttpResponse::BadRequest().json(error);
         }
     };
-    println!("{}", json_str);
-
-    let json_val: Value = match serde_json::from_str(json_str) {
-        Ok(val) => val,
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to parse JSON".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
-    println!("{}", json_val);
-    let id = match json_val.get("id").and_then(|v| v.as_u64()) {
-        Some(id) => id.to_string(),
-        None => {
-            let error = ErrorResponse { error: "Missing or invalid 'id' in JSON".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
-    println!("{}", id);
 
     let state = state.lock().await;
-
     let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
         Ok(Some(d)) => d,
         Ok(None) => {
@@ -227,7 +221,6 @@ async fn get_data(
             return HttpResponse::InternalServerError().json(error);
         }
     };
-    println!("{}", added_tokens);
     // let mut data = data;
     // data.oxi_tokens_value += added_tokens;
     let mut dynamic_data = HashMap::new();
