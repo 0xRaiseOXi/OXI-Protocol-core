@@ -157,6 +157,25 @@ struct ErrorResponse {
 }
 
 
+// #[derive(Debug, Serialize, Deserialize)]
+// struct QueryUserData {
+//     id: u64,
+//     first_name: String,
+//     last_name: String,
+//     username: String,
+//     language_code: String,
+//     is_premium: bool,
+//     allows_write_to_pm: bool,
+// }
+
+// #[derive(Debug, Serialize, Deserialize)]
+// struct QueryData {
+//     // query_id: String,
+//     user: QueryUserData,
+//     // auth_date: String,
+//     // hash: String,
+// }
+
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryUserData {
     id: u64,
@@ -170,17 +189,16 @@ struct QueryUserData {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryData {
-    // query_id: String,
+    query_id: String,
     user: QueryUserData,
-    // auth_date: String,
-    // hash: String,
+    auth_date: u64,
+    hash: String,
 }
 
-async fn get_data(data: web::Json<QueryData>) -> impl Responder {
+async fn get_data(data: web::Query<QueryData>) -> impl Responder {
     println!("{:?}", data); // Вывод для отладки
     HttpResponse::Ok().finish()
 }
-
 async fn get_data2(
     state: web::Data<Mutex<AppState>>, 
     query: web::Query<QueryData>
