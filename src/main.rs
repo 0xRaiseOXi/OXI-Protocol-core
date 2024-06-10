@@ -155,19 +155,11 @@ async fn create_new_account(
 struct ErrorResponse {
     error: String,
 }
-#[derive(Deserialize)]
-struct QueryParams {
-    params: HashMap<String, String>
-}
 
 async fn get_data(
     state: web::Data<Mutex<AppState>>, 
-    query: web::Query<QueryParams>
+    query: web::Query<HashMap<String, String>>
 ) -> impl Responder {
-    for (key, value) in &query.params {
-        println!("{} : {}", key, value);
-    }
-
     let json_str = match query.params.get("user") {
         Some(s) => s,
         None => {
