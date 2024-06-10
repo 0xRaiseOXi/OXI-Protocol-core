@@ -167,6 +167,7 @@ async fn get_data(
             return HttpResponse::BadRequest().json(error);
         }
     };
+    println!("{}", json_str);
 
     let json_val: Value = match serde_json::from_str(json_str) {
         Ok(val) => val,
@@ -175,7 +176,7 @@ async fn get_data(
             return HttpResponse::BadRequest().json(error);
         }
     };
-
+    println!("{}", json_val);
     let id = match json_val.get("id").and_then(|v| v.as_u64()) {
         Some(id) => id.to_string(),
         None => {
@@ -183,6 +184,7 @@ async fn get_data(
             return HttpResponse::BadRequest().json(error);
         }
     };
+    println!("{}", id);
 
     let state = state.lock().await;
 
@@ -197,6 +199,7 @@ async fn get_data(
             return HttpResponse::InternalServerError().json(error);
         }
     };
+
 
     let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
         Ok(Some(d)) => d,
@@ -217,7 +220,7 @@ async fn get_data(
             return HttpResponse::InternalServerError().json(error);
         }
     };
-
+    println!("{}", added_tokens);
     // let mut data = data;
     // data.oxi_tokens_value += added_tokens;
     let mut dynamic_data = HashMap::new();
