@@ -169,7 +169,7 @@ struct QueryUserData {
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryData {
     query_id: String,
-    user: UserData,
+    user: QueryUserData,
     auth_date: u64,
     hash: String,
 }
