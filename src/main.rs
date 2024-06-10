@@ -168,10 +168,10 @@ struct QueryUserData {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryData {
-    query_id: String,
+    // query_id: String,
     user: String, // Это поле будет строкой в формате JSON
-    auth_date: u64,
-    hash: String,
+    // auth_date: u64,
+    // hash: String,
 }
 
 async fn get_data(
