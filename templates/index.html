@@ -120,28 +120,25 @@
         function vault_update() {
             const vault = document.getElementById("tokens-value-vault");
             const progress_bar = document.getElementById("progress-bar");
-            vault.textContent = 1;
             const current_time = Math.floor(Date.now() / 1000);
-            vault.textContent = 2;
             const time_difference = current_time - data_local['last_time_update'];
             const time_different_in_hours = time_difference / 3600;
-            vault.textContent = 3;
             const added_tokens = Math.trunc(time_different_in_hours * 5000);
-            const vault_size = data_local['vault_size'];
+            const vault_size = data_local['dynamic_fields']['vault_size'];
             const percentage = Math.trunc(added_tokens / vault_size * 100);
             vault.textContent = vault_size;
-            // if (added_tokens < vault_size) {
-            //     if (added_tokens < 0) {
-            //         vault.textContent = 0;
-            //         vault_progress_bar(percentage);
-            //     } else {
-            //         vault.textContent = added_tokens;
-            //         vault_progress_bar(percentage);
-            //     }
-            // } else {
-            //     vault.textContent = vault_size;
-            //     vault_progress_bar(percentage);
-            // }
+            if (added_tokens < vault_size) {
+                if (added_tokens < 0) {
+                    vault.textContent = 0;
+                    vault_progress_bar(percentage);
+                } else {
+                    vault.textContent = added_tokens;
+                    vault_progress_bar(percentage);
+                }
+            } else {
+                vault.textContent = vault_size;
+                vault_progress_bar(percentage);
+            }
         }
 
         function parseNumber(number) {
