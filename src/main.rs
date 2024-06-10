@@ -168,7 +168,10 @@ struct QueryUserData {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryData {
-    user: QueryUserData,
+    query_id: String,
+    user: UserData,
+    auth_date: u64,
+    hash: String,
 }
 
 async fn get_data(
@@ -191,7 +194,7 @@ async fn get_data(
     //     }
     // };
     let id = query.user.id.to_string();
-     
+
     let state = state.lock().await;
     let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
         Ok(Some(d)) => d,
