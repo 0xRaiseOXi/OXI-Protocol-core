@@ -176,41 +176,34 @@ struct ErrorResponse {
 //     // hash: String,
 // }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct QueryUserData {
-    id: u64,
-    first_name: String,
-    last_name: String,
-    username: String,
-    language_code: String,
-    is_premium: bool,
-    allows_write_to_pm: bool,
-}
 
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryData {
-    query_id: String,
-    user: QueryUserData,
-    auth_date: u64,
-    hash: String,
+    // query_id: String,
+    user: String,
+    // auth_date: u64,
+    // hash: String,
 }
 
-async fn get_data(data: web::Query<QueryData>) -> impl Responder {
-    println!("{:?}", data); // Вывод для отладки
-    HttpResponse::Ok().finish()
-}
-async fn get_data2(
+async fn get_data(
     state: web::Data<Mutex<AppState>>, 
     query: web::Query<QueryData>
 ) -> impl Responder {
-    // let id = match query.user.id {
-    //     Some(s) => s.to_string(),
-    //     None => {
-    //         let error = ErrorResponse { error: "Missing 'id' key query parameter".to_string() };
-    //         return HttpResponse::BadRequest().json(error);
-    //     }
-    // };
-    let id = query.user.id.to_string();
+    let json_value: Value = match serde_json::from_str(&query.user) {
+        Ok(val) => val,
+        Err(_) => {
+            let error = ErrorResponse { error: "Failed to parse JSON!".to_string() };
+            return HttpResponse::BadRequest().json(error);
+        }
+    };
+
+    let id = match json_value.get("id") {
+        Some(id) => id.to_string(),
+        None => {
+            let error = ErrorResponse { error: "Mising or invalid 'id' in JSON data".to_string() };
+            return HttpResponse::BadRequest().json(error);
+        }
+    };
 
     let state = state.lock().await;
     let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
