@@ -13,6 +13,7 @@
         <div class="planet">Planet XR-1</div>
         <div id="test"></div>
         <div id="test2"></div>
+        <div id="test3"></div>
         <div class="content">
             <div class="league">Diamond ></div>
             <div id="data-in-load-tokens", class="data-in-load-tokens">
@@ -103,6 +104,7 @@
             const dataContainer = document.getElementById('main-balance');
             const test = document.getElementById('test');
             const test2 = document.getElementById('test2');
+            const test3 = document.getElementById('test3');
             try {
                 test2.textContent = 1;
 
@@ -117,8 +119,7 @@
                 displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
                 vault_progress_bar(data['dynamic_fields']['vault_use']);
             } catch (error) {
-                test2.textContent = "10";
-                console.error('Ошибка при получении данных:', error);
+                test3.textContent = "10";
                 test.textContent = 'Server Error';
                 test.textContent = 'Server Error' + tg.initData;
                 test.textContent = tg.initData;
