@@ -92,8 +92,8 @@
                 const data = await response.json();
                 test.innerText = JSON.stringify(data);
                 data_local = data;
-                displayData(data['oxi_tokens_value'], data['added_tokens']);
-                vault_progress_bar(data['vault_use']);
+                displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
+                vault_progress_bar(data['dynamic_fields']['vault_use']);
             } catch (error) {
                 console.error('Ошибка при получении данных:', error);
                 dataContainer.textContent = 'Server Error';
