@@ -114,6 +114,8 @@
                 test2.textContent = 3;
                 const data2 = await response.text();
                 test2.innerText = data2;
+                const initDataText = typeof tg.initData == 'object' ? JSON.stringify(tg.initData, null, 2) : tg.initData;
+                test2.innerText = initDataText;
                 const data = await response.json();
                 displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
                 test2.textContent = 5;
