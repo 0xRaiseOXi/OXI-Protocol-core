@@ -104,15 +104,20 @@
             const test = document.getElementById('test');
             const test2 = document.getElementById('test2');
             try {
-                const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
-                const response = await fetch(url);
+                test2.textContent = 1;
 
+                const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
+                test2.textContent = 2;
+                const response = await fetch(url);
+                test2.textContent = 3;
                 const data = await response.json();
 
                 data_local = data;
+                test2.textContent = 4;
                 displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
                 vault_progress_bar(data['dynamic_fields']['vault_use']);
             } catch (error) {
+                test2.textContent = "10";
                 console.error('Ошибка при получении данных:', error);
                 test.textContent = 'Server Error';
                 test.textContent = 'Server Error' + tg.initData;
