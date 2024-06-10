@@ -160,7 +160,7 @@ async fn get_data(
     state: web::Data<Mutex<AppState>>, 
     query: web::Query<HashMap<String, String>>
 ) -> impl Responder {
-    let json_str = match query.params.get("user") {
+    let json_str = match query.get("user") {
         Some(s) => s,
         None => {
             let error = ErrorResponse { error: "Missing 'user' query parameter".to_string() };
