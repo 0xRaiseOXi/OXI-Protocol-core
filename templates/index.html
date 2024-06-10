@@ -112,8 +112,9 @@
                 test2.textContent = 2;
                 const response = await fetch(url);
                 test2.textContent = 3;
+                const data2 = await response.text();
+                test2.innerText = data2;
                 const data = await response.json();
-                test2.textContent = data;
                 displayData(data['oxi_tokens_value'], data['dynamic_fields']['added_tokens']);
                 test2.textContent = 5;
                 vault_progress_bar(data['dynamic_fields']['vault_use']);
