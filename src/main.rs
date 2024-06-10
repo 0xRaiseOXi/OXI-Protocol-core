@@ -159,13 +159,13 @@ struct ErrorResponse {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryUserData {
-    id: i64,
-    first_name: String,
-    last_name: String,
-    username: String,
-    language_code: String,
-    is_premium: bool,
-    allows_write_to_pm: bool,
+    id: u64,
+    // first_name: String,
+    // last_name: String,
+    // username: String,
+    // language_code: String,
+    // is_premium: bool,
+    // allows_write_to_pm: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
