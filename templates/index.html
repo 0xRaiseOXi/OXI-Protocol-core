@@ -12,6 +12,7 @@
     <div class="container">
         <div class="version">V 0.0.4 beta</div>
         <div class="planet">Planet XR-1</div>
+        <div id="test"></div>
         <div class="content">
             <div class="league">Diamond ></div>
             <div id="data-in-load-tokens", class="data-in-load-tokens">
@@ -84,10 +85,12 @@
 
         async function fetchData() {
             const dataContainer = document.getElementById('main-balance');
+            const test = document.getElementById('test');
             try {
                 const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
                 const response = await fetch(url);
                 const data = await response.json();
+                test.innerText = data;
                 data_local = data;
                 displayData(data['oxi_tokens_value'], data['added_tokens']);
                 vault_progress_bar(data['vault_use']);
