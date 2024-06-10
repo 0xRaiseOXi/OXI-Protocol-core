@@ -155,16 +155,19 @@ async fn create_new_account(
 struct ErrorResponse {
     error: String,
 }
-#[derive(Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct QueryData {
-    init_data: String,
+    query_id: String,
+    user: HashMap<String, String>,
+    auth_date: String,
+    hash: String,
 }
 
 async fn get_data(
     state: web::Data<Mutex<AppState>>, 
-    query: web::Query<HashMap<String, String>>
+    query: web::Query<QueryData>
 ) -> impl Responder {
-    let json_str = match query.get("user") {
+    let json_str = match query.user.get("id") {
         Some(s) => s,
         None => {
             let error = ErrorResponse { error: "Missing 'user' query parameter".to_string() };
