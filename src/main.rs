@@ -167,80 +167,78 @@ async fn get_data(
     state: web::Data<Mutex<AppState>>, 
     query: web::Query<QueryData>
 ) -> impl Responder {
-    println!("{}", query.user);
-    // let json_str = match query.user.get("id") {
-    //     Some(s) => s,
-    //     None => {
-    //         let error = ErrorResponse { error: "Missing 'user' query parameter".to_string() };
-    //         return HttpResponse::BadRequest().json(error);
-    //     }
-    // };
-    // println!("{}", json_str);
+    let json_str = match query.user.get("id") {
+        Some(s) => s,
+        None => {
+            let error = ErrorResponse { error: "Missing 'user' query parameter".to_string() };
+            return HttpResponse::BadRequest().json(error);
+        }
+    };
+    println!("{}", json_str);
 
-    // let json_val: Value = match serde_json::from_str(json_str) {
-    //     Ok(val) => val,
-    //     Err(_) => {
-    //         let error = ErrorResponse { error: "Failed to parse JSON".to_string() };
-    //         return HttpResponse::BadRequest().json(error);
-    //     }
-    // };
-    // println!("{}", json_val);
-    // let id = match json_val.get("id").and_then(|v| v.as_u64()) {
-    //     Some(id) => id.to_string(),
-    //     None => {
-    //         let error = ErrorResponse { error: "Missing or invalid 'id' in JSON".to_string() };
-    //         return HttpResponse::BadRequest().json(error);
-    //     }
-    // };
-    // println!("{}", id);
+    let json_val: Value = match serde_json::from_str(json_str) {
+        Ok(val) => val,
+        Err(_) => {
+            let error = ErrorResponse { error: "Failed to parse JSON".to_string() };
+            return HttpResponse::BadRequest().json(error);
+        }
+    };
+    println!("{}", json_val);
+    let id = match json_val.get("id").and_then(|v| v.as_u64()) {
+        Some(id) => id.to_string(),
+        None => {
+            let error = ErrorResponse { error: "Missing or invalid 'id' in JSON".to_string() };
+            return HttpResponse::BadRequest().json(error);
+        }
+    };
+    println!("{}", id);
 
-    // let state = state.lock().await;
+    let state = state.lock().await;
 
-    // let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
-    //     Ok(Some(d)) => d,
-    //     Ok(None) => {
-    //         let error = ErrorResponse { error: "User not found".to_string() };
-    //         return HttpResponse::NotFound().json(error);
-    //     }
-    //     Err(_) => {
-    //         let error = ErrorResponse { error: "Database query failed".to_string() };
-    //         return HttpResponse::InternalServerError().json(error);
-    //     }
-    // };
+    let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
+        Ok(Some(d)) => d,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
 
 
-    // let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
-    //     Ok(Some(d)) => d,
-    //     Ok(None) => {
-    //         let error = ErrorResponse { error: "User not found".to_string() };
-    //         return HttpResponse::NotFound().json(error);
-    //     }
-    //     Err(_) => {
-    //         let error = ErrorResponse { error: "Database query failed".to_string() };
-    //         return HttpResponse::InternalServerError().json(error);
-    //     }
-    // };
+    let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
+        Ok(Some(d)) => d,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
 
-    // let added_tokens = match state.update_tokens_value_vault(&id).await {
-    //     Ok(tokens) => tokens,
-    //     Err(_) => {
-    //         let error = ErrorResponse { error: "Failed to update token values".to_string() };
-    //         return HttpResponse::InternalServerError().json(error);
-    //     }
-    // };
-    // println!("{}", added_tokens);
-    // // let mut data = data;
-    // // data.oxi_tokens_value += added_tokens;
-    // let mut dynamic_data = HashMap::new();
-    // dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
+    let added_tokens = match state.update_tokens_value_vault(&id).await {
+        Ok(tokens) => tokens,
+        Err(_) => {
+            let error = ErrorResponse { error: "Failed to update token values".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+    println!("{}", added_tokens);
+    // let mut data = data;
+    // data.oxi_tokens_value += added_tokens;
+    let mut dynamic_data = HashMap::new();
+    dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
 
-    // let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
-    // dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
+    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
+    dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
 
-    // data.dynamic_fields = Some(dynamic_data);
+    data.dynamic_fields = Some(dynamic_data);
 
-    // HttpResponse::Ok().json(data)
-    HttpResponse::Ok().json("{'OK':'OK'}")
+    HttpResponse::Ok().json(data)
 }
 
 async fn get_counter(
