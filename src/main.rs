@@ -78,10 +78,6 @@ async fn friends() -> impl Responder {
     NamedFile::open_async("./templates/friends.html").await.unwrap()
 }
 
-async fn main_page() -> impl Responder {
-    NamedFile::open_async("./templates/index.html").await.unwrap()
-}
-
 #[derive(Debug, Deserialize, Serialize)]
 struct POSTRequest {
     password: String,
@@ -432,7 +428,6 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(state.clone())
             .route("/", web::get().to(index))
-            .route("/main", web::get().to(main_page))
             .route("/friends", web::get().to(friends))
             .route("/api/data", web::post().to(get_data))
             .route("/get_counter", web::get().to(get_counter))
