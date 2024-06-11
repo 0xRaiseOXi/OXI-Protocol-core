@@ -158,25 +158,14 @@ struct ErrorResponse {
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryUserData {
     id: u64,
-    // first_name: String,
-    // last_name: String,
-    // username: String,
-    // language_code: String,
-    // is_premium: bool,
-    // allows_write_to_pm: bool,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct QueryData {
-    // query_id: String,
-    user: String, // Это поле будет строкой в формате JSON
-    // auth_date: u64,
-    // hash: String,
+    first_name: String, 
+    last_name: String,
+    username: String,
 }
 
 async fn get_data(
     state: web::Data<Mutex<AppState>>, 
-    query: web::Query<HashMap<String, String>>
+    query: web::Json<QueryUserData>
 ) -> impl Responder {
     // let json_value: Value = match serde_json::from_str(&query.user) {
     //     Ok(val) => val,
@@ -238,7 +227,6 @@ async fn get_data(
 
     // HttpResponse::Ok().json(data)
     println!("OK");
-    println!("{}", query.get("id").unwrap());
     HttpResponse::Ok().json("{'OK':'OK'}")
 }
 
@@ -446,7 +434,7 @@ async fn main() -> std::io::Result<()> {
             .route("/", web::get().to(index))
             .route("/main", web::get().to(main_page))
             .route("/friends", web::get().to(friends))
-            .route("/getdata", web::get().to(get_data))
+            .route("/api/data", web::post().to(get_data))
             .route("/get_counter", web::get().to(get_counter))
             .route("/update_counter", web::get().to(update_counter))
             .route("/claim_tokens", web::get().to(claim_tokens))
