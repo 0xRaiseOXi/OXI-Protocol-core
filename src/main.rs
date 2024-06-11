@@ -238,6 +238,7 @@ async fn get_data(
 
     // HttpResponse::Ok().json(data)
     println!("OK");
+    println!("{}", query.get("id").unwrap());
     HttpResponse::Ok().json("{'OK':'OK'}")
 }
 
