@@ -71,7 +71,7 @@ impl AppState {
 }
 
 async fn index() -> impl Responder {
-    NamedFile::open_async("./templates/loading.html").await.unwrap()
+    NamedFile::open_async("./templates/index.html").await.unwrap()
 }
 
 async fn friends() -> impl Responder {
