@@ -103,6 +103,7 @@
                 data_local = dataUserFromServer;
                 console.log(dataUserFromServer);
                 dataContainer.textContent = dataUserFromServer['oxi_tokens_value'].toLocaleString('en-US');
+                counterVault.textContent = dataUserFromServer['dynamic_fields']['added_tokens'].toLocaleString('en-US');
             }
 
             // async function fetchData() {
