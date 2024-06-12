@@ -178,52 +178,51 @@ async fn get_data(
     //         return HttpResponse::BadRequest().json(error);
     //     }
     // };
-    // // let id = query.user.id.to_string();
+    // let id = query.user.id.to_string();
+    let id = query.id.to_string();
 
-    // let state = state.lock().await;
-    // let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
-    //     Ok(Some(d)) => d,
-    //     Ok(None) => {
-    //         let error = ErrorResponse { error: "User not found".to_string() };
-    //         return HttpResponse::NotFound().json(error);
-    //     }
-    //     Err(_) => {
-    //         let error = ErrorResponse { error: "Database query failed".to_string() };
-    //         return HttpResponse::InternalServerError().json(error);
-    //     }
-    // };
+    let state = state.lock().await;
+    let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
+        Ok(Some(d)) => d,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
 
-    // let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
-    //     Ok(Some(d)) => d,
-    //     Ok(None) => {
-    //         let error = ErrorResponse { error: "User not found".to_string() };
-    //         return HttpResponse::NotFound().json(error);
-    //     }
-    //     Err(_) => {
-    //         let error = ErrorResponse { error: "Database query failed".to_string() };
-    //         return HttpResponse::InternalServerError().json(error);
-    //     }
-    // };
+    let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
+        Ok(Some(d)) => d,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
 
-    // let added_tokens = match state.update_tokens_value_vault(&id).await {
-    //     Ok(tokens) => tokens,
-    //     Err(_) => {
-    //         let error = ErrorResponse { error: "Failed to update token values".to_string() };
-    //         return HttpResponse::InternalServerError().json(error);
-    //     }
-    // };
+    let added_tokens = match state.update_tokens_value_vault(&id).await {
+        Ok(tokens) => tokens,
+        Err(_) => {
+            let error = ErrorResponse { error: "Failed to update token values".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
     
-    // let mut dynamic_data = HashMap::new();
-    // let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
-    // dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
-    // dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
-    // dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
+    let mut dynamic_data = HashMap::new();
+    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
+    dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
+    dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
+    dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
 
-    // data.dynamic_fields = Some(dynamic_data);
+    data.dynamic_fields = Some(dynamic_data);
 
-    // HttpResponse::Ok().json(data)
-    println!("OK");
-    HttpResponse::Ok().json("{'OK':'OK'}")
+    HttpResponse::Ok().json(data)
 }
 
 async fn get_counter(
