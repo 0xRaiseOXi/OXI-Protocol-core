@@ -91,10 +91,8 @@
             }
 
             const user = tg.initDataUnsafe.user;
-            dataContainer.textContent = 1;
             dataContainer.textContent = user.id;
             if (user) {
-                dataContainer.textContent = 2;
                 const userData = {
                     id: user.id,
                     first_name: user.first_name,
@@ -102,9 +100,9 @@
                     username: user.username,
                 };
                 const dataUserFromServer = await sendDataToServer(userData);
+                dataContainer.textContent = dataUserFromServer['oxi_tokens_value'].toLocaleString('en-US');
             }
 
-            dataContainer.textContent = dataUserFromServer['oxi_tokens_value'].toLocaleString('en-US');
             // async function fetchData() {
             //     try {
             //         const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
