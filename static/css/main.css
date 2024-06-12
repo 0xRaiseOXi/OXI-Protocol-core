@@ -250,11 +250,11 @@ html, body {
 }
 
 .friends-add {
-    position: absolute;
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 84%;
-    height: 30%;
+    height: 25%;
     left: 8%;
     top: 25%;
     color: #f6f7f8;
@@ -303,7 +303,7 @@ html, body {
     display: flex;
     align-items: center;
     width: 100%;
-    height: 25%;
+    height: 50%;
     padding-left: 10%;
     border-bottom: 2px solid #3701fa;
 }
@@ -313,14 +313,13 @@ html, body {
     display: flex;
     align-items: center;
     width: 100%;
-    height: 25%;
+    height: 50%;
     padding-left: 10%;
-    border-bottom: 2px solid #3701fa;
 }
 
 .friends-add-value {
-    width: 20%;
-    height: 12%;
+    width: 23%;
+    height: 15%;
     background-color: #0065fc;
     display: flex;
     right: 10%;
@@ -528,4 +527,23 @@ html, body {
     color: #ffffff;
     font-weight: 500;
     font-size: 15px;
+}
+
+.invite-friends-button {
+    width: 90%;
+    left: 5%;
+    position: absolute;
+    bottom: 0;
+    height: 7%;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f6f7f8;
+    background-color: #0562f8;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    bottom: 12%;
+    /* border: 1px solid #0088f8; */
 }

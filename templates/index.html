@@ -32,6 +32,7 @@
                     </div>
                 </div>
             </div>
+            <button onclick="sendInvite()">Пригласить друзей</button>
             <div class="claim-tokens-button", id="claim-tokens-button">Собрать OXI</div>
             <div class="main-menu-buttons">
                 <div class="button-menu-buttons", id="active-navigation-bar">
@@ -145,6 +146,7 @@
 
             // Обновление данных каждую секунду
             setInterval(vault_update, 1000);
+            Telegram.WebApp.ready();
         });
 
         function vault_progress_bar(percentage) {
@@ -208,6 +210,31 @@
             const duration = 800;
             animateCounter(parseNumber(counterElement.textContent), targetCount, duration);
         };
+
+
+
+        function sendInvite() {
+            // Здесь можно добавить текст сообщения или другой контент, который вы хотите отправить
+            const message = "Привет! Приглашаю тебя в наше приложение. Присоединяйся по ссылке: https://example.com";
+
+            // Вызов метода API Telegram для открытия меню пересылки сообщений
+            Telegram.WebApp.showPopup({
+                title: "Переслать сообщение",
+                message: "Выберите чат для пересылки:",
+                buttons: [
+                    {id: "forward", type: "default", text: "Переслать", onclick: () => forwardMessage(message)},
+                    {id: "cancel", type: "close", text: "Отмена"}
+                ]
+            });
+        }
+
+        function forwardMessage(message) {
+            // Используйте API Telegram для пересылки сообщения в выбранный чат
+            // Telegram.WebApp.sendData(message);
+        }
+
+        // Инициализация Web App
+        
     </script>  
 </body>
 </html>
