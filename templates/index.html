@@ -100,8 +100,8 @@
                     username: user.username,
                 };
                 const dataUserFromServer = await sendDataToServer(userData);
+                data_local = dataUserFromServer;
                 console.log(dataUserFromServer);
-                
                 dataContainer.textContent = dataUserFromServer['oxi_tokens_value'].toLocaleString('en-US');
             }
 

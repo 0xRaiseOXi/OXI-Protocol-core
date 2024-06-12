@@ -163,22 +163,6 @@ async fn get_data(
     state: web::Data<Mutex<AppState>>, 
     query: web::Json<QueryUserData>
 ) -> impl Responder {
-    // let json_value: Value = match serde_json::from_str(&query.user) {
-    //     Ok(val) => val,
-    //     Err(_) => {
-    //         let error = ErrorResponse { error: "Failed to parse JSON!".to_string() };
-    //         return HttpResponse::BadRequest().json(error);
-    //     }
-    // };
-
-    // let id = match json_value.get("id") {
-    //     Some(id) => id.to_string(),
-    //     None => {
-    //         let error = ErrorResponse { error: "Mising or invalid 'id' in JSON data".to_string() };
-    //         return HttpResponse::BadRequest().json(error);
-    //     }
-    // };
-    // let id = query.user.id.to_string();
     let id = query.id.to_string();
 
     let state = state.lock().await;
