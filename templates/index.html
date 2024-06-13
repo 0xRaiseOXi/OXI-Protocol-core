@@ -6,7 +6,6 @@
     <title>OXI Protocol</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/main.css">
-    <link rel="stylesheet" href="C:\dev\OXIGame\Core(Python)\OXI_PROTOCOL\static\css\main.css">
 </head>
 <body>
     <section class="container content-section-show", id="section-main">
@@ -159,7 +158,7 @@
 
             async function sendDataToServer(dataToSend) {
                 try {
-                    const response = await fetch('https://94.228.124.91/api/data', {
+                    const response = await fetch('https://oxiprotocol.ru/api/data', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -192,7 +191,7 @@
             }
 
             claimTokensButton.addEventListener('click', async () => {
-                const url = `https://94.228.124.91/claim_tokens?${tg.initData}`;
+                const url = `https://oxiprotocol.ru/claim_tokens?${tg.initData}`;
                 try {
                     const response = await fetch(url);
                     if (!response.ok) {
