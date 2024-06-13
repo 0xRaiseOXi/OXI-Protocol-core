@@ -23,6 +23,7 @@
                     <div class="progress-container">
                         <div class="progress-bar" id="progress-bar"></div>
                     </div>
+                    <div class="menu"></div>
                     <div class="vault-text">
                         Хранилище
                     </div>
@@ -51,6 +52,9 @@
             <div class="friends-vip">Парнерство<div class="friends-add-value">0</div></div>
         </div>
         <div id="referal-code">https://t.me/oxi_protocol_bot?start=</div>
+        <div class="copy-png">
+            <img src="/static/images/copy.png" alt="", class="copy-png-image">
+        </div>
         <div class="invite-friends-button">Пригласить друзей</div>
     </section>
 
@@ -61,37 +65,52 @@
                 <img src="/static/images/moneta.png" alt="", class="moneta-main-balance">
                 <div id="main-balance">100,000,000</div>
             </div>
+            <div id="main-balance-add-hour">+1M/hour</div>
         </div>
         <div class="content-containre-upgrades">
             <div class="container-upgardes-menu">
-                <div class="button-upgrades">Основные</div>
                 <div class="button-upgrades">Майнеры</div>
+                <div class="button-upgrades">Основные</div>
             </div>
             <div class="main-element-upgrades">
                 <img src="C:\dev\OXIGame\Core(Python)\server\static\images\miner.png" alt="" class="miner-png">
                 <div class="miner-text">Miner ZTX_1</div>
                 <div class="level-miner">lvl 1</div>
-                <div class="update-miner">Улучшить</div>
+                <div class="update-button-miner">
+                    <div class="update-miner">Улучшить</div>
+                </div>
             </div>
             <div class="main-element-upgrades">
                 <img src="C:\dev\OXIGame\Core(Python)\server\static\images\miner.png" alt="" class="miner-png">
                 <div class="miner-text">Miner XTG_1</div>
                 <div class="level-miner">lvl 1</div>
+                <div class="update-button-miner">
+                    <div class="update-miner">Улучшить</div>
+                </div>
             </div>
             <div class="main-element-upgrades">
                 <img src="C:\dev\OXIGame\Core(Python)\server\static\images\miner.png" alt="" class="miner-png">
                 <div class="miner-text">Miner HEF_1</div>
                 <div class="level-miner">lvl 1</div>
+                <div class="update-button-miner">
+                    <div class="update-miner">Улучшить</div>
+                </div>
             </div>
             <div class="main-element-upgrades">
                 <img src="C:\dev\OXIGame\Core(Python)\server\static\images\miner.png" alt="" class="miner-png">
                 <div class="miner-text">Miner FVJ_1</div>
                 <div class="level-miner">lvl 1</div>
+                <div class="update-button-miner">
+                    <div class="update-miner">Улучшить</div>
+                </div>
             </div>
             <div class="main-element-upgrades">
                 <img src="C:\dev\OXIGame\Core(Python)\server\static\images\miner.png" alt="" class="miner-png">
                 <div class="miner-text">Miner VYS_1</div>
                 <div class="level-miner">lvl 1</div>
+                <div class="update-button-miner">
+                    <div class="update-miner">Улучшить</div>
+                </div>
             </div>
         </div>
     </section>
@@ -140,7 +159,7 @@
 
             async function sendDataToServer(dataToSend) {
                 try {
-                    const response = await fetch('https://oxiprotocol.ru/api/data', {
+                    const response = await fetch('https://94.228.124.91/api/data', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -173,7 +192,7 @@
             }
 
             claimTokensButton.addEventListener('click', async () => {
-                const url = `https://oxiprotocol.ru/claim_tokens?${tg.initData}`;
+                const url = `https://94.228.124.91/claim_tokens?${tg.initData}`;
                 try {
                     const response = await fetch(url);
                     if (!response.ok) {

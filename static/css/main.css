@@ -473,7 +473,7 @@ html, body {
 
 .miner-png {
     filter: invert(1);
-    width: 20%;
+    width: 18%;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -495,26 +495,28 @@ html, body {
 }
 
 .level-miner {
-    color: #ffffff;
+    /* color: #ffffff;
     font-weight: 500;
     position: absolute;
     width: 15%;
-    right: 3%;
-    top: 10%;
+    /* right: 3%; */
+    /* left: 25%;
+    top: 5%;
     height: 25px;
     font-size: 15px;
     background-color: #f18202;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    border-radius: 12px; */ 
+    display: none;
 }
 
 .update-miner {
-    width: 32%;
-    position: absolute;
-    height: 35%;
-    bottom: 10%;
+    width: 100%;
+    /* position: absolute; */
+    height: 45%;
+    /* bottom: 10%; */
     right: 3%;
     border-radius: 10px;
     background-color: #3198ec;
@@ -522,8 +524,10 @@ html, body {
     justify-content: center;
     align-items: center;
     color: #ffffff;
-    font-weight: 500;
-    font-size: 15px;
+    font-weight: 600;
+    font-size: 16px;
+    border: 1px solid #2e57df;
+    cursor: pointer;
 }
 
 .invite-friends-button {
@@ -558,10 +562,10 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 64%;
-    height: 5%;
+    width: 67%;
+    height: 6%;
     left: 8%;
-    top: 52%;
+    top: 51%;
     color: #f6f7f8;
     font-weight: 400;
     font-size: 14px;
@@ -577,4 +581,50 @@ html, body {
 .big-button {
     width: 25%;
     height: 110%;
+}
+
+.copy-png {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 15%;
+    height: 6%;
+    right: 8%;
+    top: 51%;
+    color: #f6f7f8;
+    font-weight: 400;
+    font-size: 14px;
+    background-color: #063580;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.copy-png-image {
+    filter: invert(1);
+}
+
+.update-button-miner {
+    width: 35%;
+    height: 100%;
+    right: 0;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 3%;
+}
+
+.update-miner:active {
+    background-color: #9ebaf7;
+}
+
+#main-balance-add-hour {
+    font-size: 17px;
+    top: 75%;
+    position: absolute;
+    font-weight: 600;
+    color: #ffffff;
 }
