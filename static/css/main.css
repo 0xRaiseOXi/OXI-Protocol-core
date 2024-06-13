@@ -125,7 +125,7 @@ html, body {
 }
 
 .main-menu-buttons {
-    bottom: 0;
+    bottom: 1%;
     position: absolute;
     width: 90%;
     height: 10%;
@@ -136,10 +136,6 @@ html, body {
     align-items: center;
     justify-content: space-between;
     padding: 5px;
-}
-
-#active-button-menu-bar {
-    background-color: #29304d;
 }
 
 .button-menu-buttons {
@@ -315,6 +311,7 @@ html, body {
     width: 100%;
     height: 50%;
     padding-left: 10%;
+    border-bottom: 2px solid #3701fa;
 }
 
 .friends-add-value {
@@ -545,5 +542,39 @@ html, body {
     font-weight: 500;
     cursor: pointer;
     bottom: 12%;
-    /* border: 1px solid #0088f8; */
+}
+
+.friends-vip {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 50%;
+    padding-left: 10%;
+}
+
+#referal-code {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64%;
+    height: 5%;
+    left: 8%;
+    top: 52%;
+    color: #f6f7f8;
+    font-weight: 400;
+    font-size: 14px;
+    background-color: #063580;
+    border-radius: 15px;
+    text-decoration: underline;
+}
+
+.active {
+    background-color: #202642;
+}
+
+.big-button {
+    width: 25%;
+    height: 110%;
 }

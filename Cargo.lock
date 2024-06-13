@@ -9,9 +9,11 @@ dependencies = [
  "actix-files",
  "actix-web",
  "env_logger",
+ "hex",
  "mongodb",
  "serde",
  "serde_json",
+ "sha2",
  "tokio",
 ]
 

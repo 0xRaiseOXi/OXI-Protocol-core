@@ -7,6 +7,21 @@ use std::collections::HashMap;
 use serde_json::Value;
 use tokio::sync::Mutex;
 
+use sha2::{Sha256, Digest};
+use hex::encode;
+
+fn generate_invite_code(id: String) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(id.as_bytes());
+    let result = hasher.finalize();
+
+    let hash_hex = encode(result);
+
+    let invite_code = &hash_hex[hash_hex.len() - 6..].to_uppercase();
+
+    invite_code.to_string()
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 struct UserData {
     _id: String,
@@ -25,9 +40,17 @@ struct TokenData {
     dynamic_fields: Option<HashMap<String, String>>,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+struct ReferalData {
+    _id: String,
+    referal_code: String,
+    referal: Vec<u64>,
+}
+
 struct AppState {
     token_collection: mongodb::Collection<TokenData>,
     datauser_collection: mongodb::Collection<UserData>,
+    referal_collection: mongodb::Collection<ReferalData>,
     vault_size_constant: HashMap<u8, u32>,
 }
 
@@ -190,6 +213,18 @@ async fn get_data(
         }
     };
 
+    let data_referal = match state.referal_collection.find_one(doc! { "_id": &id }, None).await {
+        Ok(Some(d)) => d,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+
     let added_tokens = match state.update_tokens_value_vault(&id).await {
         Ok(tokens) => tokens,
         Err(_) => {
@@ -203,6 +238,7 @@ async fn get_data(
     dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
     dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
     dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
+    dynamic_data.insert("referal_code".to_string(), data_referal.referal_code);
 
     data.dynamic_fields = Some(dynamic_data);
 
@@ -389,11 +425,14 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
 
+    println!("{}", generate_invite_code(1070221127.to_string()));
+
     let client_options = ClientOptions::parse("mongodb://localhost:27017").await.unwrap();
     let db_client = Client::with_options(client_options).unwrap();
     let db = db_client.database("OXI");
     let token_collection = db.collection::<TokenData>("OXI_tokens");
     let datauser_collection = db.collection::<UserData>("OXI_improvements");
+    let referal_collection = db.collection::<ReferalData>("OXI_referals");
 
     let vault_size_constant = HashMap::from([
         (1, 5000), (2, 12000), (3, 50000), (4, 120000), 
@@ -404,6 +443,7 @@ async fn main() -> std::io::Result<()> {
     let state = web::Data::new(Mutex::new(AppState { 
         token_collection, 
         datauser_collection, 
+        referal_collection,
         vault_size_constant 
     }));
 

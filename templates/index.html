@@ -6,9 +6,10 @@
     <title>OXI Protocol</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="C:\dev\OXIGame\Core(Python)\OXI_PROTOCOL\static\css\main.css">
 </head>
 <body>
-    <div class="container">
+    <section class="container content-section-show", id="section-main">
         <div class="version">V 0.0.4 beta</div>
         <div class="planet">Planet XR-1</div>
         <div class="content">
@@ -33,32 +34,94 @@
                 </div>
             </div>
             
-            <div class="claim-tokens-button", id="claim-tokens-button">Собрать OXI<button onclick="sendInvite()">Пригласить друзей</button></div>
-            <div class="main-menu-buttons">
-                <div class="button-menu-buttons", id="active-navigation-bar">
-                    <img src="/static/images/moneta.png" alt="", class="moneta-navigation-bar">
-                    Токены
-                </div>
-                <div class="button-menu-buttons", onclick='location.href="https://oxiprotocol.ru/friends";'>
-                    <img src="/static/images/friends.png" alt="", class="friends-navigation-bar">
-                    Друзья
-                </div>
-                <div class="button-menu-buttons", id="active-button-menu">
-                    <img src="/static/images/upgrade.png" alt="", class="upgrade-navigation-bar">
-                    Улучшения
-                </div>
-                <div class="button-menu-buttons">
-                    <img src="/static/images/zamok.png" alt="", class="friends-navigation-bar">
-                    Рынок
-                </div>
-                <div class="button-menu-buttons">
-                    <img src="/static/images/zamok.png" alt="", class="friends-navigation-bar">
-                    Атака
-                </div>
+            <div class="claim-tokens-button", id="claim-tokens-button">Собрать OXI</div>
+        </div>
+    </section>
+
+
+    <section class="container-friends content-section-show", id="section-friends", style="display: none;">
+        <div class="text-friends">Друзья</div>
+        <div class="text-friends-text">Вы и ваш друг получите бонусы</div>
+        <div class="friends-add">
+            <div class="friends-all">
+                Приглашено друзей
+                <div class="friends-add-value">0</div>
             </div>
+            <div class="add-from-friends">Получено за приглашения<div class="friends-add-value">0</div></div>
+            <div class="friends-vip">Парнерство<div class="friends-add-value">0</div></div>
+        </div>
+        <div id="referal-code">https://t.me/oxi_protocol_bot?start=</div>
+        <div class="invite-friends-button">Пригласить друзей</div>
+    </section>
+
+
+    <section class="container-upgrades content-section-show", id="section-upgrades", style="display: none;">
+        <div class="main-text-tokens-upgrades">
+            <div id="data-in-load-tokens", class="data-in-load-tokens">
+                <img src="/static/images/moneta.png" alt="", class="moneta-main-balance">
+                <div id="main-balance">100,000,000</div>
+            </div>
+        </div>
+        <div class="content-containre-upgrades">
+            <div class="container-upgardes-menu">
+                <div class="button-upgrades">Основные</div>
+                <div class="button-upgrades">Майнеры</div>
+            </div>
+            <div class="main-element-upgrades">
+                <img src="C:\dev\OXIGame\Core(Python)\server\static\images\miner.png" alt="" class="miner-png">
+                <div class="miner-text">Miner ZTX_1</div>
+                <div class="level-miner">lvl 1</div>
+                <div class="update-miner">Улучшить</div>
+            </div>
+            <div class="main-element-upgrades">
+                <img src="C:\dev\OXIGame\Core(Python)\server\static\images\miner.png" alt="" class="miner-png">
+                <div class="miner-text">Miner XTG_1</div>
+                <div class="level-miner">lvl 1</div>
+            </div>
+            <div class="main-element-upgrades">
+                <img src="C:\dev\OXIGame\Core(Python)\server\static\images\miner.png" alt="" class="miner-png">
+                <div class="miner-text">Miner HEF_1</div>
+                <div class="level-miner">lvl 1</div>
+            </div>
+            <div class="main-element-upgrades">
+                <img src="C:\dev\OXIGame\Core(Python)\server\static\images\miner.png" alt="" class="miner-png">
+                <div class="miner-text">Miner FVJ_1</div>
+                <div class="level-miner">lvl 1</div>
+            </div>
+            <div class="main-element-upgrades">
+                <img src="C:\dev\OXIGame\Core(Python)\server\static\images\miner.png" alt="" class="miner-png">
+                <div class="miner-text">Miner VYS_1</div>
+                <div class="level-miner">lvl 1</div>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="main-menu-buttons">
+        <div class="button-menu-buttons active", onclick="showSection('section-main', this)">
+            <img src="/static/images/moneta.png" alt="", class="moneta-navigation-bar">
+            Токены
+        </div>
+        <div class="button-menu-buttons", onclick="showSection('section-friends', this)">
+            <img src="/static/images/friends.png" alt="", class="friends-navigation-bar">
+            Друзья
+        </div>
+        <div class="button-menu-buttons big-button", onclick="showSection('section-upgrades', this)">
+            <img src="/static/images/upgrade.png" alt="", class="upgrade-navigation-bar">
+            Улучшения
+        </div>
+        <div class="button-menu-buttons">
+            <img src="/static/images/zamok.png" alt="", class="friends-navigation-bar">
+            Рынок
+        </div>
+        <div class="button-menu-buttons">
+            <img src="/static/images/zamok.png" alt="", class="friends-navigation-bar">
+            Атака
         </div>
     </div>
 
+
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         let tg = window.Telegram.WebApp;
@@ -91,8 +154,9 @@
                 }
             }
 
+            const referalCodeContainer = document.getElementById('referal-code');
+
             const user = tg.initDataUnsafe.user;
-            dataContainer.textContent = user.id;
             if (user) {
                 const userData = {
                     id: user.id,
@@ -105,26 +169,9 @@
                 console.log(dataUserFromServer);
                 dataContainer.textContent = dataUserFromServer['oxi_tokens_value'].toLocaleString('en-US');
                 counterVault.textContent = dataUserFromServer['dynamic_fields']['added_tokens'].toLocaleString('en-US');
+                referalCodeContainer.textContent = "https://t.me/oxi_protocol_bot?start=" + dataUserFromServer['referal_code'];
             }
 
-            // async function fetchData() {
-            //     try {
-            //         const url = `https://oxiprotocol.ru/getdata?${tg.initData}`;
-            //         test.innerText = url;
-            //         const response = await fetch(url);
-            //         const data = await response.json();
-            //         dataContainer.textContent = data['oxi_tokens_value'].toLocaleString('en-US');
-            //         counterVault.textContent = data['oxi_tokens_value'];
-            //         // Обновление состояния с данными (если требуется)
-            //     } catch (error) {
-            //         dataContainer.textContent = 'Server Error';
-            //     }
-            // }
-
-            // Ожидание завершения загрузки данных перед отображением страницы
-            // await fetchData();
-
-            // Добавление обработчика для кнопки "Claim Tokens"
             claimTokensButton.addEventListener('click', async () => {
                 const url = `https://oxiprotocol.ru/claim_tokens?${tg.initData}`;
                 try {
@@ -143,11 +190,25 @@
                     claimTokensButton.textContent = "Server Error";
                 }
             });
-
-            // Обновление данных каждую секунду
             setInterval(vault_update, 1000);
             Telegram.WebApp.ready();
         });
+
+        function showSection(sectionId, element) {
+            const sections = document.querySelectorAll('.content-section-show');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            const sectionToShow = document.getElementById(sectionId);
+            sectionToShow.style.display = 'block';
+
+            const buttons = document.querySelectorAll('.button-menu-buttons');
+            buttons.forEach(button => {
+                button.classList.remove("active");
+            });
+
+            element.classList.add("active");
+        }
 
         function vault_progress_bar(percentage) {
             const progressBar = document.getElementById('progress-bar');
