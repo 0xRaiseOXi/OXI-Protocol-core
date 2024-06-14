@@ -191,7 +191,7 @@
                 console.log(dataUserFromServer);
                 dataContainer.textContent = dataUserFromServer['oxi_tokens_value'].toLocaleString('en-US');
                 counterVault.textContent = dataUserFromServer['dynamic_fields']['added_tokens'].toLocaleString('en-US');
-                referalCodeContainer.textContent = "https://t.me/oxi_protocol_bot?start=" + dataUserFromServer['referal_code'];
+                referalCodeContainer.textContent = "https://t.me/oxi_protocol_bot?start=" + dataUserFromServer['dynamic_fields']['referal_code'];
             }
 
             claimTokensButton.addEventListener('click', async () => {
