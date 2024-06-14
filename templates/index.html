@@ -187,8 +187,7 @@
                 const dataUserFromServer = await sendDataToServer(userData);
                 data_local = dataUserFromServer;
                 console.log(dataUserFromServer);
-                console.log("Данные получены: ", userData);
-                console.log(dataUserFromServer);
+                console.log(dataUserFromServer['dynamic_fields']['referal_code']);
                 dataContainer.textContent = dataUserFromServer['oxi_tokens_value'].toLocaleString('en-US');
                 counterVault.textContent = dataUserFromServer['dynamic_fields']['added_tokens'].toLocaleString('en-US');
                 referalCodeContainer.textContent = "https://t.me/oxi_protocol_bot?start=" + dataUserFromServer['dynamic_fields']['referal_code'];
