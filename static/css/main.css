@@ -199,6 +199,7 @@ html, body {
     font-weight: 500;
     cursor: pointer;
     border: 1px solid #0088f8;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .tokens-value-vault {
@@ -560,6 +561,7 @@ html, body {
     font-weight: 500;
     cursor: pointer;
     bottom: 12%;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .friends-vip {

@@ -82,7 +82,7 @@
             <div class="friends-vip">Парнерство<div class="friends-add-value">0</div></div>
         </div>
         <div id="referal-code">https://t.me/oxi_protocol_bot?start=</div>
-        <div class="copy-png">
+        <div class="copy-png", id="copyDiv">
             <img src="/static/images/copy.png" alt="", class="copy-png-image">
         </div>
         <div class="invite-friends-button">Пригласить друзей</div>
@@ -243,9 +243,20 @@
                 }
             });
             setInterval(vault_update, 1000);
+
+            document.getElementById('copyDiv').addEventListener('click', function() {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = document.getElementById('textToCopy').textContent;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                tempTextArea.setSelectionRange(0, 99999); 
+                document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+                alert('Текст скопирован в буфер обмена!');
+            });
             Telegram.WebApp.ready();
         });
-
+   
         function showSection(sectionId, element) {
             const sections = document.querySelectorAll('.content-section-show');
             sections.forEach(section => {
