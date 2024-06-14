@@ -247,14 +247,14 @@ async fn get_data(
             return HttpResponse::InternalServerError().json(error);
         }
     };
-    
+    println!("{}", &data_referal.referal_code);
     let mut dynamic_data = HashMap::new();
     let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
     dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
     dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
     dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
     dynamic_data.insert("referal_code".to_string(), data_referal.referal_code);
-    println!("{}", data_referal.referal_code);
+
 
     data.dynamic_fields = Some(dynamic_data);
 
