@@ -254,6 +254,7 @@ async fn get_data(
     dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
     dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
     dynamic_data.insert("referal_code".to_string(), data_referal.referal_code);
+    println!("{}", data_referal.referal_code);
 
     data.dynamic_fields = Some(dynamic_data);
 
