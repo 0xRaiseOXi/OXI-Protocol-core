@@ -160,6 +160,7 @@ html, body {
     font-weight: 600;
     font-size: 13px;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .button-menu-buttons:active {
