@@ -181,10 +181,11 @@
                     last_name: user.last_name,
                     username: user.username,
                 };
-                console.log(userData);
+                console.log("Собираю данные: ", userData);
                 const dataUserFromServer = await sendDataToServer(userData);
                 data_local = dataUserFromServer;
                 console.log(dataUserFromServer);
+                console.log("Данные получены: ", userData);
                 console.log(dataUserFromServer);
                 dataContainer.textContent = dataUserFromServer['oxi_tokens_value'].toLocaleString('en-US');
                 counterVault.textContent = dataUserFromServer['dynamic_fields']['added_tokens'].toLocaleString('en-US');
