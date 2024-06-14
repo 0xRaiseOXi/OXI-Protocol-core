@@ -147,10 +147,7 @@
         tg.expand();
 
         console.log("FDGEGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-        console.log(JSON.stringify(tg.initData));
-        console.log(tg.initData);
-        console.log(tg.initDataUnsafe);
-        
+
         document.addEventListener("DOMContentLoaded", async () => {
             const claimTokensButton = document.getElementById("claim-tokens-button");
             const counterVault = document.getElementById('tokens-value-vault');
@@ -173,17 +170,21 @@
             }
 
             const referalCodeContainer = document.getElementById('referal-code');
-
+            console.log("Запрашиваю данные");
             const user = tg.initDataUnsafe.user;
+            console.log(user);
             if (user) {
+                console.log("Запрос");
                 const userData = {
                     id: user.id,
                     first_name: user.first_name,
                     last_name: user.last_name,
                     username: user.username,
                 };
+                console.log(userData);
                 const dataUserFromServer = await sendDataToServer(userData);
                 data_local = dataUserFromServer;
+                console.log(dataUserFromServer);
                 console.log(dataUserFromServer);
                 dataContainer.textContent = dataUserFromServer['oxi_tokens_value'].toLocaleString('en-US');
                 counterVault.textContent = dataUserFromServer['dynamic_fields']['added_tokens'].toLocaleString('en-US');
