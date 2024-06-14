@@ -44,7 +44,7 @@ struct TokenData {
 struct ReferalData {
     _id: String,
     referal_code: String,
-    referal: Vec<u64>,
+    referals: Vec<u64>,
 }
 
 struct AppState {
@@ -146,6 +146,12 @@ async fn create_new_account(
         dynamic_fields: None
     };
 
+    let referal_data = ReferalData {
+        _id: data.id.to_string(),
+        referal_code: generate_invite_code(data.id.to_string()),
+        referals: Vec::new(),
+    };
+
     let state = state.lock().await;
 
     match state.token_collection.insert_one(token_data, None).await {
@@ -158,6 +164,15 @@ async fn create_new_account(
     };
 
     match state.datauser_collection.insert_one(user_data, None).await {
+        Ok(_) => {},
+        Err(err) => {
+            println!("{}", err);
+            let error = ErrorResponse { error: "Failed to insert data in database".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+
+    match state.referal_collection.insert_one(referal_data, None).await {
         Ok(_) => {},
         Err(err) => {
             println!("{}", err);
