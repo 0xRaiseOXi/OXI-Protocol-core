@@ -17,6 +17,7 @@ html, body {
     width: 100%;
     /* background-image: linear-gradient(to bottom, #090b0f, #0d1622 25%, rgb(17, 0, 255));  */
     background: url("/static/images/main.jpg");
+    background-size: 100% 100%;
 }
 
 .content {
