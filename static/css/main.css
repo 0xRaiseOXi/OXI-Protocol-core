@@ -162,6 +162,10 @@ html, body {
     cursor: pointer;
 }
 
+.button-menu-buttons:active {
+    background-color: #10102c;
+}
+
 .button-menu-buttons-big {
     background-color: #0c1325;
     width: 25%;
