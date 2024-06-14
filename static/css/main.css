@@ -422,11 +422,11 @@ html, body {
 }
 
 .content-containre-upgrades {
-    width: 100%;
+    width: 90%;
     height: 60%;
-    background-color: #152133;
+    background-color: #063580;
     top: 20%;
-    /* left: 5%; */
+    left: 5%;
     position: absolute;
     border-radius: 15px;
     padding-left: 5%;
@@ -574,7 +574,7 @@ html, body {
     top: 51%;
     color: #f6f7f8;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 13px;
     background-color: #063580;
     border-radius: 15px;
     text-decoration: underline;
@@ -592,7 +592,7 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 15%;
+    width: 16%;
     height: 6%;
     right: 8%;
     top: 51%;
