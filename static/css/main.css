@@ -30,7 +30,8 @@ html, body {
     align-items: center;
     border-bottom-left-radius: 50px;
     border-bottom-right-radius: 50px;
-    box-shadow: 0 -10px 20px rgba(3, 33, 199, 0.7); 
+    /* box-shadow: 0 -10px 20px rgba(3, 33, 199, 0.7);  */
+    background: rgba(0,0,0,0.5);
 }
 
 .main-tokens-value {
