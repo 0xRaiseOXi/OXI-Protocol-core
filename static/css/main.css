@@ -608,6 +608,10 @@ html, body {
     -webkit-tap-highlight-color: transparent;
 }
 
+.invite-friends-button:active {
+    background-color: #00daf7;
+}
+
 .friends-vip {
     font-size: 14px;
     display: flex;

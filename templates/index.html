@@ -55,7 +55,7 @@
         <div class="copy-png", id="copyDiv">
             <img src="/static/images/copy.png" alt="", class="copy-png-image">
         </div>
-        <div class="invite-friends-button">Пригласить друзей</div>
+        <div class="invite-friends-button", id="invite-friends-button">Пригласить друзей</div>
     </section>
 
 
@@ -240,7 +240,12 @@
             });
             Telegram.WebApp.ready();
         });
-   
+        
+        const inviteButton = document.getElementById("invite-friends-button");
+        inviteButton.addEventListener('click', async () => {
+                tg.openTelegramLink("tg://msg_url?url=123");
+        });
+
         function showSection(sectionId, element) {
             const sections = document.querySelectorAll('.content-section-show');
             sections.forEach(section => {
@@ -318,8 +323,6 @@
             const duration = 800;
             animateCounter(parseNumber(counterElement.textContent), targetCount, duration);
         };
-
-
 
         function sendInvite() {
             // Здесь можно добавить текст сообщения или другой контент, который вы хотите отправить
