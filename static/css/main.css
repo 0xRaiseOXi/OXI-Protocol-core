@@ -193,6 +193,7 @@ html, body {
     font-size: 13px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    position: relative;
 }
 
 .button-menu-buttons:active {
@@ -384,8 +385,8 @@ html, body {
 }
 
 .moneta-navigation-bar {
-   width: 35px;
-   height: 35px;
+   width: 40%;
+   height: 50%;
    position: absolute;
    top: 10%;
 }
