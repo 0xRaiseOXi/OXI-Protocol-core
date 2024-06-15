@@ -14,9 +14,13 @@ fn generate_invite_code(id: String) -> String {
     let mut hasher = Sha256::new();
     hasher.update(id.as_bytes());
     let result = hasher.finalize();
-
     let hash_hex = encode(result);
 
+    let mut hasher = Sha256::new();
+    hasher.update(hash_hex);
+    let result = hasher.finalize();
+
+    let hash_hex = encode(result);
     let invite_code = &hash_hex[hash_hex.len() - 6..].to_uppercase();
 
     invite_code.to_string()
@@ -44,7 +48,7 @@ struct TokenData {
 struct ReferalData {
     _id: String,
     referal_code: String,
-    referals: Vec<u64>,
+    referals: Vec<String>,
 }
 
 struct AppState {
@@ -52,6 +56,28 @@ struct AppState {
     datauser_collection: mongodb::Collection<UserData>,
     referal_collection: mongodb::Collection<ReferalData>,
     vault_size_constant: HashMap<u8, u32>,
+}
+
+#[derive(Debug, Serialize)]
+struct ErrorResponse {
+    error: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct QueryUserData {
+    id: u64,
+    first_name: String, 
+    last_name: String,
+    username: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct POSTRequest {
+    password: String,
+    id: u64,
+    user_name: String, 
+    language: String,
+    from_referal: Option<String>,
 }
 
 #[derive(Debug)]
@@ -101,16 +127,6 @@ async fn friends() -> impl Responder {
     NamedFile::open_async("./templates/friends.html").await.unwrap()
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-struct POSTRequest {
-    password: String,
-    id: u64,
-    user_name: String, 
-    language: String,
-    from_referal: Option<String>,
-}
-
-
 async fn create_new_account(
     state: web::Data<Mutex<AppState>>, 
     data: web::Json<POSTRequest>
@@ -136,6 +152,30 @@ async fn create_new_account(
     if count > 0 {
         return HttpResponse::Ok().body("{'code':0,'msg':'User already register'}");
     }
+
+    match &data.from_referal {
+        Some(referal_code_from_data) => {
+            match state.referal_collection.find_one(doc! { "referal_code": referal_code_from_data }, None).await {
+                Ok(Some(mut d)) => {
+                    d.referals.push(referal_code_from_data.clone());
+                    let update_doc = doc! { "$set": { "referals": &d.referals } };
+                    match state.referal_collection.update_one(doc! { "referal_code": referal_code_from_data }, update_doc, None).await {
+                        Ok(_) => {}
+                        Err(_) => {
+                            let error = ErrorResponse { error: "Failed to update document".to_string() };
+                            return HttpResponse::InternalServerError().json(error);
+                        }
+                    }
+                }
+                Ok(None) => {}
+                Err(_) => {
+                    let error = ErrorResponse { error: "Database query failed".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+        }
+        None => {}
+    };
 
     let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(duration) => duration.as_secs_f64(),
@@ -197,19 +237,6 @@ async fn create_new_account(
     HttpResponse::Ok().body("{'code':1,'msg':'OK'}")
 }
 
-#[derive(Debug, Serialize)]
-struct ErrorResponse {
-    error: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct QueryUserData {
-    id: u64,
-    first_name: String, 
-    last_name: String,
-    username: String,
-}
-
 async fn get_data(
     state: web::Data<Mutex<AppState>>, 
     query: web::Json<QueryUserData>
@@ -267,6 +294,7 @@ async fn get_data(
     dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
     dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
     dynamic_data.insert("referal_code".to_string(), data_referal.referal_code);
+    dynamic_data.insert("referals_value".to_string(), data_referal.referals.len().to_string());
 
 
     data.dynamic_fields = Some(dynamic_data);
@@ -274,46 +302,7 @@ async fn get_data(
     HttpResponse::Ok().json(data)
 }
 
-async fn get_counter(
-    state: web::Data<Mutex<AppState>>, 
-    query: web::Query<HashMap<String, String>>
-) -> impl Responder {
-    let json_str = match query.get("user") {
-        Some(s) => s,
-        None => {
-            let error = ErrorResponse { error: "Missing 'user' query parameter".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
-    let json_value: Value = match serde_json::from_str(json_str) {
-        Ok(val) => val,
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to parse JSON!".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
 
-    let id = match json_value.get("id").and_then(|v| v.as_u64()) {
-        Some(id) => id.to_string(),
-        None => {
-            let error = ErrorResponse { error: "Mising or invalid 'id' in JSON data".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
-   
-    let state = state.lock().await;
-    let added_tokens = state.update_tokens_value_vault(&id).await;
-    
-    match added_tokens {
-        Ok(tokens) => HttpResponse::Ok().body(tokens.to_string()),
-        Err(err) => {
-            match err {
-                UpdateError::DatabaseError => HttpResponse::InternalServerError().body("Database error occured."),
-                UpdateError::NotFound => HttpResponse::NotFound().body("Data not found."),
-            }
-        }
-    }
-}
 
 async fn update_counter(
     state: web::Data<Mutex<AppState>>, 
@@ -482,7 +471,6 @@ async fn main() -> std::io::Result<()> {
             .route("/", web::get().to(index))
             .route("/friends", web::get().to(friends))
             .route("/api/data", web::post().to(get_data))
-            .route("/get_counter", web::get().to(get_counter))
             .route("/update_counter", web::get().to(update_counter))
             .route("/claim_tokens", web::get().to(claim_tokens))
             .route("/newaccount", web::post().to(create_new_account))
