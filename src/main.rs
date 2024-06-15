@@ -26,7 +26,7 @@ fn generate_invite_code(id: String) -> String {
 struct UserData {
     _id: String,
     user_name: String,
-    register_in_game: u64,
+    register_in_game: f64,
     vault: u8,
 }
 
@@ -122,8 +122,17 @@ async fn create_new_account(
         return HttpResponse::BadRequest().json(error);
     }
 
-    let count = collection.count_documents(doc! {"_id": data.id.to_string()}, None).await?;
-    
+    let state = state.lock().await;
+
+    let result = state.token_collection.count_documents(doc! {"_id": data.id.to_string()}, None).await;
+    let count = match result {
+        Ok(count) => count,
+        Err(e) => {
+            eprintln!("Failed to count documents: {:?}", e);
+            return HttpResponse::InternalServerError().body("Internal Server Error");
+        }
+    };
+
     if count > 0 {
         return HttpResponse::Ok().body("{'code':0,'msg':'User already register'}");
     }
@@ -157,8 +166,6 @@ async fn create_new_account(
         referal_code: generate_invite_code(data.id.to_string()),
         referals: Vec::new(),
     };
-
-    let state = state.lock().await;
 
     match state.token_collection.insert_one(token_data, None).await {
         Ok(_) => {},
