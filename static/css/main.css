@@ -48,7 +48,7 @@ html, body {
     bottom: 0;
     background: url("/static/images/main.jpg");
     background-size: 100% 100%;
-    filter: blur(5px); /* Размывает только фон на 5 пикселей */
+    filter: blur(3px); /* Размывает только фон на 5 пикселей */
     z-index: -1; /* Помещает размытый фон за содержимым контейнера */
 }
 
