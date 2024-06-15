@@ -106,8 +106,8 @@ struct POSTRequest {
     password: String,
     id: u64,
     user_name: String, 
-    register_in_game: u64,
     language: String,
+    from_referal: String,
 }
 
 
@@ -122,12 +122,11 @@ async fn create_new_account(
         return HttpResponse::BadRequest().json(error);
     }
 
-    let user_data = UserData {
-        _id: data.id.to_string(),
-        user_name: data.user_name.clone(),
-        register_in_game: data.register_in_game.clone(),
-        vault: 1
-    };
+    let count = collection.count_documents(doc! {"_id": data.id.to_string()}, None).await?;
+    
+    if count > 0 {
+        return HttpResponse::Ok().body("{'code':0,'msg':'User already register'}");
+    }
 
     let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(duration) => duration.as_secs_f64(),
@@ -135,6 +134,13 @@ async fn create_new_account(
             let error = ErrorResponse { error: "Failed to get current time".to_string() };
             return HttpResponse::InternalServerError().json(error);
         }
+    };
+
+    let user_data = UserData {
+        _id: data.id.to_string(),
+        user_name: data.user_name.clone(),
+        register_in_game: last_time_update,
+        vault: 1
     };
 
     let token_data = TokenData {
@@ -181,7 +187,7 @@ async fn create_new_account(
         }
     };
 
-    HttpResponse::Ok().body("OK")
+    HttpResponse::Ok().body("{'code':1,'msg':'OK'}")
 }
 
 #[derive(Debug, Serialize)]
