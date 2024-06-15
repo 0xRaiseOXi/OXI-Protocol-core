@@ -21,7 +21,7 @@ fn generate_invite_code(id: String) -> String {
     let result = hasher.finalize();
 
     let hash_hex = encode(result);
-    let invite_code = &hash_hex[hash_hex.len() - 6..].to_uppercase();
+    let invite_code = &hash_hex[hash_hex.len() - 6..];
 
     invite_code.to_string()
 }
@@ -295,7 +295,6 @@ async fn get_data(
     dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
     dynamic_data.insert("referal_code".to_string(), data_referal.referal_code);
     dynamic_data.insert("referals_value".to_string(), data_referal.referals.len().to_string());
-
 
     data.dynamic_fields = Some(dynamic_data);
 
