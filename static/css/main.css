@@ -15,12 +15,12 @@ html, body {
 .container {
     height: 100%;
     width: 100%;
-    /* background-image: linear-gradient(to bottom, #090b0f, #0d1622 25%, rgb(17, 0, 255));  */
     background: url("/static/images/main.jpg");
     background-size: 100% 100%;
+    filter: blur(5px); /* Размывает фон на 5 пикселей */
 }
 
-
+/* 
 .container::before {
     content: "";
     position: absolute;
@@ -31,7 +31,7 @@ html, body {
     background: inherit; /* Наследование фонового изображения */
     filter: blur(10px); /* Применение размытия */
     z-index: -1; /* Отправка размытого слоя на задний план */
-}
+} */
 
 
 .content {
