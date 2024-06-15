@@ -393,7 +393,7 @@ html, body {
    margin-top: 5%;
    /* position: absolute; */
    /* top: 5%; */
-   /* border: 1px solid #ffffff; */
+   border: 1px solid #ffffff;
 }
 
 .text-menu-button {
@@ -401,8 +401,9 @@ html, body {
     justify-content: center;
     align-items: center;
     width: 100%;
-    bottom: 0;
     height: 30%;
+    margin-top: 10%;
+    /* position: relative; */
     /* border: 1px solid #ffffff; */
 }
 
