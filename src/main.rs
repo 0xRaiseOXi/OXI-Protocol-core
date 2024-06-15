@@ -29,7 +29,9 @@ fn generate_invite_code(id: String) -> String {
 #[derive(Debug, Deserialize, Serialize)]
 struct UserData {
     _id: String,
-    user_name: String,
+    username: Option<String>,
+    first_name: Option<String>,
+    last_name: Option<String>,
     register_in_game: f64,
     vault: u8,
 }
@@ -65,17 +67,16 @@ struct ErrorResponse {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct QueryUserData {
-    id: u64,
-    first_name: String, 
-    last_name: String,
-    username: String,
+    id: u64
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct POSTRequest {
     password: String,
     id: u64,
-    user_name: String, 
+    username: Option<String>,
+    first_name: Option<String>,
+    last_name: Option<String>,
     language: String,
     from_referal: Option<String>,
 }
@@ -187,7 +188,9 @@ async fn create_new_account(
 
     let user_data = UserData {
         _id: data.id.to_string(),
-        user_name: data.user_name.clone(),
+        username: data.username.clone(),
+        first_name: data.first_name.clone(),
+        last_name: data.last_name.clone(),
         register_in_game: last_time_update,
         vault: 1
     };
