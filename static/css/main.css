@@ -12,13 +12,13 @@ html, body {
     font-family: "Open Sans", sans-serif;
 }
 
-.container {
+/* .container {
     height: 100%;
     width: 100%;
     background: url("/static/images/main.jpg");
     background-size: 100% 100%;
-    filter: blur(5px); /* Размывает фон на 5 пикселей */
-}
+    filter: blur(5px); 
+} 
 
 /* 
 .container::before {
@@ -33,6 +33,24 @@ html, body {
     /* z-index: -1; /* Отправка размытого слоя на задний план */
 /* } */
 
+.container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("/static/images/main.jpg");
+    background-size: 100% 100%;
+    filter: blur(5px); /* Размывает только фон на 5 пикселей */
+    z-index: -1; /* Помещает размытый фон за содержимым контейнера */
+}
 
 .content {
     width: 100%;
