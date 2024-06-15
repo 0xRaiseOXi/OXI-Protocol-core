@@ -186,8 +186,10 @@ html, body {
     border-radius: 20px;
     color: #757575;
     display: flex;
-    align-items: end;
+    /* align-items: end; */
+    align-items: center;
     justify-content: center;
+    flex-direction: column;
     padding-bottom: 10px;
     font-weight: 600;
     font-size: 13px;
@@ -385,10 +387,22 @@ html, body {
 }
 
 .moneta-navigation-bar {
-   width: 35%;
-   height: 45%;
-   position: absolute;
-   top: 5%;
+   width: 50%;
+   height: 60%;
+   margin-bottom: 5%;
+   /* position: absolute; */
+   /* top: 5%; */
+   /* border: 1px solid #ffffff; */
+}
+
+.text-menu-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    bottom: 0;
+    height: 30%;
+    /* border: 1px solid #ffffff; */
 }
 
 #active-navigation-bar {
