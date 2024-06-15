@@ -107,7 +107,7 @@ struct POSTRequest {
     id: u64,
     user_name: String, 
     language: String,
-    from_referal: String,
+    from_referal: Option<String>,
 }
 
 
