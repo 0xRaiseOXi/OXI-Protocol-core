@@ -513,17 +513,41 @@ html, body {
     z-index: -1;
 }
 
-
-.content-containre-upgrades {
+.content-container-upgrades {
     width: 90%;
-    height: 60%;
+    height: 75%;
     background-color: #063580;
-    top: 20%;
+    top: 10%;
     left: 5%;
     position: absolute;
     border-radius: 15px;
-    padding-left: 5%;
-    padding-right: 5%;
+    /* display: flex; */
+    /* flex-direction: column; */
+}
+
+.bar-container {
+    overflow-y: scroll;
+    width: 98%;
+    height: 90%;
+    top: 10%;
+    position: absolute;
+}
+
+.bar-container::-webkit-scrollbar {
+    width: 8px; /* ширина скроллбара */
+}
+
+.bar-container::-webkit-scrollbar-track {
+    background: #063580; /* цвет трека */
+}
+
+.bar-container::-webkit-scrollbar-thumb {
+    background: #888; /* цвет ползунка */
+    border-radius: 10px; /* скругление углов ползунка */
+}
+
+.bar-container::-webkit-scrollbar-thumb:hover {
+    background: #555; /* цвет ползунка при наведении */
 }
 
 .container-upgardes-menu {
@@ -729,4 +753,38 @@ html, body {
     position: absolute;
     font-weight: 600;
     color: #ffffff;
+}
+
+.upgrades-container-1 {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.upgrades-container-2 {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.block-1 {
+    border: 1px solid #ffffff;
+    width: 70%;
+    height: 25%;
+}
+
+.block-2 { 
+    width: 70%;
+    height: 25%;
+    border: 2px solid rgb(255, 0, 30);
+}
+
+.data-upgarde-module {
+    width: 90%;
+    height: 20%;
+    margin: 2%;
+    background-color: #141269;
+    border-radius: 20px;
 }
