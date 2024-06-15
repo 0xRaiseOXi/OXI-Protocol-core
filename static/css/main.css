@@ -387,13 +387,13 @@ html, body {
 }
 
 .moneta-navigation-bar {
-   width: 35%;
+   width: 50%;
    height: 50%;
    margin-bottom: 5%;
    margin-top: 5%;
    /* position: absolute; */
    /* top: 5%; */
-   /* border: 1px solid #ffffff; */
+   border: 1px solid #ffffff;
 }
 
 .text-menu-button {
