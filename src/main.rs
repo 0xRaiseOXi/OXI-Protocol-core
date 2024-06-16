@@ -1,6 +1,6 @@
 use actix_web::{web, App, HttpServer, Responder, HttpResponse};
 use actix_files::NamedFile;
-use mongodb::{Client, options::ClientOptions, bson::{doc}};
+use mongodb::{Client, options::ClientOptions, bson::{doc, Bson}};
 use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::collections::HashMap;
@@ -124,10 +124,6 @@ async fn index() -> impl Responder {
     NamedFile::open_async("./templates/index.html").await.unwrap()
 }
 
-async fn friends() -> impl Responder {
-    NamedFile::open_async("./templates/friends.html").await.unwrap()
-}
-
 async fn create_new_account(
     state: web::Data<Mutex<AppState>>, 
     data: web::Json<POSTRequest>
@@ -154,30 +150,6 @@ async fn create_new_account(
         return HttpResponse::Ok().body("{'code':0,'msg':'User already register'}");
     }
 
-    match &data.from_referal {
-        Some(referal_code_from_data) => {
-            match state.referal_collection.find_one(doc! { "referal_code": referal_code_from_data }, None).await {
-                Ok(Some(mut d)) => {
-                    d.referals.push(referal_code_from_data.clone());
-                    let update_doc = doc! { "$set": { "referals": &d.referals } };
-                    match state.referal_collection.update_one(doc! { "referal_code": referal_code_from_data }, update_doc, None).await {
-                        Ok(_) => {}
-                        Err(_) => {
-                            let error = ErrorResponse { error: "Failed to update document".to_string() };
-                            return HttpResponse::InternalServerError().json(error);
-                        }
-                    }
-                }
-                Ok(None) => {}
-                Err(_) => {
-                    let error = ErrorResponse { error: "Database query failed".to_string() };
-                    return HttpResponse::InternalServerError().json(error);
-                }
-            };
-        }
-        None => {}
-    };
-
     let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(duration) => duration.as_secs_f64(),
         Err(_) => {
@@ -195,7 +167,7 @@ async fn create_new_account(
         vault: 1
     };
 
-    let token_data = TokenData {
+    let mut token_data = TokenData {
         _id: data.id.to_string(),
         language: data.language.clone(),
         oxi_tokens_value: 0,
@@ -208,6 +180,61 @@ async fn create_new_account(
         _id: data.id.to_string(),
         referal_code: generate_invite_code(data.id.to_string()),
         referals: Vec::new(),
+    };
+
+    match &data.from_referal {
+        // Извлечение значения referal_code
+        Some(referal_code_from_data) => {
+            // Поиск рефераловода
+            match state.referal_collection.find_one(doc! { "referal_code": referal_code_from_data }, None).await {
+                Ok(Some(mut d)) => {
+                    // Новый реферал, добавление его id
+                    d.referals.push(data.id.to_string());
+                    // Подготовка данных для обновления
+                    let update_doc = doc! { "$set": { "referals": &d.referals } };
+                    match state.referal_collection.update_one(doc! { "referal_code": referal_code_from_data }, update_doc, None).await {
+                        Ok(_) => {}
+                        Err(_) => {
+                            let error = ErrorResponse { error: "Failed to update document".to_string() };
+                            return HttpResponse::InternalServerError().json(error);
+                        }
+                    }
+                    // Реферал добавлен
+                    
+                    // Поиск данных рфераловода
+                    let mut data_collection_value = match state.token_collection.find_one(doc! { "_id": &d._id }, None).await {
+                        Ok(Some(d)) => d,
+                        Ok(None) => {
+                            let error = ErrorResponse { error: "User not found".to_string() };
+                            return HttpResponse::NotFound().json(error);
+                        }
+                        Err(_) => {
+                            let error = ErrorResponse { error: "Database query failed".to_string() };
+                            return HttpResponse::InternalServerError().json(error);
+                        }
+                    };
+                    
+                    data_collection_value.oxi_tokens_value += 25000;
+                    token_data.oxi_tokens_value += 25000;
+
+                    let update_doc = doc! { "$set": { "oxi_tokens_value": Bson::from(data_collection_value.oxi_tokens_value as i64) } };
+                    match state.token_collection.update_one(doc! { "_id": &d._id }, update_doc, None).await {
+                        Ok(_) => {},
+                        Err(err) => {
+                            println!("{}", err);
+                            let error = ErrorResponse { error: "Failed to insert data in database".to_string() };
+                            return HttpResponse::InternalServerError().json(error);
+                        }
+                    }
+                }
+                Ok(None) => {}
+                Err(_) => {
+                    let error = ErrorResponse { error: "Database query failed".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+        }
+        None => {}
     };
 
     match state.token_collection.insert_one(token_data, None).await {
@@ -304,51 +331,6 @@ async fn get_data(
     HttpResponse::Ok().json(data)
 }
 
-
-
-async fn update_counter(
-    state: web::Data<Mutex<AppState>>, 
-    query: web::Query<HashMap<String, String>>
-) -> impl Responder {
-    let json_str = match query.get("user") {
-        Some(s) => s,
-        None => {
-            let error = ErrorResponse { error: "Missing 'error' query parameter".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
-    let json_value: Value = match serde_json::from_str(json_str) {
-        Ok(val) => val,
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to parse JSON data".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
-
-    let id = match json_value.get("id").and_then(|v| v.as_u64()) {
-        Some(s) => s.to_string(),
-        None => {
-            let error = ErrorResponse { error: "Missing or invalid 'id' id JSON data".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
-
-    let state = state.lock().await;
-    let data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
-        Ok(Some(d)) => d,
-        Ok(None) => {
-            let error = ErrorResponse { error: "User not found".to_string() };
-            return HttpResponse::NotFound().json(error);
-        }
-        Err(_) => {
-            let error = ErrorResponse { error: "Database query failed".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
-
-    HttpResponse::Ok().body(data.oxi_tokens_value.to_string())
-}
-
 async fn claim_tokens(
     state: web::Data<Mutex<AppState>>, 
     query: web::Query<HashMap<String, String>>
@@ -420,8 +402,6 @@ async fn claim_tokens(
     };
     data.last_time_update = last_time_update;
 
-    // let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
-
     match state.token_collection.replace_one(doc! { "_id": &id }, &data, None).await {
         Ok(_) => {}
         Err(_) => {
@@ -469,9 +449,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(state.clone())
             .route("/", web::get().to(index))
-            .route("/friends", web::get().to(friends))
             .route("/api/data", web::post().to(get_data))
-            .route("/update_counter", web::get().to(update_counter))
             .route("/claim_tokens", web::get().to(claim_tokens))
             .route("/newaccount", web::post().to(create_new_account))
             .service(actix_files::Files::new("/static", "./static").show_files_listing())
