@@ -52,7 +52,7 @@
             <div class="friends-vip">Партнёрство<div class="friends-add-value">0</div></div>
         </div>
         <div id="referal-code">oxi_protocol_bot?start=</div>
-        <div class="copy-png", id="copyDiv">
+        <div class="copy-png", onclick="copyText()">
             <img src="/static/images/copy.png" alt="", class="copy-png-image">
         </div>
         <div class="invite-friends-button", id="invite-friends-button">Пригласить друзей</div>
@@ -315,6 +315,17 @@
             Telegram.WebApp.ready();
         });
         
+        function copyText() {
+            const sourceDiv = document.getElementById('referal-code');
+            const textToCopy = sourceDiv.innerText;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+        }
+
         const inviteButton = document.getElementById("invite-friends-button");
         inviteButton.addEventListener('click', async () => {
             const url = "Привет! Приглашаю тебя в новый проект OXI Mining Protocol. Скорее заходи " + document.getElementById('referal-code').textContent;
