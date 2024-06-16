@@ -142,60 +142,7 @@
                         <div class="lock-text">Закрыто</div>
                     </div>
                 </div>
-        </div>
-            <!-- <div class="main-element-upgrades">
-                <img src="/static/images/miner.png" alt="" class="miner-png">
-                <div class="miner-text">Miner ZTX_1</div>
-                <div class="level-miner">lvl 1</div>
-                <div class="update-button-miner">
-                    <div class="update-miner">Улучшить</div>
-                </div>
             </div>
-            <div class="main-element-upgrades">
-                <img src="/static/images/miner.png" alt="" class="miner-png">
-                <div class="miner-text">Miner XTG_1</div>
-                <div class="level-miner">lvl 1</div>
-                <div class="update-button-miner">
-                    <div class="update-miner">Улучшить</div>
-                </div>
-            </div>
-            <div class="main-element-upgrades">
-                <img src="/static/images/miner.png" alt="" class="miner-png">
-                <div class="miner-text">Miner HEF_1</div>
-                <div class="level-miner">lvl 1</div>
-                <div class="update-button-miner">
-                    <div class="update-miner">Улучшить</div>
-                </div>
-            </div>
-            <div class="main-element-upgrades">
-                <img src="/static/images/miner.png" alt="" class="miner-png">
-                <div class="miner-text">Miner FVJ_1</div>
-                <div class="level-miner">lvl 1</div>
-                <div class="update-button-miner">
-                    <div class="update-miner">Улучшить</div>
-                </div>
-            </div>
-            <div class="main-element-upgrades">
-                <img src="/static/images/miner.png" alt="" class="miner-png">
-                <div class="miner-text">Miner VYS_1</div>
-                <div class="level-miner">lvl 1</div>
-                <div class="update-button-miner">
-                    <div class="update-miner">Улучшить</div>
-                </div>
-            </div> -->
-            <!-- <div class="upgrades-container-1">
-                <div class="block-1"></div>
-                <div class="block-2"></div>
-                <div class="block-1"></div>
-                <div class="block-2"></div>
-            </div>
-            <div class="upgrades-container-2">
-                <div class="block-1"></div>
-                <div class="block-2"></div>
-                <div class="block-1"></div>
-                <div class="block-2"></div>
-            </div> -->
-
         </div>
     </section>
 
@@ -214,9 +161,15 @@
             </div>
             <div class="text-menu-button">Друзья</div>
         </div>
-        <div class="button-menu-buttons big-button", onclick="showSection('section-upgrades', this)">
+        <!-- <div class="button-menu-buttons big-button", onclick="showSection('section-upgrades', this)">
             <div class="moneta-navigation-bar">
                 <img src="/static/images/upgrade.png" alt="", style="width: 100%;height: auto;filter: invert(1);object-fit: cover;">
+            </div>
+            <div class="text-menu-button">Улучшения</div>
+        </div> -->
+        <div class="button-menu-buttons big-button">
+            <div class="moneta-navigation-bar">
+                <img src="/static/images/zamok.png" alt="", style="width: 100%;height: auto;filter: invert(1);object-fit: cover;">
             </div>
             <!-- <img src="/static/images/upgrade.png" alt="", class="upgrade-navigation-bar"> -->
             <div class="text-menu-button">Улучшения</div>
@@ -245,7 +198,6 @@
         let data_local;
         tg.expand();
         tg.setHeaderColor("#000000");
-        console.log("FDGEGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
 
         document.addEventListener("DOMContentLoaded", async () => {
             const claimTokensButton = document.getElementById("claim-tokens-button");
@@ -397,11 +349,11 @@
                 const startTime = performance.now();
                 function updateCounter(currentTime) {
                     const elapsedTime = currentTime - startTime;
-                    const progress = Math.min(elapsedTime / duration, 1); // Прогресс анимации от 0 до 1
+                    const progress = Math.min(elapsedTime / duration, 1);
                     const currentCount = Math.floor(startValue + progress * (endValue - startValue));
                     counterElement.textContent = currentCount.toLocaleString('en-US');
                     if (progress < 1) {
-                        requestAnimationFrame(updateCounter); // Продолжаем анимацию
+                        requestAnimationFrame(updateCounter);
                     } else {
                         console.log('Анимация завершена');
                     }
