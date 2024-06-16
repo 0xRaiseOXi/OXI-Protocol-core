@@ -317,7 +317,7 @@
         
         const inviteButton = document.getElementById("invite-friends-button");
         inviteButton.addEventListener('click', async () => {
-            tg.openTelegramLink("https://t.me/share/url?url=123");
+            tg.openTelegramLink("https://t.me/share/url?url=Привет! Приглашаю тебя в новый проект OXI Mining Protocol. Скорее заходи\n" + referalCodeContainer.textContent);
         });
 
         function showSection(sectionId, element) {
