@@ -84,7 +84,6 @@ html, body {
     justify-content: center; 
     align-items: center; 
     height: 30%; 
-    text-align: center;
     font-weight: 700;
 }
 
@@ -341,9 +340,13 @@ html, body {
 }
 
 .moneta-main-balance {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
     margin-right: 1%;
+}
+
+#main-balance {
+    text-align: center; /* Центрирование текста внутри div */
 }
 
 /* .tasks {
@@ -871,6 +874,7 @@ html, body {
     height: 30px;
     margin-right: 2%;
     object-fit: cover;
+    filter: invert(1);
 }
 
 .level-miner {
@@ -898,6 +902,6 @@ html, body {
 
 .lock-text {
     color: #ffffff;
-    font-size: 20px;
+    font-size: 21px;
     font-weight: 600;
 }
