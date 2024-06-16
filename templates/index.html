@@ -319,7 +319,7 @@
         inviteButton.addEventListener('click', async () => {
             const url = "Привет! Приглашаю тебя в новый проект OXI Mining Protocol. Скорее заходи " + document.getElementById('referal-code').textContent;
             const encodedUrl = encodeURIComponent(url);
-            const telegramLink = `https://t.me/share/url?url=${encodedUrl}`;
+            const telegramLink = `https://t.me/share/url?url=&text=${encodedUrl}`;
             tg.openTelegramLink(telegramLink);
         });
 
