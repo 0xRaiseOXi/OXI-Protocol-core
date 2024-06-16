@@ -49,7 +49,7 @@
                 <div class="friends-add-value", id="referals-value">0</div>
             </div>
             <div class="add-from-friends">Получено за приглашения<div class="friends-add-value">0</div></div>
-            <div class="friends-vip">Парнерство<div class="friends-add-value">0</div></div>
+            <div class="friends-vip">Партнёрство<div class="friends-add-value">0</div></div>
         </div>
         <div id="referal-code">oxi_protocol_bot?start=</div>
         <div class="copy-png", id="copyDiv">
@@ -317,7 +317,11 @@
         
         const inviteButton = document.getElementById("invite-friends-button");
         inviteButton.addEventListener('click', async () => {
-            tg.openTelegramLink("https://t.me/share/url?url=Привет! Приглашаю тебя в новый проект OXI Mining Protocol. Скорее заходи " + document.getElementById('referal-code').textContent);
+            var referralCode = encodeURIComponent(document.getElementById('referal-code').textContent);
+            var message = encodeURIComponent("Привет! Приглашаю тебя в новый проект OXI Mining Protocol. Скорее заходи");
+            var url = "https://t.me/share/url?url=" + message + "%20" + referralCode;
+
+            tg.openTelegramLink(url);
         });
 
         function showSection(sectionId, element) {
