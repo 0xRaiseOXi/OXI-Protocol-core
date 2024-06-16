@@ -79,7 +79,7 @@ html, body {
 
 .data-in-load-tokens {
     color: #f6f7f8;
-    font-size: 50px;
+    font-size: 40px;
     display: flex;
     justify-content: center; 
     align-items: center; 
@@ -869,7 +869,6 @@ html, body {
 .img-miner-module {
     width: 30px;
     height: 30px;
-    filter: invert(1);
     margin-right: 2%;
     object-fit: cover;
 }
@@ -894,6 +893,7 @@ html, body {
     width: 30px;
     height: 30px;
     object-fit: cover;
+    filter: invert(1);
 }
 
 .lock-text {
