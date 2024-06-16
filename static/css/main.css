@@ -869,9 +869,9 @@ html, body {
 .img-miner-module {
     width: 30px;
     height: 30px;
-    filter:invert(1);
-    overflow: hidden;
+    filter: invert(1);
     margin-right: 2%;
+    object-fit: cover;
 }
 
 .level-miner {
@@ -893,7 +893,7 @@ html, body {
 .img-lock {
     width: 30px;
     height: 30px;
-    overflow: hidden;
+    object-fit: cover;
 }
 
 .lock-text {
