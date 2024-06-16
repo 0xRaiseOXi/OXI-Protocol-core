@@ -867,6 +867,7 @@ html, body {
     font-size: 15px;
     font-weight: 600;
     color: #ffffff;
+    cursor: pointer;
 }
 
 .img-miner-module {
@@ -914,7 +915,6 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
 }
 
 .button-switch {
@@ -958,7 +958,7 @@ html, body {
     justify-content: center;
     align-items: center;
     font-weight: 600;
-    margin-right: 2%;
+    margin-right: 3%;
 }
 
 .arrow-right {
