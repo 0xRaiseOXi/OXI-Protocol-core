@@ -340,8 +340,8 @@ html, body {
 }
 
 .moneta-main-balance {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     margin-right: 1%;
 }
 
@@ -904,4 +904,43 @@ html, body {
     color: #ffffff;
     font-size: 21px;
     font-weight: 600;
+}
+
+.navbar-module-update {
+    position: absolute;
+    height: 10%;
+    width: 100%;
+    border: 1px solid #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button-switch {
+    width: 30%;
+    height: 80%;
+    background-color: #0084ff;
+    border-radius: 10px;
+    margin-left: 1%;
+    border: 1px solid #003afa;
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-text-upgrades-in {
+    font-size: 25px;
+    font-weight: 600;
+    left: 5%;
+    position: absolute;
+    top: 4%;
+    height: 5%;
+    border-left: 2px solid #ffffff;
+    display: flex;
+    align-items: center;
+    padding-left: 2%;
+    color: #ffffff;
 }
