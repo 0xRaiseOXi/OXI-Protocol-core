@@ -317,11 +317,10 @@
         
         const inviteButton = document.getElementById("invite-friends-button");
         inviteButton.addEventListener('click', async () => {
-            var referralCode = encodeURIComponent(document.getElementById('referal-code').textContent);
-            var message = encodeURIComponent("Привет! Приглашаю тебя в новый проект OXI Mining Protocol. Скорее заходи");
-            var url = "https://t.me/share/url?url=" + message + "%20" + referralCode;
-
-            tg.openTelegramLink(url);
+            const url = "Привет! Приглашаю тебя в новый проект OXI Mining Protocol. Скорее заходи " + document.getElementById('referal-code').textContent;
+            const encodedUrl = encodeURIComponent(url);
+            const telegramLink = `https://t.me/share/url?url=${encodedUrl}`;
+            tg.openTelegramLink(telegramLink);
         });
 
         function showSection(sectionId, element) {
