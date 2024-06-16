@@ -951,15 +951,13 @@ html, body {
 }
 
 .last-value-mine {
-    position: absolute;
     font-size: 18px;
     color: #ffffff;
     display: flex;
+    justify-content: center;
     align-items: center;
-    height: 100%;
-    width: 100%;
-    padding-left: 25%;
-    padding-bottom: 5%;
+    font-weight: 600;
+    margin-right: 5%;
 }
 
 .arrow-right {
@@ -973,15 +971,11 @@ html, body {
  }
 
 .new-value-mine {
-    position: absolute;
     font-size: 18px;
     color: #ffffff;
     display: flex;
-    align-items: center;
     justify-content: center;
-    height: 100%;
-    width: 100%;
-    padding-left: 45%;
-    padding-bottom: 5%;
+    align-items: center;
     font-weight: 600;
+    margin-left: 5%;
 }
