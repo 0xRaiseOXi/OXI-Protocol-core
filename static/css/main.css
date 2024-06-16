@@ -914,6 +914,7 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .button-switch {
@@ -957,7 +958,7 @@ html, body {
     justify-content: center;
     align-items: center;
     font-weight: 600;
-    margin-right: 5%;
+    margin-right: 2%;
 }
 
 .arrow-right {
@@ -977,5 +978,5 @@ html, body {
     justify-content: center;
     align-items: center;
     font-weight: 600;
-    margin-left: 5%;
+    margin-left: 2%;
 }
