@@ -910,7 +910,7 @@ html, body {
     position: absolute;
     height: 10%;
     width: 100%;
-    border: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -922,13 +922,18 @@ html, body {
     background-color: #0084ff;
     border-radius: 10px;
     margin-left: 1%;
-    border: 1px solid #003afa;
+    border: 1px solid #00abfa;
     color: #ffffff;
     font-size: 17px;
     font-weight: 600;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+}
+
+.button-switch:active {
+    background-color: #5aabf7;
 }
 
 .main-text-upgrades-in {
