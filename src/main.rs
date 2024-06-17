@@ -166,7 +166,7 @@ async fn create_new_account(
         last_name: data.last_name.clone(),
         register_in_game: last_time_update,
         vault: 1,
-        upgardes: HashMap::new()
+        upgrades: HashMap::new()
     };
 
     let mut token_data = TokenData {
