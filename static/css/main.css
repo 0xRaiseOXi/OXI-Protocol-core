@@ -868,6 +868,7 @@ html, body {
     font-weight: 600;
     color: #ffffff;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .img-miner-module {

@@ -34,6 +34,7 @@ struct UserData {
     last_name: Option<String>,
     register_in_game: f64,
     vault: u8,
+    upgrades: HashMap<String, String>
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -420,6 +421,58 @@ async fn claim_tokens(
     HttpResponse::Ok().json(data)
 }
 
+
+#[derive(Debug, Deserialize, Serialize)]
+struct UpdateData {
+    id: String,
+    type_update: String,
+    id_update: String
+}
+//upgardes: {"miner_1": 12, "miner_2": 3}
+
+async fn update(
+    state: web::Data<Mutex<AppState>>, 
+    data: web::Json<UpdateData>>
+) -> impl Responder {
+    // Запрос на повышение уровня на 1 единицу некоторого объекта
+    
+    // Получение данных пользователя по его id
+    let data_user = match state.datauser_collection.find_one(doc! { "_id": &data.id }, None).await {
+        Ok(Some(d)) => d,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+    // Получение текущего уровня объекта
+    last_level = data_user.upgrades.get(data.type_update);
+    // Получение данных что нужно для следюущего уровня
+    new_level_data = state.
+
+    let data_user = match state.token_collection.find_one(doc! { "_id": &data.id }, None).await {
+        Ok(Some(d)) => d,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+
+    if data_user.oxi_tokens_value < new_level_data.level_up_value {
+        let error = ErrorResponse { error: "Insufficient balance".to_string() };
+        return HttpResponse:BadRequest().json(error);
+    } 
+
+    
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
@@ -450,6 +503,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(state.clone())
             .route("/", web::get().to(index))
             .route("/api/data", web::post().to(get_data))
+            .route("/api/update", web::post().to(update))
             .route("/claim_tokens", web::get().to(claim_tokens))
             .route("/newaccount", web::post().to(create_new_account))
             .service(actix_files::Files::new("/static", "./static").show_files_listing())
