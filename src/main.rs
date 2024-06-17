@@ -527,7 +527,7 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
 
-    let client_options = ClientOptions::parse("mongodb://localhost:27017").await.unwrap();
+    let client_options = ClientOptions::parse("mongodb://localhost:27018").await.unwrap();
     let db_client = Client::with_options(client_options).unwrap();
     let db = db_client.database("OXI");
     let token_collection = db.collection::<TokenData>("OXI_tokens");
