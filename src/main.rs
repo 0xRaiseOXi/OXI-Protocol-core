@@ -560,7 +560,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(state.clone())
             .route("/", web::get().to(index))
             .route("/api/data", web::post().to(get_data))
-            // .route("/api/update", web::post().to(update))
+            .route("/api/update", web::post().to(update))
             .route("/claim_tokens", web::get().to(claim_tokens))
             .route("/newaccount", web::post().to(create_new_account))
             .service(actix_files::Files::new("/static", "./static").show_files_listing())
