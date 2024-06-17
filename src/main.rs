@@ -427,7 +427,7 @@ async fn claim_tokens(
 
 #[derive(Debug, Deserialize, Serialize)]
 struct UpdateData {
-    _id: String,
+    _id: u64,
     type_update: String,
     id_update: String
 }
@@ -446,8 +446,9 @@ async fn update(
 
     // Запрос на повышение уровня на 1 единицу некоторого объекта
     let state = state.lock().await;
+    let id = data._id.to_string();
     // Получение данных пользователя по его id (USER DATA)
-    let data_user = match state.datauser_collection.find_one(doc! { "_id": &data._id }, None).await {
+    let data_user = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
         Ok(Some(d)) => d,
         Ok(None) => {
             let error = ErrorResponse { error: "User not found".to_string() };
@@ -476,7 +477,7 @@ async fn update(
         None
     };
 
-    let mut token_data = match state.token_collection.find_one(doc! { "_id": &data._id }, None).await {
+    let mut token_data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
         Ok(Some(d)) => d,
         Ok(None) => {
             let error = ErrorResponse { error: "User not found".to_string() };
