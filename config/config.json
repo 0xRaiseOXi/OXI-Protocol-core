@@ -1,0 +1,101 @@
+{
+    "miner": {
+        "2": {
+            "buy_price": 12000,
+            "tokens_add": 2000 
+        },
+        "3": {
+            "buy_price": 17000,
+            "tokens_add": 3600 
+        },
+        "4": {
+            "buy_price": 36000,
+            "tokens_add": 4200 
+        },
+        
+        "5": {
+            "buy_price": 120000,
+            "tokens_add": 15000 
+        },
+        
+        "6": {
+            "buy_price": 280000,
+            "tokens_add": 25000 
+        },
+        
+        "7": {
+            "buy_price": 570000,
+            "tokens_add": 43000 
+        },
+        
+        "8": {
+            "buy_price": 1200000,
+            "tokens_add": 65000 
+        },
+        
+        "9": {
+            "buy_price": 3700000,
+            "tokens_add": 120000 
+        },
+        
+        "10": {
+            "buy_price": 10000000,
+            "tokens_add": 200000
+        },
+        
+        "11": {
+            "buy_price": 12000,
+            "tokens_add": 1000 
+        },
+        
+        "12": {
+            "buy_price": 12000,
+            "tokens_add": 1000 
+        },
+        
+        "13": {
+            "buy_price": 12000,
+            "tokens_add": 1000 
+        },
+        
+        "14": {
+            "buy_price": 12000,
+            "tokens_add": 1000
+        },
+        
+        "15": {
+            "buy_price": 12000,
+            "tokens_add": 1000
+        },
+        
+        "16": {
+            "buy_price": 12000,
+            "tokens_add": 1000 
+        },
+        
+        "17": {
+            "buy_price": 12000,
+            "tokens_add": 1000
+        },
+        
+        "18": {
+            "buy_price": 12000,
+            "tokens_add": 1000 
+        },
+        
+        "19": {
+            "buy_price": 12000,
+            "tokens_add": 1000 
+        },
+        
+        "20": {
+            "buy_price": 12000,
+            "tokens_add": 1000 
+        }
+    },
+    "buy_miner": {
+        "2": 100000,
+        "3": 5000000,
+        "4": 70000000
+    }
+}

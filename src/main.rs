@@ -6,7 +6,8 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use std::collections::HashMap;
 use serde_json::Value;
 use tokio::sync::Mutex;
-
+use std::fs::File;
+use std::io::BufReader;
 use sha2::{Sha256, Digest};
 use hex::encode;
 
@@ -34,7 +35,7 @@ struct UserData {
     last_name: Option<String>,
     register_in_game: f64,
     vault: u8,
-    upgrades: HashMap<String, String>
+    upgrades: HashMap<String, u8>
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -59,6 +60,7 @@ struct AppState {
     datauser_collection: mongodb::Collection<UserData>,
     referal_collection: mongodb::Collection<ReferalData>,
     vault_size_constant: HashMap<u8, u32>,
+    upgrades_constant: Config
 }
 
 #[derive(Debug, Serialize)]
@@ -425,54 +427,99 @@ async fn claim_tokens(
 
 #[derive(Debug, Deserialize, Serialize)]
 struct UpdateData {
-    id: String,
+    _id: String,
     type_update: String,
     id_update: String
 }
-//upgardes: {"miner_1": 12, "miner_2": 3}
+// USER DATA
+// {"miner_1": 12, "miner_2": 3, "miner_3": 2, "miner_4": 1}
 
-// async fn update(
-//     state: web::Data<Mutex<AppState>>, 
-//     data: web::Json<UpdateData>>
-// ) -> impl Responder {
-//     // Запрос на повышение уровня на 1 единицу некоторого объекта
+// UPGARDE DATA
+// {"miner": 1: {"buy_price": 13121}}
+
+async fn update(
+    state: web::Data<Mutex<AppState>>, 
+    data: web::Json<UpdateData>
+) -> impl Responder {
+    // data.type_update => miner, vault
+    // data.id_update => miner_1, miner_2.. vault_main - значения созхранены в бд user_data
+
+    // Запрос на повышение уровня на 1 единицу некоторого объекта
+    let state = state.lock().await;
+    // Получение данных пользователя по его id (USER DATA)
+    let data_user = match state.datauser_collection.find_one(doc! { "_id": &data._id }, None).await {
+        Ok(Some(d)) => d,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+    // Получение текущего уровня объекта
+    // let last_level_upgrade = data_user.upgrades.get(&data.id_update) + 1;
+
+    let last_level_upgrade = match data_user.upgrades.get(&data.id_update) {
+        Some(level) => (level + 1).to_string(),
+        None => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        } 
+    };
+
+    // // Получение данных что нужно для следюущего уровня
+    let new_level_data = if &data.type_update == "miner" {
+        Some(state.upgrades_constant.miner.get(&last_level_upgrade).unwrap())
+    } else {
+        None
+    };
+
+    let mut token_data = match state.token_collection.find_one(doc! { "_id": &data._id }, None).await {
+        Ok(Some(d)) => d,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+
+    if token_data.oxi_tokens_value < new_level_data.unwrap().buy_price {
+        let error = ErrorResponse { error: "Insufficient balance".to_string() };
+        return HttpResponse::BadRequest().json(error);
+    } 
     
-//     // Получение данных пользователя по его id
-//     let data_user = match state.datauser_collection.find_one(doc! { "_id": &data.id }, None).await {
-//         Ok(Some(d)) => d,
-//         Ok(None) => {
-//             let error = ErrorResponse { error: "User not found".to_string() };
-//             return HttpResponse::NotFound().json(error);
-//         }
-//         Err(_) => {
-//             let error = ErrorResponse { error: "Database query failed".to_string() };
-//             return HttpResponse::InternalServerError().json(error);
-//         }
-//     };
-//     // Получение текущего уровня объекта
-//     last_level = data_user.upgrades.get(data.type_update);
-//     // Получение данных что нужно для следюущего уровня
-//     new_level_data = state.
-
-//     let data_user = match state.token_collection.find_one(doc! { "_id": &data.id }, None).await {
-//         Ok(Some(d)) => d,
-//         Ok(None) => {
-//             let error = ErrorResponse { error: "User not found".to_string() };
-//             return HttpResponse::NotFound().json(error);
-//         }
-//         Err(_) => {
-//             let error = ErrorResponse { error: "Database query failed".to_string() };
-//             return HttpResponse::InternalServerError().json(error);
-//         }
-//     };
-
-//     if data_user.oxi_tokens_value < new_level_data.level_up_value {
-//         let error = ErrorResponse { error: "Insufficient balance".to_string() };
-//         return HttpResponse:BadRequest().json(error);
-//     } 
+    token_data.oxi_tokens_value -= new_level_data.unwrap().buy_price;
+    token_data.tokens_hour += new_level_data.unwrap().tokens_add;
 
 
-// }
+    HttpResponse::Ok().json(token_data)
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct MinerConfig {
+    buy_price: u64,
+    tokens_add: u64,
+}
+
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Config {
+    miner: HashMap<String, MinerConfig>,
+    buy_miner: HashMap<String, u64>
+}
+
+
+fn load_config(file_path: &str) -> Result<Config, Box<dyn std::error::Error>> {
+    let file = File::open(file_path)?;
+    let reader = BufReader::new(file);
+    let config = serde_json::from_reader(reader)?;
+    Ok(config)
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -491,12 +538,21 @@ async fn main() -> std::io::Result<()> {
         (5, 450000), (6, 800000), (7, 1600000), 
         (8, 3500000), (9, 5000000), (10, 10000000)
     ]);
+    
+    let upgrades_constant = match load_config("config/config.json") {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("Error loading config: {}", e);
+            panic!("Fail load config");
+        } 
+    };
 
     let state = web::Data::new(Mutex::new(AppState { 
         token_collection, 
         datauser_collection, 
         referal_collection,
-        vault_size_constant 
+        vault_size_constant,
+        upgrades_constant
     }));
 
     HttpServer::new(move || {
