@@ -934,7 +934,7 @@ html, body {
 .button-switch {
     width: 30%;
     height: 80%;
-    background-color: #0084ff;
+    background-color: #0562f8;
     border-radius: 10px;
     margin-left: 1%;
     border: 1px solid #00abfa;
@@ -949,7 +949,7 @@ html, body {
 }
 
 .button-switch:active {
-    background-color: #5aabf7;
+    background-color: #003afa;
 }
 
 .main-text-upgrades-in {
@@ -1026,10 +1026,26 @@ html, body {
     z-index: 999;
     justify-content: center;
     align-items: center;
+    background-color: rgba(0,0,0,0.7);
 }
 
 .menu-to-confirm-upgrarde {
-    width: 70%;
+    width: 65%;
     height: 50%;
     background-color: #003afa;
+    clip-path: polygon(0% 10%, 10% 0%, 100% 0%, 100% 90%, 90% 100%, 0% 100%);
+    /* border-radius: 20px; */
+    position: relative;
 }
+.menu-to-confirm-upgrarde::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #4caf50;
+    clip-path: polygon(0% 10%, 10% 0%, 100% 0%, 100% 90%, 90% 100%, 0% 100%);
+    box-sizing: border-box;
+    z-index: -1;
+  }
