@@ -1006,6 +1006,7 @@ html, body {
 }
 
 .hidden {
+    display: flex;
     position: absolute;
     width: 50%;
     height: 50%;
