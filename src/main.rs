@@ -450,6 +450,7 @@ async fn update(
     // data.id_update => miner_1, miner_2.. vault_main - значения созхранены в бд user_data
 
     // Запрос на повышение уровня на 1 единицу некоторого объекта
+    
     let state = state.lock().await;
     let id = data._id.to_string();
     // Получение данных пользователя по его id (USER DATA)
@@ -467,7 +468,7 @@ async fn update(
 
     // Получение текущего уровня объекта + 1
     let new_level_upgrade = match data_user.upgrades.get(&data.id_update) {
-        Some(level) => (level + 1).to_string(),
+        Some(level) => level,
         None => {
             let error = ErrorResponse { error: "User not found".to_string() };
             return HttpResponse::NotFound().json(error);
@@ -476,7 +477,7 @@ async fn update(
 
     // // Получение данных что нужно для следюущего уровня
     let new_level_data = if &data.type_update == "miner" {
-        Some(state.upgrades_constant.miner.get(&new_level_upgrade).unwrap())
+        Some(state.upgrades_constant.miner.get(&((new_level_upgrade + 1).to_string())).unwrap())
     } else {
         None
     };
@@ -501,6 +502,18 @@ async fn update(
     token_data.oxi_tokens_value -= new_level_data.unwrap().buy_price;
     token_data.tokens_hour += new_level_data.unwrap().tokens_add;
 
+    let new_level_data = if &data.type_update == "miner" {
+        Some(state.upgrades_constant.miner.get(&((new_level_upgrade + 2).to_string())).unwrap())
+    } else {
+        None
+    };
+
+    let mut dynamic_data = HashMap::new();
+    dynamic_data.insert(data.id_update.to_string(), (new_level_upgrade + 1).to_string());
+    dynamic_data.insert("new_update_price".to_string(), new_level_data.unwrap().buy_price.to_string());
+    dynamic_data.insert("new_update_tokens_add".to_string(), new_level_data.unwrap().tokens_add.to_string());
+
+    token_data.dynamic_fields = Some(dynamic_data);
 
     HttpResponse::Ok().json(token_data)
 }
