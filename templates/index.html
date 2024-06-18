@@ -102,7 +102,7 @@
                                 </div>
                             </div> -->
                             
-                            <div class="upgrade-text">Улучшить</div>
+                            <div class="upgrade-text", id='upgrade-button-module'>Улучшить</div>
                         </div>
                         <!-- <div class="arrow-right">
                             <div class="last-value-mine">
@@ -163,6 +163,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div id="confirmationMenu", class="hidden1">
+   
         </div>
     </section>
 
@@ -307,7 +310,7 @@
                 dataContainer.textContent = result['oxi_tokens_value'].toLocaleString('en-US');
                 priceDiv.textContent = result['dynamic_fields']['new_update_price'];
                 tokensAdd.textContent =  result['dynamic_fields']['new_update_tokens_add'];
-                level.textContent = "lvl" + result['dynamic_fields'][id];
+                level.textContent = "lvl " + result['dynamic_fields'][id];
             } catch (error) {
                 console.log("Error: ", error);
             }
@@ -400,8 +403,6 @@
                     counterElement.textContent = currentCount.toLocaleString('en-US');
                     if (progress < 1) {
                         requestAnimationFrame(updateCounter);
-                    } else {
-                        console.log('Анимация завершена');
                     }
                 }
                 requestAnimationFrame(updateCounter);
@@ -409,6 +410,13 @@
             const duration = 800;
             animateCounter(parseNumber(counterElement.textContent), targetCount, duration);
         };
+
+        document.getElementById('upgrade-button-module').addEventListener('click', () => {
+            const counterElement = document.getElementById('confirmationMenu');
+            counterElement.classList.remove('hidden1');
+            confirmationMenu.classList.add('hidden');
+        });
+
     </script>  
 </body>
 </html>

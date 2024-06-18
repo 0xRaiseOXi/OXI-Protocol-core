@@ -1000,3 +1000,15 @@ html, body {
 .mine-text {
     margin-right: 3%;
 }
+
+.hidden1 {
+    display: none;
+}
+
+.hidden {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    background-color: #ffffff;
+    z-index: 999;
+}
