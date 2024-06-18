@@ -25,8 +25,10 @@
             <div class="progress-container">
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
-            <div class="vault-text">
-                Хранилище
+            <div class="vault-text-container">
+                <div class="vault-text", id="vault-text">
+                    <div id="vault-text-main">Хранилище</div>
+                </div>
             </div>
             <div class="vault-level">lvl 1</div>
             <div class="tokens-value-vault">
@@ -166,7 +168,7 @@
             </div>
         </div>
         <div id="confirmationMenu", class="hidden1">
-   
+            <div class="menu-to-confirm-upgrarde"></div>
         </div>
     </section>
 
@@ -284,6 +286,7 @@
                 document.body.removeChild(tempTextArea);
                 alert('Текст скопирован в буфер обмена!');
             });
+            load_text();
             Telegram.WebApp.ready();
         });
         
@@ -416,6 +419,23 @@
             const counterElement = document.getElementById('confirmationMenu');
             counterElement.classList.remove('hidden1');
             confirmationMenu.classList.add('hidden');
+        }
+
+        function load_text() {
+            const vault = document.getElementById('vault-text');
+            const vaultText = document.getElementById('vault-text-main');
+            fitTextToContainer(vault, vaultText);
+        }
+
+        function fitTextToContainer(container, textElement) {
+            let containerHeight = container.clientHeight;
+            let containerWidth = container.clientWidth;
+            let fontSize = parseInt(window.getComputedStyle(textElement, null).getPropertyValue('font-size'));
+
+            while ((textElement.scrollHeight > containerHeight || textElement.scrollWidth > containerWidth) && fontSize > 0) {
+                fontSize--;
+                textElement.style.fontSize = fontSize + 'px';
+            }
         }
 
     </script>  
