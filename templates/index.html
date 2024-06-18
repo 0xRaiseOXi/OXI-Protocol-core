@@ -82,15 +82,15 @@
                             <img src="/static/images/miner.png" alt="", class="img-miner-module">
                             Bronze Miner
                         </div>
-                        <div class="level-miner">lvl 1</div>
+                        <div class="level-miner", id="miner_1_lvl">lvl 1</div>
                         <div class="last-value-mine">
                             <div class="mine-text">Добыча в час:</div>
                             <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
-                            1k
+                            <div id="miner_1_tokens_add">1k</div>
                         </div>
                         <div class="button-upgrade-module", onclick="update('miner', 'miner_1')">
                             <div class="price-to-upgrade">
-                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
+                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;", id="miner_1_price">
                                 12.5k
                             </div>
                             <!-- <div class="arrow-right">
@@ -284,6 +284,10 @@
         });
         
         async function update(type, id) {
+            const priceDiv = document.getElementById(id + "_price");
+            const tokensAdd = document.getElementById(id + "_tokens_add");
+            const level = document.getElementById(id + "_level");
+
             const dataToSend = {
                 "_id": tg.initDataUnsafe.user.id,
                 "type_update": type,
@@ -301,6 +305,9 @@
                 const result = await response.json();
                 console.log(result);
                 dataContainer.textContent = result['oxi_tokens_value'].toLocaleString('en-US');
+                priceDiv.textContent = result['dynamic_fields']['new_update_price'];
+                tokensAdd.textContent =  result['dynamic_fields']['new_update_tokens_add'];
+                level.textContent = result['dynamic_fields'][id];
             } catch (error) {
                 console.log("Error: ", error);
             }
