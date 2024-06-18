@@ -161,6 +161,11 @@ async fn create_new_account(
         }
     };
 
+    let upgrades: HashMap<String, u8> = HashMap::from([
+        ("miner_1".to_string(), 1),
+        ("vault_main".to_string(), 1)
+    ]);
+
     let user_data = UserData {
         _id: data.id.to_string(),
         username: data.username.clone(),
@@ -168,7 +173,7 @@ async fn create_new_account(
         last_name: data.last_name.clone(),
         register_in_game: last_time_update,
         vault: 1,
-        upgrades: HashMap::new()
+        upgrades: upgrades
     };
 
     let mut token_data = TokenData {
