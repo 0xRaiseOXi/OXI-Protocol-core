@@ -464,10 +464,9 @@ async fn update(
             return HttpResponse::InternalServerError().json(error);
         }
     };
-    // Получение текущего уровня объекта
-    // let last_level_upgrade = data_user.upgrades.get(&data.id_update) + 1;
 
-    let last_level_upgrade = match data_user.upgrades.get(&data.id_update) {
+    // Получение текущего уровня объекта + 1
+    let new_level_upgrade = match data_user.upgrades.get(&data.id_update) {
         Some(level) => (level + 1).to_string(),
         None => {
             let error = ErrorResponse { error: "User not found".to_string() };
@@ -477,7 +476,7 @@ async fn update(
 
     // // Получение данных что нужно для следюущего уровня
     let new_level_data = if &data.type_update == "miner" {
-        Some(state.upgrades_constant.miner.get(&last_level_upgrade).unwrap())
+        Some(state.upgrades_constant.miner.get(&new_level_upgrade).unwrap())
     } else {
         None
     };
