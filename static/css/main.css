@@ -173,7 +173,7 @@ html, body {
     position: relative;
     display: flex;
     align-items: center;
-    border: 1px solid #f18202;
+    margin-right: 7%;
 }
 
 .main-menu-buttons {
