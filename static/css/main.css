@@ -161,7 +161,7 @@ html, body {
     justify-content: center;
     align-items: center;
     border-right: 2px solid #ffffff;
-    padding-left: 11%;
+    padding-left: 15%;
 }
 
 .vault-text {
@@ -173,7 +173,7 @@ html, body {
     position: relative;
     display: flex;
     align-items: center;
-    padding-left: 10%;
+    border: 1px solid #f18202;
 }
 
 .main-menu-buttons {

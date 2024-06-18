@@ -275,18 +275,8 @@
                 }
             });
             setInterval(vault_update, 1000);
-
-            document.getElementById('copyDiv').addEventListener('click', function() {
-                const tempTextArea = document.createElement('textarea');
-                tempTextArea.value = document.getElementById('textToCopy').textContent;
-                document.body.appendChild(tempTextArea);
-                tempTextArea.select();
-                tempTextArea.setSelectionRange(0, 99999); 
-                document.execCommand('copy');
-                document.body.removeChild(tempTextArea);
-                alert('Текст скопирован в буфер обмена!');
-            });
             load_text();
+            
             Telegram.WebApp.ready();
         });
         
