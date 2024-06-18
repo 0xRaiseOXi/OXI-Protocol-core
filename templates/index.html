@@ -299,6 +299,7 @@
                     body: JSON.stringify(dataToSend)
                 });
                 const result = await response.json();
+                console.log(result);
                 dataContainer.textContent = result['oxi_tokens_value'].toLocaleString('en-US');
             } catch (error) {
                 console.log("Error: ", error);
