@@ -162,7 +162,12 @@
         </div>
         <div id="overlay", class="overlay">
             <div class="menu-to-confirm-upgrarde">
+                <div id="close-menu-upgrade">
+                    <img src="/static/images/krestic.png" alt="", style="width:100%;height:100%;object-fit:cover;">
+                </div>
+                <div class="text-upgrade-menu">Улучшение</div>
                 <div class="confirm-update-button"></div>
+    
             </div>
         </div>
     </section>
@@ -274,12 +279,19 @@
 
             const menuButton = document.getElementById("upgrade-menu-button");
             const overlay = document.getElementById("overlay");
+            const closeOverlay = document.getElementById("close-menu-upgrade");
 
             menuButton.addEventListener("click", () => {
                 overlay.style.display = "flex";
             });
 
             overlay.addEventListener("click", (event) => {
+                if (event.target === overlay) {
+                    overlay.style.display = "none";
+                }
+            });
+
+            closeOverlay.addEventListener("click", (event) => {
                 if (event.target === overlay) {
                     overlay.style.display = "none";
                 }
