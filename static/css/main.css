@@ -500,6 +500,13 @@ html, body {
     bottom: 5%;
 }
 
+.league-text {
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out;
+}
+.league-text:hover {
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 15px 20px rgba(0, 0, 0, 0.2);
+  }
 /* .container-upgrades {
     background-color: #152133;
     width: 100%;
@@ -1067,7 +1074,7 @@ html, body {
     position: absolute;
     width: 20%;
     height: 12%;
-    right: 1%;
+    right: 0;
     border-left: 4px solid #ffffff;
     border-bottom: 4px solid #ffffff;
     border-bottom-left-radius: 20px;
