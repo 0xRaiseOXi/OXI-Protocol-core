@@ -290,10 +290,8 @@
                 }
             });
 
-            closeOverlay.addEventListener("click", (event) => {
-                if (event.target === overlay) {
-                    overlay.style.display = "none";
-                }
+            closeOverlay.addEventListener("click", () => {
+                overlay.style.display = "none";
             });
             
             Telegram.WebApp.ready();
