@@ -325,6 +325,7 @@
                 priceDiv.textContent = result['dynamic_fields']['new_update_price'];
                 tokensAdd.textContent =  result['dynamic_fields']['new_update_tokens_add'];
                 level.textContent = "lvl " + result['dynamic_fields'][id];
+                document.getElementById("overlay").style.display = "none";
             } catch (error) {
                 console.log("Error: ", error);
             }
