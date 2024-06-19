@@ -62,13 +62,6 @@
 
 
     <section class="container-upgrades content-section-show", id="section-upgrades", style="display: none;">
-        <!-- <div class="main-text-tokens-upgrades">
-            <div id="data-in-load-tokens", class="data-in-load-tokens">
-                <img src="/static/images/moneta.png" alt="", class="moneta-main-balance">
-                <div id="main-balance">100,000,000</div>
-            </div>
-            <div id="main-balance-add-hour">+1M/hour</div>
-        </div> -->
         <div class="main-text-upgrades-in">Улучшения</div>
         <div class="content-container-upgrades">
             <div class="navbar-module-update">
@@ -91,7 +84,7 @@
                             <div id="miner_1_tokens_add">1k</div>
                         </div>
                         <!-- <div class="button-upgrade-module", onclick="update('miner', 'miner_1')"> -->
-                        <div class="button-upgrade-module", onclick="showA()">
+                        <div class="button-upgrade-module", id="upgrade-menu-button">
                             <div class="price-to-upgrade">
                                 <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;", id="miner_1_price">
                                 <div class="miner_1_price">12.5k</div>
@@ -167,9 +160,9 @@
                 </div>
             </div>
         </div>
-        <div id="confirmationMenu", class="hidden1">
+        <div id="overlay", class="overlay">
             <div class="menu-to-confirm-upgrarde">
-                <div class="border-left"></div>
+                <div class="confirm-update-button"></div>
             </div>
         </div>
     </section>
@@ -279,6 +272,19 @@
             setInterval(vault_update, 1000);
             load_text();
 
+            const menuButton = document.getElementById("upgrade-menu-button");
+            const overlay = document.getElementById("overlay");
+
+            menuButton.addEventListener("click", () => {
+                overlay.style.display = "flex";
+            });
+
+            overlay.addEventListener("click", (event) => {
+                if (event.target === overlay) {
+                    overlay.style.display = "none";
+                }
+            });
+            
             Telegram.WebApp.ready();
         });
         
