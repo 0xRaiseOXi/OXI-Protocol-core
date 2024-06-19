@@ -1020,7 +1020,7 @@ html, body {
     position: absolute;
     width: 100%;
     height: 100%;
-    z-index: 999;
+    z-index: 998;
     justify-content: center;
     align-items: center;
     background-color: rgba(0,0,0,0.3);
@@ -1060,17 +1060,20 @@ html, body {
     bottom: 5%;
     background-color: #003afa;
     border-radius: 20px;
+    cursor: pointer;
 }
 
 #close-menu-upgrade {
     position: absolute;
     width: 20%;
     height: 12%;
-    right: 0;
+    right: 1%;
     border-left: 4px solid #ffffff;
     border-bottom: 4px solid #ffffff;
     border-bottom-left-radius: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 999;
+    cursor: pointer;
 }
