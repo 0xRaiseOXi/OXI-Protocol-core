@@ -394,12 +394,12 @@
             const vault_size = data_local['dynamic_fields']['vault_size'];
             const percentage = Math.trunc(added_tokens / vault_size * 100);
             
-            if (percentage > 80) {
+            if (percentage < 80) {
                 button.style.backgroundColor = "#454546";
             } else {
                 button.style.backgroundColor = "#0562f8";
             }
-            
+
             vault.textContent = vault_size;
             if (added_tokens < vault_size) {
                 if (added_tokens < 0) {
