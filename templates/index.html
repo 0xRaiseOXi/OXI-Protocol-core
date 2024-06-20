@@ -237,14 +237,11 @@
         const counterVault = document.getElementById('tokens-value-vault');
         const dataContainer = document.getElementById('main-balance');
         const referalsValue = document.getElementById('referals-value');
-
-        // const url = "https://oxiprotocol.ru/";
-        const url = "http://127.0.0.1:8081";
-
+ 
         document.addEventListener("DOMContentLoaded", async () => {
             async function sendDataToServer(dataToSend) {
                 try {
-                    const response = await fetch(url + '/api/data', {
+                    const response = await fetch('https://oxiprotocol.ru/api/data', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -271,7 +268,7 @@
             }
 
             claimTokensButton.addEventListener('click', async () => {
-                const url = `${url}/claim_tokens?${tg.initData}`;
+                const url = `https://oxiprotocol.ru/claim_tokens?${tg.initData}`;
                 try {
                     const response = await fetch(url);
                     if (!response.ok) {
@@ -325,7 +322,7 @@
             };
             console.log(dataToSend);
             try {
-                const response = await fetch(url + '/api/update', {
+                const response = await fetch('https://oxiprotocol.ru/api/update', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
