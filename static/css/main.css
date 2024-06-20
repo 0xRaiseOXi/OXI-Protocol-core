@@ -1081,7 +1081,7 @@ html, body {
     z-index: 999;
     cursor: pointer;
 }
-
+/* 
 .upgrade-to-new {
     display: flex;
     position: absolute;
@@ -1131,4 +1131,4 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-}
+} */
