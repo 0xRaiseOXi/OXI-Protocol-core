@@ -4,13 +4,12 @@ use mongodb::{Client, options::ClientOptions, bson::{doc, Bson}};
 use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::collections::HashMap;
-use serde_json::Value;
 use tokio::sync::Mutex;
 use std::fs::File;
 use std::io::BufReader;
 use sha2::{Sha256, Digest};
 use hex::encode;
-use serde_json::json;
+
 
 fn generate_invite_code(id: String) -> String {
     let mut hasher = Sha256::new();
@@ -29,39 +28,68 @@ fn generate_invite_code(id: String) -> String {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-struct UserData {
+struct TokenData {
     _id: String,
     username: Option<String>,
     first_name: Option<String>,
     last_name: Option<String>,
     register_in_game: f64,
-    vault: u8,
-    upgrades: HashMap<String, u8>
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-struct TokenData {
-    _id: String,
+    upgrades: HashMap<String, u8>,
     language: String,
     oxi_tokens_value: u64,
     last_time_update: f64,
     tokens_hour: u64,
-    dynamic_fields: Option<HashMap<String, String>>,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-struct ReferalData {
-    _id: String,
     referal_code: String,
     referals: Vec<String>,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+struct AddData {
+    added_tokens: u64,
+    vault_use: u8,
+    vault_size: u32,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct MainResponse {
+    _id: String,
+    username: Option<String>,
+    upgrades: HashMap<String, u8>,
+    oxi_tokens_value: u64,
+    last_time_update: f64,
+    tokens_hour: u64,
+    referal_code: String,
+    referals: Vec<String>,
+    added_tokens: u64,
+    vault_use: u8,
+    vault_size: u32,
+    referals_value: String,
+}
+
+impl TokenData {
+    fn build_response(&self, add_data: AddData) -> MainResponse {
+        MainResponse {
+            _id: self._id.clone(),
+            username: self.username.clone(),
+            upgrades: self.upgrades.clone(),
+            oxi_tokens_value: self.oxi_tokens_value,
+            last_time_update: self.last_time_update,
+            tokens_hour: self.tokens_hour,
+            referal_code: self.referal_code.clone(),
+            referals: self.referals.clone(),
+            added_tokens: add_data.added_tokens,
+            vault_use: add_data.vault_use,
+            vault_size: add_data.vault_size,
+            referals_value: self.referals.len().to_string()
+        }
+    }
+}
+
 struct AppState {
     token_collection: mongodb::Collection<TokenData>,
-    datauser_collection: mongodb::Collection<UserData>,
-    referal_collection: mongodb::Collection<ReferalData>,
     vault_size_constant: HashMap<u8, u32>,
-    upgrades_constant: Config
+    upgrades_constant: Config,
+    password: String
 }
 
 #[derive(Debug, Serialize)]
@@ -101,20 +129,12 @@ impl AppState {
             Ok(None) => return Err(UpdateError::NotFound),
             Err(_) => return Err(UpdateError::DatabaseError),
         };
-    
-        let data_result = self.datauser_collection.find_one(filter.clone(), None).await;
-        let data_user_2 = match data_result {
-            Ok(Some(doc)) => doc,
-            Ok(None) => return Err(UpdateError::NotFound),
-            Err(_) => return Err(UpdateError::DatabaseError),
-        };
-
-        let last_time_update = data.last_time_update;
+        
         let current_time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs_f64();
-        let time_difference = current_time - last_time_update;
+        let time_difference = current_time - data.last_time_update;
         let time_difference_in_hours = time_difference / 3600.0;
         let added_tokens = (time_difference_in_hours * 1000.0) as u64;
-        let vault_size = self.vault_size_constant[&data_user_2.vault] as u64;
+        let vault_size = self.vault_size_constant[&data.upgrades.get("vault_main").unwrap()] as u64;
     
         if added_tokens > vault_size {
             return Ok(vault_size);
@@ -129,30 +149,30 @@ async fn index() -> impl Responder {
 }
 
 async fn create_new_account(
-    state: web::Data<Mutex<AppState>>, 
+    guard: web::Data<Mutex<AppState>>, 
     data: web::Json<POSTRequest>
 ) -> impl Responder {
+    let state = guard.lock().await;
 
-    let password = "123";
-    if data.password != password {
+    if data.password != state.password {
         let error = ErrorResponse { error: "Auth error".to_string() };
         return HttpResponse::BadRequest().json(error);
     }
 
-    let state = state.lock().await;
-
-    let result = state.token_collection.count_documents(doc! {"_id": data.id.to_string()}, None).await;
-    let count = match result {
-        Ok(count) => count,
+    match state.token_collection.count_documents(doc! {"_id": data.id.to_string()}, None).await {
+        Ok(count) => {
+            if count > 0 {
+                let error = ErrorResponse { error: "User already register".to_string() };
+                return HttpResponse::BadRequest().json(error);
+            }
+            count
+        }
         Err(e) => {
             eprintln!("Failed to count documents: {:?}", e);
-            return HttpResponse::InternalServerError().body("Internal Server Error");
+            let error = ErrorResponse { error: "Internal Server Error".to_string() };
+            return HttpResponse::InternalServerError().json(error);
         }
     };
-
-    if count > 0 {
-        return HttpResponse::Ok().body("{'code':0,'msg':'User already register'}");
-    }
 
     let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(duration) => duration.as_secs_f64(),
@@ -167,27 +187,17 @@ async fn create_new_account(
         ("vault_main".to_string(), 1)
     ]);
 
-    let user_data = UserData {
+    let mut token_data = TokenData {
         _id: data.id.to_string(),
         username: data.username.clone(),
         first_name: data.first_name.clone(),
         last_name: data.last_name.clone(),
         register_in_game: last_time_update,
-        vault: 1,
-        upgrades: upgrades
-    };
-
-    let mut token_data = TokenData {
-        _id: data.id.to_string(),
+        upgrades: upgrades,
         language: data.language.clone(),
         oxi_tokens_value: 0,
         last_time_update: last_time_update,
         tokens_hour: 1000,
-        dynamic_fields: None
-    };
-
-    let referal_data = ReferalData {
-        _id: data.id.to_string(),
         referal_code: generate_invite_code(data.id.to_string()),
         referals: Vec::new(),
     };
@@ -196,13 +206,13 @@ async fn create_new_account(
         // Извлечение значения referal_code
         Some(referal_code_from_data) => {
             // Поиск рефераловода
-            match state.referal_collection.find_one(doc! { "referal_code": referal_code_from_data }, None).await {
+            match state.token_collection.find_one(doc! { "referal_code": referal_code_from_data }, None).await {
                 Ok(Some(mut d)) => {
                     // Новый реферал, добавление его id
                     d.referals.push(data.id.to_string());
                     // Подготовка данных для обновления
                     let update_doc = doc! { "$set": { "referals": &d.referals } };
-                    match state.referal_collection.update_one(doc! { "referal_code": referal_code_from_data }, update_doc, None).await {
+                    match state.token_collection.update_one(doc! { "referal_code": referal_code_from_data }, update_doc, None).await {
                         Ok(_) => {}
                         Err(_) => {
                             let error = ErrorResponse { error: "Failed to update document".to_string() };
@@ -246,7 +256,6 @@ async fn create_new_account(
         }
         None => {}
     };
-
     match state.token_collection.insert_one(token_data, None).await {
         Ok(_) => {},
         Err(err) => {
@@ -255,60 +264,17 @@ async fn create_new_account(
             return HttpResponse::InternalServerError().json(error);
         }
     };
-
-    match state.datauser_collection.insert_one(user_data, None).await {
-        Ok(_) => {},
-        Err(err) => {
-            println!("{}", err);
-            let error = ErrorResponse { error: "Failed to insert data in database".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
-
-    match state.referal_collection.insert_one(referal_data, None).await {
-        Ok(_) => {},
-        Err(err) => {
-            println!("{}", err);
-            let error = ErrorResponse { error: "Failed to insert data in database".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
-
     HttpResponse::Ok().body("{'code':1,'msg':'OK'}")
 }
 
 async fn get_data(
-    state: web::Data<Mutex<AppState>>, 
+    guard: web::Data<Mutex<AppState>>, 
     query: web::Json<QueryUserData>
 ) -> impl Responder {
     let id = query.id.to_string();
+    let state = guard.lock().await;
 
-    let state = state.lock().await;
-    let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
-        Ok(Some(d)) => d,
-        Ok(None) => {
-            let error = ErrorResponse { error: "User not found".to_string() };
-            return HttpResponse::NotFound().json(error);
-        }
-        Err(_) => {
-            let error = ErrorResponse { error: "Database query failed".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
-
-    let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
-        Ok(Some(d)) => d,
-        Ok(None) => {
-            let error = ErrorResponse { error: "User not found".to_string() };
-            return HttpResponse::NotFound().json(error);
-        }
-        Err(_) => {
-            let error = ErrorResponse { error: "Database query failed".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
-
-    let data_referal = match state.referal_collection.find_one(doc! { "_id": &id }, None).await {
+    let data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
         Ok(Some(d)) => d,
         Ok(None) => {
             let error = ErrorResponse { error: "User not found".to_string() };
@@ -328,145 +294,122 @@ async fn get_data(
         }
     };
 
-    let mut json_value = serde_json::to_value(&data)
-        .expect("Failed to convert data to serde_json::Value");
-    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
+    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()] as u64 * 100) as u8;
 
-    if let Some(obj) = json_value.as_object_mut() {
-        obj.insert("added_tokens".to_string(), json!(added_tokens));
-        obj.insert("vault_use".to_string(),  json!(vault_use));
-        obj.insert("vault_size".to_string(), json!(state.vault_size_constant[&data_user_improvements.vault]));
-        obj.insert("referal_code".to_string(), json!(data_referal.referal_code));
-        obj.insert("referals_value".to_string(), json!(data_referal.referals.len()));
-        obj.insert("upgrades".to_string(), json!(data_user_improvements.upgrades));
-    }
+    let add_add = AddData {
+        added_tokens: added_tokens,
+        vault_use: vault_use,
+        vault_size: state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()],
+    };
 
-    // Сериализуем json_value в JSON строку
-    let json_response = serde_json::to_string(&json_value)
-        .expect("Failed to serialize serde_json::Value to JSON string");
+    let response = data.build_response(add_add);
 
-    println!("{}", json_response);
-
-    // println!("{}", &data_referal.referal_code);
-    // let mut dynamic_data = HashMap::new();
-    // let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
-    // dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
-    // dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
-    // dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
-    // dynamic_data.insert("referal_code".to_string(), data_referal.referal_code);
-    // dynamic_data.insert("referals_value".to_string(), data_referal.referals.len().to_string());
-
-    // let upgrades_json = serde_json::json!(data_user_improvements.upgrades);
-    // dynamic_data.insert("upgrades".to_string(), upgrades_json.to_string());
-
-    // data.dynamic_fields = Some(dynamic_data);
-
-    HttpResponse::Ok().json(json_response)
+    HttpResponse::Ok().json(response)
 }
 
-async fn claim_tokens(
-    state: web::Data<Mutex<AppState>>, 
-    query: web::Query<HashMap<String, String>>
-) -> impl Responder {
-    let json_str = match query.get("user") {
-        Some(s) => s,
-        None => {
-            let error = ErrorResponse { error: "Missing 'user' query parameter".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
+// async fn claim_tokens(
+//     state: web::Data<Mutex<AppState>>, 
+//     query: web::Query<HashMap<String, String>>
+// ) -> impl Responder {
+//     let json_str = match query.get("user") {
+//         Some(s) => s,
+//         None => {
+//             let error = ErrorResponse { error: "Missing 'user' query parameter".to_string() };
+//             return HttpResponse::BadRequest().json(error);
+//         }
+//     };
 
-    let json_val: Value = match serde_json::from_str(json_str) {
-        Ok(val) => val,
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to parse JSON".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
+//     let json_val: Value = match serde_json::from_str(json_str) {
+//         Ok(val) => val,
+//         Err(_) => {
+//             let error = ErrorResponse { error: "Failed to parse JSON".to_string() };
+//             return HttpResponse::BadRequest().json(error);
+//         }
+//     };
 
-    let id = match json_val.get("id").and_then(|v| v.as_u64()) {
-        Some(id) => id.to_string(),
-        None => {
-            let error = ErrorResponse { error: "Missing or invalid 'id' in JSON".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
-    let state = state.lock().await;
+//     let id = match json_val.get("id").and_then(|v| v.as_u64()) {
+//         Some(id) => id.to_string(),
+//         None => {
+//             let error = ErrorResponse { error: "Missing or invalid 'id' in JSON".to_string() };
+//             return HttpResponse::BadRequest().json(error);
+//         }
+//     };
+//     let state = state.lock().await;
 
-    let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
-        Ok(Some(d)) => d,
-        Ok(None) => {
-            let error = ErrorResponse { error: "User not found".to_string() };
-            return HttpResponse::NotFound().json(error);
-        }
-        Err(_) => {
-            let error = ErrorResponse { error: "Database query failed".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
+//     let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
+//         Ok(Some(d)) => d,
+//         Ok(None) => {
+//             let error = ErrorResponse { error: "User not found".to_string() };
+//             return HttpResponse::NotFound().json(error);
+//         }
+//         Err(_) => {
+//             let error = ErrorResponse { error: "Database query failed".to_string() };
+//             return HttpResponse::InternalServerError().json(error);
+//         }
+//     };
 
-    let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
-        Ok(Some(d)) => d,
-        Ok(None) => {
-            let error = ErrorResponse { error: "User not found".to_string() };
-            return HttpResponse::NotFound().json(error);
-        }
-        Err(_) => {
-            let error = ErrorResponse { error: "Database query failed".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
+//     let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
+//         Ok(Some(d)) => d,
+//         Ok(None) => {
+//             let error = ErrorResponse { error: "User not found".to_string() };
+//             return HttpResponse::NotFound().json(error);
+//         }
+//         Err(_) => {
+//             let error = ErrorResponse { error: "Database query failed".to_string() };
+//             return HttpResponse::InternalServerError().json(error);
+//         }
+//     };
     
-    let added_tokens = match state.update_tokens_value_vault(&id).await {
-        Ok(tokens) => tokens,
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to update token values".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
+//     let added_tokens = match state.update_tokens_value_vault(&id).await {
+//         Ok(tokens) => tokens,
+//         Err(_) => {
+//             let error = ErrorResponse { error: "Failed to update token values".to_string() };
+//             return HttpResponse::InternalServerError().json(error);
+//         }
+//     };
 
-    data.oxi_tokens_value += added_tokens as u64;
-    let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(duration) => duration.as_secs_f64(),
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to get current time".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
-    data.last_time_update = last_time_update;
+//     data.oxi_tokens_value += added_tokens as u64;
+//     let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
+//         Ok(duration) => duration.as_secs_f64(),
+//         Err(_) => {
+//             let error = ErrorResponse { error: "Failed to get current time".to_string() };
+//             return HttpResponse::InternalServerError().json(error);
+//         }
+//     };
+//     data.last_time_update = last_time_update;
 
-    match state.token_collection.replace_one(doc! { "_id": &id }, &data, None).await {
-        Ok(_) => {}
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to replace data in database".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    }
+//     match state.token_collection.replace_one(doc! { "_id": &id }, &data, None).await {
+//         Ok(_) => {}
+//         Err(_) => {
+//             let error = ErrorResponse { error: "Failed to replace data in database".to_string() };
+//             return HttpResponse::InternalServerError().json(error);
+//         }
+//     }
 
-    // let mut json_value = serde_json::to_value(&data)?;
+//     // let mut json_value = serde_json::to_value(&data)?;
 
-    // let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
+//     // let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
 
-    // if let Some(obj) = json_value.as_object_mut() {
-    //     // obj.insert("additional_field1".to_string(), json!("Additional Value 1"));
-    //     obj.insert("added_tokens".to_string(), added_tokens.to_string());
-    //     obj.insert("vault_use".to_string(), vault_use.to_string());
-    //     obj.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
-    // }
+//     // if let Some(obj) = json_value.as_object_mut() {
+//     //     // obj.insert("additional_field1".to_string(), json!("Additional Value 1"));
+//     //     obj.insert("added_tokens".to_string(), added_tokens.to_string());
+//     //     obj.insert("vault_use".to_string(), vault_use.to_string());
+//     //     obj.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
+//     // }
 
-    // let json_response = serde_json::to_string(&json_value)?;
-    // println!("{}", json_response);
+//     // let json_response = serde_json::to_string(&json_value)?;
+//     // println!("{}", json_response);
 
-    let mut dynamic_data = HashMap::new();
-    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
-    dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
-    dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
-    dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
+//     let mut dynamic_data = HashMap::new();
+//     let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
+//     dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
+//     dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
+//     dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
 
-    data.dynamic_fields = Some(dynamic_data);
+//     data.dynamic_fields = Some(dynamic_data);
     
-    HttpResponse::Ok().json(data)
-}
+//     HttpResponse::Ok().json(data)
+// }
 
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -481,82 +424,82 @@ struct UpdateData {
 // UPGARDE DATA
 // {"miner": 1: {"buy_price": 13121}}
 
-async fn update(
-    state: web::Data<Mutex<AppState>>, 
-    data: web::Json<UpdateData>
-) -> impl Responder {
-    // data.type_update => miner, vault
-    // data.id_update => miner_1, miner_2.. vault_main - значения созхранены в бд user_data
+// async fn update(
+//     state: web::Data<Mutex<AppState>>, 
+//     data: web::Json<UpdateData>
+// ) -> impl Responder {
+//     // data.type_update => miner, vault
+//     // data.id_update => miner_1, miner_2.. vault_main - значения созхранены в бд user_data
 
-    // Запрос на повышение уровня на 1 единицу некоторого объекта
+//     // Запрос на повышение уровня на 1 единицу некоторого объекта
     
-    let state = state.lock().await;
-    let id = data._id.to_string();
-    // Получение данных пользователя по его id (USER DATA)
-    let data_user = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
-        Ok(Some(d)) => d,
-        Ok(None) => {
-            let error = ErrorResponse { error: "User not found".to_string() };
-            return HttpResponse::NotFound().json(error);
-        }
-        Err(_) => {
-            let error = ErrorResponse { error: "Database query failed".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
+//     let state = state.lock().await;
+//     let id = data._id.to_string();
+//     // Получение данных пользователя по его id (USER DATA)
+//     let data_user = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
+//         Ok(Some(d)) => d,
+//         Ok(None) => {
+//             let error = ErrorResponse { error: "User not found".to_string() };
+//             return HttpResponse::NotFound().json(error);
+//         }
+//         Err(_) => {
+//             let error = ErrorResponse { error: "Database query failed".to_string() };
+//             return HttpResponse::InternalServerError().json(error);
+//         }
+//     };
 
-    // Получение текущего уровня объекта + 1
-    let new_level_upgrade = match data_user.upgrades.get(&data.id_update) {
-        Some(level) => level,
-        None => {
-            let error = ErrorResponse { error: "User not found".to_string() };
-            return HttpResponse::NotFound().json(error);
-        } 
-    };
+//     // Получение текущего уровня объекта + 1
+//     let new_level_upgrade = match data_user.upgrades.get(&data.id_update) {
+//         Some(level) => level,
+//         None => {
+//             let error = ErrorResponse { error: "User not found".to_string() };
+//             return HttpResponse::NotFound().json(error);
+//         } 
+//     };
 
-    // // Получение данных что нужно для следюущего уровня
-    let new_level_data = if &data.type_update == "miner" {
-        Some(state.upgrades_constant.miner.get(&((new_level_upgrade + 1).to_string())).unwrap())
-    } else {
-        None
-    };
+//     // // Получение данных что нужно для следюущего уровня
+//     let new_level_data = if &data.type_update == "miner" {
+//         Some(state.upgrades_constant.miner.get(&((new_level_upgrade + 1).to_string())).unwrap())
+//     } else {
+//         None
+//     };
 
-    let mut token_data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
-        Ok(Some(d)) => d,
-        Ok(None) => {
-            let error = ErrorResponse { error: "User not found".to_string() };
-            return HttpResponse::NotFound().json(error);
-        }
-        Err(_) => {
-            let error = ErrorResponse { error: "Database query failed".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
+//     let mut token_data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
+//         Ok(Some(d)) => d,
+//         Ok(None) => {
+//             let error = ErrorResponse { error: "User not found".to_string() };
+//             return HttpResponse::NotFound().json(error);
+//         }
+//         Err(_) => {
+//             let error = ErrorResponse { error: "Database query failed".to_string() };
+//             return HttpResponse::InternalServerError().json(error);
+//         }
+//     };
 
-    if token_data.oxi_tokens_value < new_level_data.unwrap().buy_price {
-        let error = ErrorResponse { error: "Insufficient balance".to_string() };
-        return HttpResponse::BadRequest().json(error);
-    } 
+//     if token_data.oxi_tokens_value < new_level_data.unwrap().buy_price {
+//         let error = ErrorResponse { error: "Insufficient balance".to_string() };
+//         return HttpResponse::BadRequest().json(error);
+//     } 
     
-    token_data.oxi_tokens_value -= new_level_data.unwrap().buy_price;
-    token_data.tokens_hour += new_level_data.unwrap().tokens_add;
+//     token_data.oxi_tokens_value -= new_level_data.unwrap().buy_price;
+//     token_data.tokens_hour += new_level_data.unwrap().tokens_add;
 
-    let new_level_data = if &data.type_update == "miner" {
-        Some(state.upgrades_constant.miner.get(&((new_level_upgrade + 2).to_string())).unwrap())
-    } else {
-        None
-    };
+//     let new_level_data = if &data.type_update == "miner" {
+//         Some(state.upgrades_constant.miner.get(&((new_level_upgrade + 2).to_string())).unwrap())
+//     } else {
+//         None
+//     };
 
 
-    let mut dynamic_data = HashMap::new();
-    dynamic_data.insert(data.id_update.to_string(), (new_level_upgrade + 1).to_string());
-    dynamic_data.insert("new_update_price".to_string(), new_level_data.unwrap().buy_price.to_string());
-    dynamic_data.insert("new_update_tokens_add".to_string(), new_level_data.unwrap().tokens_add.to_string());
+//     let mut dynamic_data = HashMap::new();
+//     dynamic_data.insert(data.id_update.to_string(), (new_level_upgrade + 1).to_string());
+//     dynamic_data.insert("new_update_price".to_string(), new_level_data.unwrap().buy_price.to_string());
+//     dynamic_data.insert("new_update_tokens_add".to_string(), new_level_data.unwrap().tokens_add.to_string());
 
-    token_data.dynamic_fields = Some(dynamic_data);
+//     token_data.dynamic_fields = Some(dynamic_data);
 
-    HttpResponse::Ok().json(token_data)
-}
+//     HttpResponse::Ok().json(token_data)
+// }
 
 #[derive(Serialize, Deserialize, Debug)]
 struct MinerConfig {
@@ -587,9 +530,8 @@ async fn main() -> std::io::Result<()> {
     let client_options = ClientOptions::parse("mongodb://localhost:27017").await.unwrap();
     let db_client = Client::with_options(client_options).unwrap();
     let db = db_client.database("OXI");
+
     let token_collection = db.collection::<TokenData>("OXI_tokens");
-    let datauser_collection = db.collection::<UserData>("OXI_improvements");
-    let referal_collection = db.collection::<ReferalData>("OXI_referals");
 
     let vault_size_constant = HashMap::from([
         (1, 5000), (2, 12000), (3, 50000), (4, 120000), 
@@ -605,12 +547,13 @@ async fn main() -> std::io::Result<()> {
         } 
     };
 
+    let password = "123";
+
     let state = web::Data::new(Mutex::new(AppState { 
         token_collection, 
-        datauser_collection, 
-        referal_collection,
         vault_size_constant,
-        upgrades_constant
+        upgrades_constant,
+        password: password.to_string()
     }));
 
     HttpServer::new(move || {
@@ -618,8 +561,8 @@ async fn main() -> std::io::Result<()> {
             .app_data(state.clone())
             .route("/", web::get().to(index))
             .route("/api/data", web::post().to(get_data))
-            .route("/api/update", web::post().to(update))
-            .route("/claim_tokens", web::get().to(claim_tokens))
+            // .route("/api/update", web::post().to(update))
+            // .route("/claim_tokens", web::get().to(claim_tokens))
             .route("/newaccount", web::post().to(create_new_account))
             .service(actix_files::Files::new("/static", "./static").show_files_listing())
     })
