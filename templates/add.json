@@ -1,0 +1,26 @@
+[   
+    {
+        "_id": "1070221127",
+        "referal_code": "c2edb6",
+        "referals": [
+            "c2edb6",
+            "c2edb6",
+            "357518747"
+        ]
+    },
+    {
+        "_id": "5294101328",
+        "referal_code": "70a847",
+        "referals": []
+    },
+    {
+        "_id": "1030365162",
+        "referal_code": "dbeb17",
+        "referals": []
+    },
+    {
+        "_id": "357518747",
+        "referal_code": "c55269",
+        "referals": []
+}
+]
