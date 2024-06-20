@@ -335,7 +335,8 @@ async fn get_data(
     dynamic_data.insert("referal_code".to_string(), data_referal.referal_code);
     dynamic_data.insert("referals_value".to_string(), data_referal.referals.len().to_string());
 
-    dynamic_data.insert("upgardes".to_string(), serde_json::to_string(&data_user_improvements.upgrades).unwrap());
+    let upgrades_json = serde_json::json!(data_user_improvements.upgrades);
+    dynamic_data.insert("upgrades".to_string(), upgrades_json.to_string());
 
     data.dynamic_fields = Some(dynamic_data);
 
