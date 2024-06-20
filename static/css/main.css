@@ -489,7 +489,7 @@ html, body {
     margin-left: 2px;
 }
 
-.league {
+/* .league {
     color: #00daf7;
     font-size: 18px;
     font-weight: 500;
@@ -498,7 +498,19 @@ html, body {
     width: 100%;
     justify-content: center;
     bottom: 5%;
+} */
+
+.league {
+    color: #703614;
+    font-size: 18px;
+    font-weight: 500;
+    position: absolute;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    bottom: 5%;
 }
+
 
 .league-text {
     box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.1);

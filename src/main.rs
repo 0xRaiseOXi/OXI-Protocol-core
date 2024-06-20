@@ -10,6 +10,7 @@ use std::fs::File;
 use std::io::BufReader;
 use sha2::{Sha256, Digest};
 use hex::encode;
+use serde_json::json;
 
 fn generate_invite_code(id: String) -> String {
     let mut hasher = Sha256::new();
@@ -326,21 +327,41 @@ async fn get_data(
             return HttpResponse::InternalServerError().json(error);
         }
     };
-    println!("{}", &data_referal.referal_code);
-    let mut dynamic_data = HashMap::new();
-    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
-    dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
-    dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
-    dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
-    dynamic_data.insert("referal_code".to_string(), data_referal.referal_code);
-    dynamic_data.insert("referals_value".to_string(), data_referal.referals.len().to_string());
 
-    let upgrades_json = serde_json::json!(data_user_improvements.upgrades);
-    dynamic_data.insert("upgrades".to_string(), upgrades_json.to_string());
+    let mut json_value = serde_json::to_value(&data)
+        .expect("Failed to convert data to serde_json::Value");
+    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
 
-    data.dynamic_fields = Some(dynamic_data);
+    if let Some(obj) = json_value.as_object_mut() {
+        obj.insert("added_tokens".to_string(), json!(added_tokens));
+        obj.insert("vault_use".to_string(),  json!(vault_use));
+        obj.insert("vault_size".to_string(), json!(state.vault_size_constant[&data_user_improvements.vault]));
+        obj.insert("referal_code".to_string(), json!(data_referal.referal_code));
+        obj.insert("referals_value".to_string(), json!(data_referal.referals.len()));
+        obj.insert("upgrades".to_string(), json!(data_user_improvements.upgrades));
+    }
 
-    HttpResponse::Ok().json(data)
+    // Сериализуем json_value в JSON строку
+    let json_response = serde_json::to_string(&json_value)
+        .expect("Failed to serialize serde_json::Value to JSON string");
+
+    println!("{}", json_response);
+
+    // println!("{}", &data_referal.referal_code);
+    // let mut dynamic_data = HashMap::new();
+    // let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
+    // dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
+    // dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
+    // dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
+    // dynamic_data.insert("referal_code".to_string(), data_referal.referal_code);
+    // dynamic_data.insert("referals_value".to_string(), data_referal.referals.len().to_string());
+
+    // let upgrades_json = serde_json::json!(data_user_improvements.upgrades);
+    // dynamic_data.insert("upgrades".to_string(), upgrades_json.to_string());
+
+    // data.dynamic_fields = Some(dynamic_data);
+
+    HttpResponse::Ok().json(json_response)
 }
 
 async fn claim_tokens(
@@ -421,6 +442,21 @@ async fn claim_tokens(
             return HttpResponse::InternalServerError().json(error);
         }
     }
+
+    // let mut json_value = serde_json::to_value(&data)?;
+
+    // let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
+
+    // if let Some(obj) = json_value.as_object_mut() {
+    //     // obj.insert("additional_field1".to_string(), json!("Additional Value 1"));
+    //     obj.insert("added_tokens".to_string(), added_tokens.to_string());
+    //     obj.insert("vault_use".to_string(), vault_use.to_string());
+    //     obj.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
+    // }
+
+    // let json_response = serde_json::to_string(&json_value)?;
+    // println!("{}", json_response);
+
     let mut dynamic_data = HashMap::new();
     let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
     dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
@@ -510,6 +546,7 @@ async fn update(
     } else {
         None
     };
+
 
     let mut dynamic_data = HashMap::new();
     dynamic_data.insert(data.id_update.to_string(), (new_level_upgrade + 1).to_string());
