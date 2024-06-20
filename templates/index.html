@@ -160,6 +160,7 @@
                 </div>
             </div>
         </div>
+
         <div id="overlay" class="overlay">
             <div class="menu-to-confirm-upgrarde">
                 <div id="close-menu-upgrade">
@@ -167,8 +168,21 @@
                 </div>
                 <div class="text-upgrade-menu">Улучшение</div>
                 <div class="confirm-update-button"></div>
+                <div class="upgrade-to-new">
+                    <!-- <div class="upgrade-to-new-text">Добыча в час</div> -->
+                    <div class="upgrade-new-view">
+                        <div class="upgrade-to-new-text">Добыча в час</div>
+                    </div>
+                </div>
+                <div class="upgrade-to-new-price">
+                    <div class="upgrade-to-new-price-text">
+                        <img src="/static/images/moneta.png" alt="",  style="width: 100%;height: auto;object-fit: cover;", class="upgrade-to-new-price-img">
+                        <div>100,000,000</div>
+                    </div>
+                </div>
             </div>
         </div>        
+
     </section>
 
 
@@ -294,7 +308,9 @@
             document.querySelector('.confirm-update-button').addEventListener('click', () => {
                 update('miner', 'miner_1');
             });
-                    
+
+            vault_update();
+
             Telegram.WebApp.ready();
         });
         
