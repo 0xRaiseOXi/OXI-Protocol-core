@@ -250,9 +250,9 @@
                 const dataUserFromServer = await sendDataToServer(userData);
                 data_local = dataUserFromServer;
                 dataContainer.textContent = dataUserFromServer['oxi_tokens_value'].toLocaleString('en-US');
-                counterVault.textContent = dataUserFromServer['dynamic_fields']['added_tokens'].toLocaleString('en-US');
-                referalCodeContainer.textContent = "oxi_protocol_bot?start=" + dataUserFromServer['dynamic_fields']['referal_code'];
-                referalsValue.textContent = dataUserFromServer['dynamic_fields']['referals_value'];
+                counterVault.textContent = dataUserFromServer['added_tokens'].toLocaleString('en-US');
+                referalCodeContainer.textContent = "oxi_protocol_bot?start=" + dataUserFromServer['referal_code'];
+                referalsValue.textContent = dataUserFromServer['referals_value'];
             }
 
             claimTokensButton.addEventListener('click', async () => {
