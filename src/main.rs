@@ -307,109 +307,86 @@ async fn get_data(
     HttpResponse::Ok().json(response)
 }
 
-// async fn claim_tokens(
-//     state: web::Data<Mutex<AppState>>, 
-//     query: web::Query<HashMap<String, String>>
-// ) -> impl Responder {
-//     let json_str = match query.get("user") {
-//         Some(s) => s,
-//         None => {
-//             let error = ErrorResponse { error: "Missing 'user' query parameter".to_string() };
-//             return HttpResponse::BadRequest().json(error);
-//         }
-//     };
+async fn claim_tokens(
+    guard: web::Data<Mutex<AppState>>, 
+    query: web::Query<HashMap<String, String>>
+) -> impl Responder {
+    let json_str = match query.get("user") {
+        Some(s) => s,
+        None => {
+            let error = ErrorResponse { error: "Missing 'user' query parameter".to_string() };
+            return HttpResponse::BadRequest().json(error);
+        }
+    };
 
-//     let json_val: Value = match serde_json::from_str(json_str) {
-//         Ok(val) => val,
-//         Err(_) => {
-//             let error = ErrorResponse { error: "Failed to parse JSON".to_string() };
-//             return HttpResponse::BadRequest().json(error);
-//         }
-//     };
+    let json_val: Value = match serde_json::from_str(json_str) {
+        Ok(val) => val,
+        Err(_) => {
+            let error = ErrorResponse { error: "Failed to parse JSON".to_string() };
+            return HttpResponse::BadRequest().json(error);
+        }
+    };
 
-//     let id = match json_val.get("id").and_then(|v| v.as_u64()) {
-//         Some(id) => id.to_string(),
-//         None => {
-//             let error = ErrorResponse { error: "Missing or invalid 'id' in JSON".to_string() };
-//             return HttpResponse::BadRequest().json(error);
-//         }
-//     };
-//     let state = state.lock().await;
+    let id = match json_val.get("id").and_then(|v| v.as_u64()) {
+        Some(id) => id.to_string(),
+        None => {
+            let error = ErrorResponse { error: "Missing or invalid 'id' in JSON".to_string() };
+            return HttpResponse::BadRequest().json(error);
+        }
+    };
+    let state = guard.lock().await;
 
-//     let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
-//         Ok(Some(d)) => d,
-//         Ok(None) => {
-//             let error = ErrorResponse { error: "User not found".to_string() };
-//             return HttpResponse::NotFound().json(error);
-//         }
-//         Err(_) => {
-//             let error = ErrorResponse { error: "Database query failed".to_string() };
-//             return HttpResponse::InternalServerError().json(error);
-//         }
-//     };
-
-//     let data_user_improvements = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
-//         Ok(Some(d)) => d,
-//         Ok(None) => {
-//             let error = ErrorResponse { error: "User not found".to_string() };
-//             return HttpResponse::NotFound().json(error);
-//         }
-//         Err(_) => {
-//             let error = ErrorResponse { error: "Database query failed".to_string() };
-//             return HttpResponse::InternalServerError().json(error);
-//         }
-//     };
+    let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
+        Ok(Some(d)) => d,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
     
-//     let added_tokens = match state.update_tokens_value_vault(&id).await {
-//         Ok(tokens) => tokens,
-//         Err(_) => {
-//             let error = ErrorResponse { error: "Failed to update token values".to_string() };
-//             return HttpResponse::InternalServerError().json(error);
-//         }
-//     };
+    let added_tokens = match state.update_tokens_value_vault(&id).await {
+        Ok(tokens) => tokens,
+        Err(_) => {
+            let error = ErrorResponse { error: "Failed to update token values".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
 
-//     data.oxi_tokens_value += added_tokens as u64;
-//     let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
-//         Ok(duration) => duration.as_secs_f64(),
-//         Err(_) => {
-//             let error = ErrorResponse { error: "Failed to get current time".to_string() };
-//             return HttpResponse::InternalServerError().json(error);
-//         }
-//     };
-//     data.last_time_update = last_time_update;
+    data.oxi_tokens_value += added_tokens as u64;
 
-//     match state.token_collection.replace_one(doc! { "_id": &id }, &data, None).await {
-//         Ok(_) => {}
-//         Err(_) => {
-//             let error = ErrorResponse { error: "Failed to replace data in database".to_string() };
-//             return HttpResponse::InternalServerError().json(error);
-//         }
-//     }
+    let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(duration) => duration.as_secs_f64(),
+        Err(_) => {
+            let error = ErrorResponse { error: "Failed to get current time".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+    data.last_time_update = last_time_update;
 
-//     // let mut json_value = serde_json::to_value(&data)?;
+    match state.token_collection.replace_one(doc! { "_id": &id }, &data, None).await {
+        Ok(_) => {}
+        Err(_) => {
+            let error = ErrorResponse { error: "Failed to replace data in database".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    }
 
-//     // let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
+    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()] as u64 * 100) as u8;
 
-//     // if let Some(obj) = json_value.as_object_mut() {
-//     //     // obj.insert("additional_field1".to_string(), json!("Additional Value 1"));
-//     //     obj.insert("added_tokens".to_string(), added_tokens.to_string());
-//     //     obj.insert("vault_use".to_string(), vault_use.to_string());
-//     //     obj.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
-//     // }
+    let add_add = AddData {
+        added_tokens: added_tokens,
+        vault_use: vault_use,
+        vault_size: state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()],
+    };
 
-//     // let json_response = serde_json::to_string(&json_value)?;
-//     // println!("{}", json_response);
-
-//     let mut dynamic_data = HashMap::new();
-//     let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data_user_improvements.vault] as u64 * 100) as i32;
-//     dynamic_data.insert("added_tokens".to_string(), added_tokens.to_string());
-//     dynamic_data.insert("vault_use".to_string(), vault_use.to_string());
-//     dynamic_data.insert("vault_size".to_string(), state.vault_size_constant[&data_user_improvements.vault].to_string());
-
-//     data.dynamic_fields = Some(dynamic_data);
+    let response = data.build_data(add_data);
     
-//     HttpResponse::Ok().json(data)
-// }
+    HttpResponse::Ok().json(response)
+}
 
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -562,7 +539,7 @@ async fn main() -> std::io::Result<()> {
             .route("/", web::get().to(index))
             .route("/api/data", web::post().to(get_data))
             // .route("/api/update", web::post().to(update))
-            // .route("/claim_tokens", web::get().to(claim_tokens))
+            .route("/claim_tokens", web::get().to(claim_tokens))
             .route("/newaccount", web::post().to(create_new_account))
             .service(actix_files::Files::new("/static", "./static").show_files_listing())
     })
