@@ -335,6 +335,8 @@ async fn get_data(
     dynamic_data.insert("referal_code".to_string(), data_referal.referal_code);
     dynamic_data.insert("referals_value".to_string(), data_referal.referals.len().to_string());
 
+    dynamic_data.insert("upgardes".to_string(), format!("{:?}", data_user_improvements));
+
     data.dynamic_fields = Some(dynamic_data);
 
     HttpResponse::Ok().json(data)

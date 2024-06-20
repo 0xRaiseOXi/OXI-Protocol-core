@@ -638,6 +638,7 @@ html, body {
     font-weight: 600;
     color: #fcfcfc;
     font-size: 18px;
+    border: 1px solid #ffffff;
 }
 
 .level-miner {
@@ -1039,18 +1040,22 @@ html, body {
     background-color: #063580;
     position: relative;
     border-radius: 20px;
+    border: 1px solid #003cff;
 }
 
 .text-upgrade-menu {
     color: #ffffff;
     position: absolute;
     width: 100%;
-    height: 15%;
+    height: 14%;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: 600;
     font-size: 21px;
+    border-bottom: 1px solid rgb(0, 60, 255);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
 .confirm-update-button {
@@ -1075,6 +1080,7 @@ html, body {
     width: 20%;
     height: 12%;
     right: 0;
+    top: 1%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1132,3 +1138,96 @@ html, body {
     justify-content: center;
     align-items: center;
 } */
+
+
+.upgrade-module-price {
+    width: 100%;
+    height: 30%;
+    bottom: 14%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.price-balance {
+    color: #ffffff;
+    font-size: 23px;
+    font-weight: 600;
+}
+
+.moneta-upgrade-module {
+    padding-top: 1px;
+    width: 10%;
+    height: 25%;
+    position: relative;
+}
+
+.module-name-upgrade {
+    position: absolute;
+    width: 100%;
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+    top: 8%;
+}
+
+.module-name-confirm {
+    width: 80%;
+    height: 50%;
+    background-color: #1c0d5e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+}
+
+.upgrade-module-tokens-add {
+    display: flex;
+    position: absolute;
+    bottom: 45%;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 17px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.miner-text-price {
+    color: #ffffff;
+    width: 100%;
+    position: relative;
+    font-size: 14px;
+    padding-left: 10%;
+    padding-right: 10%;
+    top: 32%;
+    text-align: center;
+}
+
+.level-up-upgrade {
+    width: 100%;
+    height: 10%;
+    top: 31%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.level-miner-up {
+    color: #ffffff;
+    font-weight: 500;
+    width: 20%;
+    height: 60%;
+    font-size: 15px;
+    background-color: #f18202;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+}
