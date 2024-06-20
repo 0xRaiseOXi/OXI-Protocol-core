@@ -319,7 +319,7 @@ async fn claim_tokens(
         }
     };
 
-    let json_val: Value = match serde_json::from_str(json_str) {
+    let json_val: serde_json::Value = match serde_json::from_str(json_str) {
         Ok(val) => val,
         Err(_) => {
             let error = ErrorResponse { error: "Failed to parse JSON".to_string() };
@@ -377,13 +377,13 @@ async fn claim_tokens(
 
     let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()] as u64 * 100) as u8;
 
-    let add_add = AddData {
+    let add_data = AddData {
         added_tokens: added_tokens,
         vault_use: vault_use,
         vault_size: state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()],
     };
 
-    let response = data.build_data(add_data);
+    let response = data.build_response(add_data);
     
     HttpResponse::Ok().json(response)
 }
