@@ -268,6 +268,7 @@
                         body: JSON.stringify(dataToSend)
                     });
                     const result = await response.json();
+                    console.log(result);
                     return result;
                 } catch (error) {
                     dataContainer.textContent = 'Server Error';
@@ -297,7 +298,7 @@
                     const data = await response.json();
                     animate_main_counter(data['oxi_tokens_value']);
                     vault_progress_bar(0);
-
+                    
                     counterVault.textContent = 0;
                     data_local = data;
                 } catch (error) {
