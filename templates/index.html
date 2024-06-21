@@ -274,6 +274,7 @@
                         body: JSON.stringify(dataToSend)
                     });
                     const result = await response.json();
+                    data_local = result;
                     console.log(result);
                     return result;
                 } catch (error) {
