@@ -321,6 +321,9 @@ async fn get_data(
 
     let mut upgrades_local = HashMap::new();
 
+    for (key, value) in &data.upgrades {
+        println!("{} {}", key, value);
+    }
     let b = match data.upgrades.get("miner_1") {
         Some(v) => v,
         None => {
@@ -346,6 +349,7 @@ async fn get_data(
     };
 
     upgrades_local.insert("tokens_hour".to_string(), current_level_upgrade.tokens_add);
+    upgrades_local.insert("level".to_string(), *b as u64);
     upgrades_chapshot.insert("miner_1", upgrades_local);
 
     println!("{:?}", upgrades_chapshot);
