@@ -325,6 +325,8 @@ async fn get_data(
         let mut upgrades_local = HashMap::new();
 
         let parts: Vec<&str> = key.split('_').collect();
+        println!("{}", parts[0]);
+        
         if "miner" == parts[0] { 
             let current_level_upgrade = match state.upgrades_constant.miner.get(&b.to_string()) {
                 Some(v) => v,
