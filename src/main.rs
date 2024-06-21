@@ -316,6 +316,11 @@ async fn get_data(
 
     let response = data.build_response(add_add);
 
+
+    let mut upgrades_chapshot = HashMap::new();
+
+    let mut upgrades_local = HashMap::new();
+
     let b = match data.upgrades.get("miner_1") {
         Some(v) => v,
         None => {
@@ -324,17 +329,26 @@ async fn get_data(
     };
     println!("B {}", b);
 
-
-    match state.upgrades_constant.miner.get(&b.to_string()) {
-        Some(v) => {
-            println!("{:?}", v);
-            v
+    let current_level_upgrade = match state.upgrades_constant.miner.get(&b.to_string()) {
+        Some(v) => v,
+        None => {
+            let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+            return HttpResponse::InternalServerError().json(error);
         }
-        None => panic!("safs")
     };
 
-    let new_level_upgrade = state.upgrades_constant.miner.get(&(b + 1).to_string()).unwrap();
-    println!("{:?}", new_level_upgrade);
+    let new_level_upgrade = match state.upgrades_constant.miner.get(&(b + 1).to_string()) {
+        Some(v) => v,
+        None => {
+            let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+
+    upgrades_local.insert("tokens_hour".to_string(), current_level_upgrade.tokens_add);
+    upgrades_chapshot.insert("miner_1", upgrades_local);
+
+    println!("{:?}", upgrades_chapshot);
     // miner_1.insert("level".to_string(), 1);
     // miner_1.insert("tokens_hour".to_string(), 1);
     // miner_1.insert("level".to_string(), 1);
