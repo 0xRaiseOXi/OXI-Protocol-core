@@ -55,8 +55,8 @@ struct AddData {
 struct MainResponse {
     _id: String,
     username: Option<String>,
-    upgrades_current: Option<HashMap<String, HashMap<String, u32>>>,
-    upgrades_new: Option<HashMap<String, HashMap<String, u32>>>,
+    upgrades_current: Option<HashMap<String, HashMap<String, String>>>,
+    upgrades_new: Option<HashMap<String, HashMap<String, String>>>,
     oxi_tokens_value: u64,
     last_time_update: f64,
     tokens_hour: u64,
@@ -69,23 +69,12 @@ struct MainResponse {
 }
 
 impl TokenData {
-    fn build_response(&self, add_data: AddData) -> MainResponse {
-       
-        // let current_level_upgrade = state.upgrades_constant.miner.get(&self.upgrades.get("miner_1")).unwrap();
-        // let new_level_upgrade = state.upgrades_constant.miner.get(&(self.upgrades.get("miner_1") + 1)).unwrap();
-        // // miner_1.insert("level".to_string(), 1);
-        // // miner_1.insert("tokens_hour".to_string(), 1);
-        // // miner_1.insert("level".to_string(), 1);
-        // // upgrades.insert("miner_1");
-        // println!("{:?}", current_level_upgrade);
-        // println!("{:?}", new_level_upgrade);
-        
+    fn build_response(&self, add_data: AddData, upgrades_chapshot: Option<HashMap<String, HashMap<String, String>>>, upgrades_chapshot_new: Option<HashMap<String, HashMap<String, String>>>) -> MainResponse {
         MainResponse {
             _id: self._id.clone(),
             username: self.username.clone(),
-            // upgrades: add_data.upgrades.clone(),
-            upgrades_current: None,
-            upgrades_new: None,
+            upgrades_current: upgrades_chapshot,
+            upgrades_new: upgrades_chapshot_new,
             oxi_tokens_value: self.oxi_tokens_value,
             last_time_update: self.last_time_update,
             tokens_hour: self.tokens_hour,
@@ -316,9 +305,6 @@ async fn get_data(
         vault_size: state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()],
     };
 
-    let response = data.build_response(add_add);
-
-
     let mut upgrades_chapshot = HashMap::new();
     let mut upgrades_chapshot_new = HashMap::new();
 
@@ -352,8 +338,8 @@ async fn get_data(
 
             upgrades_new.insert("tokens_hour".to_string(), new_level_upgrade.tokens_add.to_string());
 
-            upgrades_chapshot.insert(key, upgrades_local.clone());
-            upgrades_chapshot_new.insert(key, upgrades_new.clone());
+            upgrades_chapshot.insert(key.to_string(), upgrades_local.clone());
+            upgrades_chapshot_new.insert(key.to_string(), upgrades_new.clone());
 
         } else if parts[0] == "vault" {
             let current_level_upgrade = match state.upgrades_constant.vault.get(&b.to_string()) {
@@ -376,16 +362,14 @@ async fn get_data(
 
             upgrades_new.insert("volume".to_string(), new_level_upgrade.volume.to_string());
 
-            upgrades_chapshot.insert(key, upgrades_local.clone());
-            upgrades_chapshot_new.insert(key, upgrades_new.clone());
+            upgrades_chapshot.insert(key.to_string(), upgrades_local.clone());
+            upgrades_chapshot_new.insert(key.to_string(), upgrades_new.clone());
         }
     }
     println!("{:?}", upgrades_chapshot);
     println!("{:?}", upgrades_chapshot_new);
-    // miner_1.insert("level".to_string(), 1);
-    // miner_1.insert("tokens_hour".to_string(), 1);
-    // miner_1.insert("level".to_string(), 1);
-    // upgrades.insert("miner_1");
+
+    let response = data.build_response(add_add, Some(upgrades_chapshot), Some(upgrades_chapshot_new));
 
     HttpResponse::Ok().json(response)
 }
@@ -466,7 +450,7 @@ async fn claim_tokens(
         vault_size: state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()],
     };
 
-    let response = data.build_response(add_data);
+    let response = data.build_response(add_data, None, None);
     
     HttpResponse::Ok().json(response)
 }
