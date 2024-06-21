@@ -337,6 +337,7 @@ async fn get_data(
             upgrades_local.insert("level".to_string(), b.to_string());
 
             upgrades_new.insert("tokens_hour".to_string(), new_level_upgrade.tokens_add.to_string());
+            upgrades_new.insert("price".to_string(), new_level_upgrade.buy_price.to_string());
 
             upgrades_chapshot.insert(key.to_string(), upgrades_local.clone());
             upgrades_chapshot_new.insert(key.to_string(), upgrades_new.clone());
