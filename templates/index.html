@@ -302,11 +302,11 @@
                 document.getElementById("miner_1_lvl").textContent = `lvl ${data['upgrades_current']['miner_1']['level']}`;
                 document.getElementById("miner_1_price").textContent = data['upgrades_new']['miner_1']['price'];
 
-                
+
             }
 
             claimTokensButton.addEventListener('click', async () => {
-                const url = `https://oxiprotocol.ru/claim_tokens?${tg.initData}`;
+                const url = `https://oxiprotocol.ru/claim_tokens?id=${tg.initData.user.id}`;
                 try {
                     const response = await fetch(url);
                     if (!response.ok) {
