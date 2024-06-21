@@ -48,13 +48,14 @@ struct AddData {
     added_tokens: u64,
     vault_use: u8,
     vault_size: u32,
+    // upgrades: HashMap<String, HashMap<String, u32>>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct MainResponse {
     _id: String,
     username: Option<String>,
-    upgrades: HashMap<String, HashMap<String, u32>>,
+    upgrades: Option<HashMap<String, HashMap<String, u32>>>,
     oxi_tokens_value: u64,
     last_time_update: f64,
     tokens_hour: u64,
@@ -67,22 +68,22 @@ struct MainResponse {
 }
 
 impl TokenData {
-    fn build_response(&self, add_data: AddData, state: AppState) -> MainResponse {
-        let upgrades = HashMap::new();
-        let miner_1 = HashMap::new();
-        let current_level_upgrade = state.upgrades_constant.miner.get(&self.upgrades.get("miner_1")).unwrap()
-        let new_level_upgrade = state.upgrades_constant.miner.get(&(self.upgrades.get("miner_1") + 1)).unwrap()
-        // miner_1.insert("level".to_string(), 1);
-        // miner_1.insert("tokens_hour".to_string(), 1);
-        // miner_1.insert("level".to_string(), 1);
-        // upgrades.insert("miner_1");
-        println!("{:?}", current_level_upgrade);
-        println!("{:?}", new_level_upgrade);
+    fn build_response(&self, add_data: AddData) -> MainResponse {
+       
+        // let current_level_upgrade = state.upgrades_constant.miner.get(&self.upgrades.get("miner_1")).unwrap();
+        // let new_level_upgrade = state.upgrades_constant.miner.get(&(self.upgrades.get("miner_1") + 1)).unwrap();
+        // // miner_1.insert("level".to_string(), 1);
+        // // miner_1.insert("tokens_hour".to_string(), 1);
+        // // miner_1.insert("level".to_string(), 1);
+        // // upgrades.insert("miner_1");
+        // println!("{:?}", current_level_upgrade);
+        // println!("{:?}", new_level_upgrade);
         
         MainResponse {
             _id: self._id.clone(),
             username: self.username.clone(),
-            upgrades: self.upgrades.clone(),
+            // upgrades: add_data.upgrades.clone(),
+            upgrades: None,
             oxi_tokens_value: self.oxi_tokens_value,
             last_time_update: self.last_time_update,
             tokens_hour: self.tokens_hour,
@@ -314,6 +315,22 @@ async fn get_data(
     };
 
     let response = data.build_response(add_add);
+
+    let b = match data.upgrades.get("miner_1") {
+        Some(v) => v,
+        None => {
+            &0
+        }
+    };
+
+    let current_level_upgrade = state.upgrades_constant.miner.get(&b.to_string()).unwrap();
+    let new_level_upgrade = state.upgrades_constant.miner.get(&(b + 1).to_string()).unwrap();
+    // miner_1.insert("level".to_string(), 1);
+    // miner_1.insert("tokens_hour".to_string(), 1);
+    // miner_1.insert("level".to_string(), 1);
+    // upgrades.insert("miner_1");
+    println!("{:?}", current_level_upgrade);
+    println!("{:?}", new_level_upgrade);
 
     HttpResponse::Ok().json(response)
 }
