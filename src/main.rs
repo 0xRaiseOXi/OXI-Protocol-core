@@ -319,39 +319,51 @@ async fn get_data(
 
     let mut upgrades_chapshot = HashMap::new();
 
-    let mut upgrades_local = HashMap::new();
+    for (key, b) in &data.upgrades {
+        println!("{} {}", key, b);
 
-    for (key, value) in &data.upgrades {
-        println!("{} {}", key, value);
+        let mut upgrades_local = HashMap::new();
+
+        let parts: Vec<&str> = key.split('_').collect();
+        if "miner" == parts[0] { 
+            let current_level_upgrade = match state.upgrades_constant.miner.get(&b.to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+
+            let new_level_upgrade = match state.upgrades_constant.miner.get(&(b + 1).to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+            upgrades_local.insert("tokens_hour".to_string(), current_level_upgrade.tokens_add.to_string());
+            upgrades_local.insert("level".to_string(), b.to_string());
+            upgrades_chapshot.insert(key, upgrades_local.clone());
+        } else if parts[0] == "vault" {
+            let current_level_upgrade = match state.upgrades_constant.vault.get(&b.to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+
+            let new_level_upgrade = match state.upgrades_constant.vault.get(&(b + 1).to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+            upgrades_local.insert("volume".to_string(), current_level_upgrade.volume.to_string());
+            upgrades_local.insert("level".to_string(), b.to_string());
+        }
     }
-    let b = match data.upgrades.get("miner_1") {
-        Some(v) => v,
-        None => {
-            &0
-        }
-    };
-    println!("B {}", b);
-
-    let current_level_upgrade = match state.upgrades_constant.miner.get(&b.to_string()) {
-        Some(v) => v,
-        None => {
-            let error = ErrorResponse { error: "Failed to Data Base".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
-
-    let new_level_upgrade = match state.upgrades_constant.miner.get(&(b + 1).to_string()) {
-        Some(v) => v,
-        None => {
-            let error = ErrorResponse { error: "Failed to Data Base".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
-
-    upgrades_local.insert("tokens_hour".to_string(), current_level_upgrade.tokens_add);
-    upgrades_local.insert("level".to_string(), *b as u64);
-    upgrades_chapshot.insert("miner_1", upgrades_local);
-
     println!("{:?}", upgrades_chapshot);
     // miner_1.insert("level".to_string(), 1);
     // miner_1.insert("tokens_hour".to_string(), 1);
@@ -538,9 +550,14 @@ struct MinerConfig {
     tokens_add: u64,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+struct VaultConfig {
+    volume: u32
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Config {
+    vault: HashMap<String, VaultConfig>,
     miner: HashMap<String, MinerConfig>,
     buy_miner: HashMap<String, u64>
 }
