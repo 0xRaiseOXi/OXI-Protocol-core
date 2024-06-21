@@ -55,7 +55,8 @@ struct AddData {
 struct MainResponse {
     _id: String,
     username: Option<String>,
-    upgrades: Option<HashMap<String, HashMap<String, u32>>>,
+    upgrades_current: Option<HashMap<String, HashMap<String, u32>>>,
+    upgrades_new: Option<HashMap<String, HashMap<String, u32>>>,
     oxi_tokens_value: u64,
     last_time_update: f64,
     tokens_hour: u64,
@@ -83,7 +84,8 @@ impl TokenData {
             _id: self._id.clone(),
             username: self.username.clone(),
             // upgrades: add_data.upgrades.clone(),
-            upgrades: None,
+            upgrades_current: None,
+            upgrades_new: None,
             oxi_tokens_value: self.oxi_tokens_value,
             last_time_update: self.last_time_update,
             tokens_hour: self.tokens_hour,
@@ -318,11 +320,13 @@ async fn get_data(
 
 
     let mut upgrades_chapshot = HashMap::new();
+    let mut upgrades_chapshot_new = HashMap::new();
 
     for (key, b) in &data.upgrades {
         println!("{} {}", key, b);
 
         let mut upgrades_local = HashMap::new();
+        let mut upgrades_new = HashMap::new();
 
         let parts: Vec<&str> = key.split('_').collect();
         println!("{}", parts[0]);
@@ -345,7 +349,12 @@ async fn get_data(
             };
             upgrades_local.insert("tokens_hour".to_string(), current_level_upgrade.tokens_add.to_string());
             upgrades_local.insert("level".to_string(), b.to_string());
+
+            upgrades_new.insert("tokens_hour".to_string(), new_level_upgrade.tokens_add.to_string());
+
             upgrades_chapshot.insert(key, upgrades_local.clone());
+            upgrades_chapshot_new.insert(key, upgrades_new.clone());
+
         } else if parts[0] == "vault" {
             let current_level_upgrade = match state.upgrades_constant.vault.get(&b.to_string()) {
                 Some(v) => v,
@@ -355,19 +364,24 @@ async fn get_data(
                 }
             };
 
-            // let new_level_upgrade = match state.upgrades_constant.vault.get(&(b + 1).to_string()) {
-            //     Some(v) => v,
-            //     None => {
-            //         let error = ErrorResponse { error: "Failed to Data Base".to_string() };
-            //         return HttpResponse::InternalServerError().json(error);
-            //     }
-            // };
+            let new_level_upgrade = match state.upgrades_constant.vault.get(&(b + 1).to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
             upgrades_local.insert("volume".to_string(), current_level_upgrade.volume.to_string());
             upgrades_local.insert("level".to_string(), b.to_string());
+
+            upgrades_new.insert("volume".to_string(), new_level_upgrade.volume.to_string());
+
             upgrades_chapshot.insert(key, upgrades_local.clone());
+            upgrades_chapshot_new.insert(key, upgrades_new.clone());
         }
     }
     println!("{:?}", upgrades_chapshot);
+    println!("{:?}", upgrades_chapshot_new);
     // miner_1.insert("level".to_string(), 1);
     // miner_1.insert("tokens_hour".to_string(), 1);
     // miner_1.insert("level".to_string(), 1);
