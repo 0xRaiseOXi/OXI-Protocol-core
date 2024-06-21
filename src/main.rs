@@ -54,7 +54,7 @@ struct AddData {
 struct MainResponse {
     _id: String,
     username: Option<String>,
-    upgrades: HashMap<String, u8>,
+    upgrades: HashMap<String, HashMap<String, u32>>,
     oxi_tokens_value: u64,
     last_time_update: f64,
     tokens_hour: u64,
@@ -67,7 +67,18 @@ struct MainResponse {
 }
 
 impl TokenData {
-    fn build_response(&self, add_data: AddData) -> MainResponse {
+    fn build_response(&self, add_data: AddData, state: AppState) -> MainResponse {
+        let upgrades = HashMap::new();
+        let miner_1 = HashMap::new();
+        let current_level_upgrade = state.upgrades_constant.miner.get(&self.upgrades.get("miner_1")).unwrap()
+        let new_level_upgrade = state.upgrades_constant.miner.get(&(self.upgrades.get("miner_1") + 1)).unwrap()
+        // miner_1.insert("level".to_string(), 1);
+        // miner_1.insert("tokens_hour".to_string(), 1);
+        // miner_1.insert("level".to_string(), 1);
+        // upgrades.insert("miner_1");
+        println!("{:?}", current_level_upgrade);
+        println!("{:?}", new_level_upgrade);
+        
         MainResponse {
             _id: self._id.clone(),
             username: self.username.clone(),
