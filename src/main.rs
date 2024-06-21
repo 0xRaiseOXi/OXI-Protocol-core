@@ -357,14 +357,14 @@ async fn get_data(
 
 #[derive(Debug, Deserialize)]
 struct ClaimTokensQuery {
-    id: String,
+    id: u64,
 }
 
 async fn claim_tokens(
     guard: web::Data<Mutex<AppState>>, 
     query: web::Json<ClaimTokensQuery>
 ) -> impl Responder {
-    let user_id = query.id.clone();
+    let user_id = query.id.clone().to_string();
     let state = guard.lock().await;
 
     let mut data = match state.token_collection.find_one(doc! { "_id": &user_id }, None).await {
