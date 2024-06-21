@@ -453,7 +453,7 @@
             const time_difference = current_time - data_local['last_time_update'];
             const time_different_in_hours = time_difference / 3600;
             const added_tokens = Math.trunc(time_different_in_hours * data_local['tokens_hour']);
-            const vault_size = data_local['upgrades_current']['vault']['volume'];
+            const vault_size = data_local['upgrades_current']['vault_main']['volume'];
             const percentage = Math.trunc(added_tokens / vault_size * 100);
             
             vault.textContent = vault_size;
