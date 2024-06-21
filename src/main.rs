@@ -362,7 +362,7 @@ struct ClaimTokensQuery {
 
 async fn claim_tokens(
     guard: web::Data<Mutex<AppState>>, 
-    query: web::Query<ClaimTokensQuery>
+    query: web::Json<ClaimTokensQuery>
 ) -> impl Responder {
     let user_id = query.id.clone();
     let state = guard.lock().await;
@@ -603,7 +603,7 @@ async fn main() -> std::io::Result<()> {
             .route("/", web::get().to(index))
             .route("/api/data", web::post().to(get_data))
             .route("/api/update", web::post().to(update))
-            .route("/claim_tokens", web::get().to(claim_tokens))
+            .route("/claim_tokens", web::post().to(claim_tokens))
             .route("/newaccount", web::post().to(create_new_account))
             .service(actix_files::Files::new("/static", "./static").show_files_listing())
     })
