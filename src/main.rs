@@ -44,14 +44,6 @@ struct TokenData {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-struct AddData {
-    added_tokens: u64,
-    vault_use: u8,
-    vault_size: u32,
-    // upgrades: HashMap<String, HashMap<String, u32>>,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
 struct MainResponse {
     _id: String,
     username: Option<String>,
@@ -62,14 +54,11 @@ struct MainResponse {
     tokens_hour: u64,
     referal_code: String,
     referals: Vec<String>,
-    added_tokens: u64,
-    vault_use: u8,
-    vault_size: u32,
     referals_value: String,
 }
 
 impl TokenData {
-    fn build_response(&self, add_data: AddData, upgrades_chapshot: Option<HashMap<String, HashMap<String, String>>>, upgrades_chapshot_new: Option<HashMap<String, HashMap<String, String>>>) -> MainResponse {
+    fn build_response(&self, upgrades_chapshot: Option<HashMap<String, HashMap<String, String>>>, upgrades_chapshot_new: Option<HashMap<String, HashMap<String, String>>>) -> MainResponse {
         MainResponse {
             _id: self._id.clone(),
             username: self.username.clone(),
@@ -80,9 +69,6 @@ impl TokenData {
             tokens_hour: self.tokens_hour,
             referal_code: self.referal_code.clone(),
             referals: self.referals.clone(),
-            added_tokens: add_data.added_tokens,
-            vault_use: add_data.vault_use,
-            vault_size: add_data.vault_size,
             referals_value: self.referals.len().to_string()
         }
     }
@@ -298,14 +284,6 @@ async fn get_data(
         }
     };
 
-    let added_tokens = match state.update_tokens_value_vault(&id).await {
-        Ok(tokens) => tokens,
-        Err(_) => {
-            return HttpResponse::InternalServerError().json(create_error_response("Failed to update token values"));
-        }
-    };
-
-
     let mut upgrades_chapshot = HashMap::new();
     let mut upgrades_chapshot_new = HashMap::new();
 
@@ -372,16 +350,7 @@ async fn get_data(
     println!("{:?}", upgrades_chapshot);
     println!("{:?}", upgrades_chapshot_new);
 
-
-    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()] as u64 * 100) as u8;
-
-    let add_data = AddData {
-        added_tokens,
-        vault_use,
-        vault_size: state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()],
-    };
-
-    let response = data.build_response(add_data, Some(upgrades_chapshot), Some(upgrades_chapshot_new));
+    let response = data.build_response(Some(upgrades_chapshot), Some(upgrades_chapshot_new));
 
     HttpResponse::Ok().json(response)
 }
@@ -425,90 +394,148 @@ async fn claim_tokens(
         Err(_) => return HttpResponse::InternalServerError().json(ErrorResponse { error: "Failed to replace data in database".to_string() }),
     };
 
-    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()] as u64 * 100) as u8;
-
-    let add_data = AddData {
-        added_tokens,
-        vault_use,
-        vault_size: state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()],
-    };
-
-    let response = data.build_response(add_data, None, None);
+    let response = data.build_response(None, None);
 
     HttpResponse::Ok().json(response)
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+struct UpdateData {
+    _id: u64,
+    type_update: String,
+    id_update: String
+}
 
+async fn update(
+    state: web::Data<Mutex<AppState>>,
+    data: web::Json<UpdateData>,
+) -> impl Responder {
+    let state = state.lock().await;
+    let user_id = data._id.to_string();
 
-// async fn update(
-//     state: web::Data<Mutex<AppState>>,
-//     data: web::Json<UpdateData>,
-// ) -> impl Responder {
-//     let state = state.lock().await;
-//     let user_id = data._id.to_string();
+    let mut token_data = match state.token_collection.find_one(doc! { "_id": &user_id }, None).await {
+        Ok(Some(data)) => data,
+        Ok(None) => {
+            let error = ErrorResponse { error: "User not found".to_string() };
+            return HttpResponse::NotFound().json(error);
+        }
+        Err(_) => {
+            let error = ErrorResponse { error: "Database query failed".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
 
-//     let mut token_data = match state.token_collection.find_one(doc! { "_id": &user_id }, None).await {
-//         Ok(Some(data)) => data,
-//         Ok(None) => {
-//             let error = ErrorResponse { error: "User not found".to_string() };
-//             return HttpResponse::NotFound().json(error);
-//         }
-//         Err(_) => {
-//             let error = ErrorResponse { error: "Database query failed".to_string() };
-//             return HttpResponse::InternalServerError().json(error);
-//         }
-//     };
+    let current_level_upgrade = match token_data.upgrades.get(&data.id_update) {
+        Some(level) => *level,
+        None => {
+            let error = ErrorResponse { error: "Upgrade not found for the user".to_string() };
+            return HttpResponse::BadRequest().json(error);
+        }
+    };
 
-//     let current_level_upgrade = match token_data.upgrades.get(&data.id_update) {
-//         Some(level) => *level,
-//         None => {
-//             let error = ErrorResponse { error: "Upgrade not found for the user".to_string() };
-//             return HttpResponse::BadRequest().json(error);
-//         }
-//     };
+    let new_level_upgrade = current_level_upgrade + 1;
+    let new_level_data = if &data.type_update == "miner" {
+        Some(state.upgrades_constant.miner.get(&((new_level_upgrade).to_string())).unwrap())
+    } else {
+        None
+    };
 
-//     let new_level_upgrade = current_level_upgrade + 1;
-//     let new_level_data = match &data.type_update {
-//         "miner" => state.upgrades_constant.miner.get(&new_level_upgrade.to_string()),
-//         _ => None, // Add support for other types as needed
-//     };
+    // Check if the user has enough tokens to perform the upgrade
+    let new_level_data = match new_level_data {
+        Some(data) => data,
+        None => {
+            let error = ErrorResponse { error: "Failed to get upgrade data".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
 
-//     // Check if the user has enough tokens to perform the upgrade
-//     let new_level_data = match new_level_data {
-//         Some(data) => data,
-//         None => {
-//             let error = ErrorResponse { error: "Failed to get upgrade data".to_string() };
-//             return HttpResponse::InternalServerError().json(error);
-//         }
-//     };
+    if token_data.oxi_tokens_value < new_level_data.buy_price {
+        let error = ErrorResponse { error: "Insufficient balance".to_string() };
+        return HttpResponse::BadRequest().json(error);
+    }
 
-//     if token_data.oxi_tokens_value < new_level_data.buy_price {
-//         let error = ErrorResponse { error: "Insufficient balance".to_string() };
-//         return HttpResponse::BadRequest().json(error);
-//     }
+    // Perform the upgrade
+    token_data.oxi_tokens_value -= new_level_data.buy_price;
+    token_data.tokens_hour += new_level_data.tokens_add;
 
-//     // Perform the upgrade
-//     token_data.oxi_tokens_value -= new_level_data.buy_price;
-//     token_data.tokens_hour += new_level_data.tokens_add;
+    match state.token_collection.replace_one(doc! { "_id": &user_id }, &token_data, None).await {
+        Ok(_) => {}
+        Err(_) => {
+            let error = ErrorResponse { error: "Failed to update user data".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    }
 
-//     // Prepare dynamic fields data
-//     let mut dynamic_fields = HashMap::new();
-//     dynamic_fields.insert(data.id_update.clone(), new_level_upgrade.to_string());
-//     dynamic_fields.insert("new_update_price".to_string(), new_level_data.buy_price.to_string());
-//     dynamic_fields.insert("new_update_tokens_add".to_string(), new_level_data.tokens_add.to_string());
+    let mut upgrades_chapshot = HashMap::new();
+    let mut upgrades_chapshot_new = HashMap::new();
 
-//     // Update token data with dynamic fields
-//     token_data.dynamic_fields = Some(dynamic_fields);
+    for (key, b) in &token_data.upgrades {
+        println!("{} {}", key, b);
 
-//     // Replace updated user data in the database
-//     match state.token_collection.replace_one(doc! { "_id": &user_id }, &token_data, None).await {
-//         Ok(_) => HttpResponse::Ok().json(token_data),
-//         Err(_) => {
-//             let error = ErrorResponse { error: "Failed to update user data".to_string() };
-//             HttpResponse::InternalServerError().json(error)
-//         }
-//     }
-// }
+        let mut upgrades_local = HashMap::new();
+        let mut upgrades_new = HashMap::new();
+
+        let parts: Vec<&str> = key.split('_').collect();
+        println!("{}", parts[0]);
+
+        if "miner" == parts[0] { 
+            let current_level_upgrade = match state.upgrades_constant.miner.get(&b.to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+
+            let new_level_upgrade = match state.upgrades_constant.miner.get(&(b + 1).to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+            upgrades_local.insert("tokens_hour".to_string(), current_level_upgrade.tokens_add.to_string());
+            upgrades_local.insert("level".to_string(), b.to_string());
+
+            upgrades_new.insert("tokens_hour".to_string(), new_level_upgrade.tokens_add.to_string());
+            upgrades_new.insert("price".to_string(), new_level_upgrade.buy_price.to_string());
+
+            upgrades_chapshot.insert(key.to_string(), upgrades_local.clone());
+            upgrades_chapshot_new.insert(key.to_string(), upgrades_new.clone());
+
+        } else if parts[0] == "vault" {
+            let current_level_upgrade = match state.upgrades_constant.vault.get(&b.to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+
+            let new_level_upgrade = match state.upgrades_constant.vault.get(&(b + 1).to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+            upgrades_local.insert("volume".to_string(), current_level_upgrade.volume.to_string());
+            upgrades_local.insert("level".to_string(), b.to_string());
+
+            upgrades_new.insert("volume".to_string(), new_level_upgrade.volume.to_string());
+
+            upgrades_chapshot.insert(key.to_string(), upgrades_local.clone());
+            upgrades_chapshot_new.insert(key.to_string(), upgrades_new.clone());
+        }
+    }
+
+    println!("{:?}", upgrades_chapshot);
+    println!("{:?}", upgrades_chapshot_new);
+
+    let response = token_data.build_response(Some(upgrades_chapshot), Some(upgrades_chapshot_new));
+
+    HttpResponse::Ok().json(response)
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 struct MinerConfig {
@@ -575,7 +602,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(state.clone())
             .route("/", web::get().to(index))
             .route("/api/data", web::post().to(get_data))
-            // .route("/api/update", web::post().to(update))
+            .route("/api/update", web::post().to(update))
             .route("/claim_tokens", web::get().to(claim_tokens))
             .route("/newaccount", web::post().to(create_new_account))
             .service(actix_files::Files::new("/static", "./static").show_files_listing())
