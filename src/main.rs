@@ -105,21 +105,15 @@ struct QueryUserData {
     id: u64
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-struct POSTRequest {
-    password: String,
-    id: u64,
-    username: Option<String>,
-    first_name: Option<String>,
-    last_name: Option<String>,
-    language: String,
-    from_referal: Option<String>,
-}
-
 #[derive(Debug)]
 enum UpdateError {
     DatabaseError,
     NotFound,
+}
+
+#[derive(Debug, Serialize)]
+struct SuccessResponse {
+    msg: String,
 }
 
 impl AppState {
@@ -151,127 +145,144 @@ async fn index() -> impl Responder {
     NamedFile::open_async("./templates/index.html").await.unwrap()
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+struct RequestRegister {
+    password: String,
+    id: u64,
+    username: Option<String>,
+    first_name: Option<String>,
+    last_name: Option<String>,
+    language: String,
+    from_referal: Option<String>,
+}
+
 async fn create_new_account(
     guard: web::Data<Mutex<AppState>>, 
-    data: web::Json<POSTRequest>
+    data: web::Json<RequestRegister>
 ) -> impl Responder {
     let state = guard.lock().await;
 
     if data.password != state.password {
-        let error = ErrorResponse { error: "Auth error".to_string() };
-        return HttpResponse::BadRequest().json(error);
+        return HttpResponse::BadRequest().json(create_error_response("Auth error"));
     }
 
-    match state.token_collection.count_documents(doc! {"_id": data.id.to_string()}, None).await {
-        Ok(count) => {
-            if count > 0 {
-                let error = ErrorResponse { error: "User already register".to_string() };
-                return HttpResponse::BadRequest().json(error);
-            }
-            count
-        }
+    if let Err(response) = check_user_registration(&state, &data.id.to_string()).await {
+        return response;
+    }
+
+    let last_time_update = match get_current_time() {
+        Ok(time) => time,
+        Err(response) => return response,
+    };
+
+    let mut token_data = create_token_data(&data, last_time_update);
+
+    if let Some(response) = process_referal(&state, &data, &mut token_data).await {
+        return response;
+    }
+
+    if let Err(response) = insert_token_data(&state, token_data).await {
+        return response;
+    }
+
+    HttpResponse::Ok().json(create_success_response("User registered"))
+}
+
+fn create_error_response(message: &str) -> ErrorResponse {
+    ErrorResponse { error: message.to_string() }
+}
+
+fn create_success_response(message: &str) -> SuccessResponse {
+    SuccessResponse { msg: message.to_string() }
+}
+
+async fn check_user_registration(state: &AppState, user_id: &String) -> Result<(), HttpResponse> {
+    match state.token_collection.count_documents(doc! {"_id": user_id.to_string()}, None).await {
+        Ok(count) if count > 0 => Err(HttpResponse::BadRequest().json(create_error_response("User already register"))),
+        Ok(_) => Ok(()),
         Err(e) => {
             eprintln!("Failed to count documents: {:?}", e);
-            let error = ErrorResponse { error: "Internal Server Error".to_string() };
-            return HttpResponse::InternalServerError().json(error);
+            Err(HttpResponse::InternalServerError().json(create_error_response("Internal Server Error")))
         }
-    };
+    }
+}
 
-    let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(duration) => duration.as_secs_f64(),
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to get current time".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
+fn get_current_time() -> Result<f64, HttpResponse> {
+    match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(duration) => Ok(duration.as_secs_f64()),
+        Err(_) => Err(HttpResponse::InternalServerError().json(create_error_response("Failed to get current time"))),
+    }
+}
 
-    let upgrades: HashMap<String, u8> = HashMap::from([
+fn create_token_data(data: &RequestRegister, last_time_update: f64) -> TokenData {
+    let upgrades = HashMap::from([
         ("miner_1".to_string(), 1),
-        ("vault_main".to_string(), 1)
+        ("vault_main".to_string(), 1),
     ]);
 
-    let mut token_data = TokenData {
+    TokenData {
         _id: data.id.to_string(),
         username: data.username.clone(),
         first_name: data.first_name.clone(),
         last_name: data.last_name.clone(),
         register_in_game: last_time_update,
-        upgrades: upgrades,
+        upgrades,
         language: data.language.clone(),
         oxi_tokens_value: 0,
-        last_time_update: last_time_update,
+        last_time_update,
         tokens_hour: 1000,
         referal_code: generate_invite_code(data.id.to_string()),
         referals: Vec::new(),
-    };
-
-    match &data.from_referal {
-        // Извлечение значения referal_code
-        Some(referal_code_from_data) => {
-            // Поиск рефераловода
-            match state.token_collection.find_one(doc! { "referal_code": referal_code_from_data }, None).await {
-                Ok(Some(mut d)) => {
-                    // Новый реферал, добавление его id
-                    d.referals.push(data.id.to_string());
-                    // Подготовка данных для обновления
-                    let update_doc = doc! { "$set": { "referals": &d.referals } };
-                    match state.token_collection.update_one(doc! { "referal_code": referal_code_from_data }, update_doc, None).await {
-                        Ok(_) => {}
-                        Err(_) => {
-                            let error = ErrorResponse { error: "Failed to update document".to_string() };
-                            return HttpResponse::InternalServerError().json(error);
-                        }
-                    }
-                    // Реферал добавлен
-                    
-                    // Поиск данных рфераловода
-                    let mut data_collection_value = match state.token_collection.find_one(doc! { "_id": &d._id }, None).await {
-                        Ok(Some(d)) => d,
-                        Ok(None) => {
-                            let error = ErrorResponse { error: "User not found".to_string() };
-                            return HttpResponse::NotFound().json(error);
-                        }
-                        Err(_) => {
-                            let error = ErrorResponse { error: "Database query failed".to_string() };
-                            return HttpResponse::InternalServerError().json(error);
-                        }
-                    };
-                    
-                    data_collection_value.oxi_tokens_value += 25000;
-                    token_data.oxi_tokens_value += 25000;
-
-                    let update_doc = doc! { "$set": { "oxi_tokens_value": Bson::from(data_collection_value.oxi_tokens_value as i64) } };
-                    match state.token_collection.update_one(doc! { "_id": &d._id }, update_doc, None).await {
-                        Ok(_) => {},
-                        Err(err) => {
-                            println!("{}", err);
-                            let error = ErrorResponse { error: "Failed to insert data in database".to_string() };
-                            return HttpResponse::InternalServerError().json(error);
-                        }
-                    }
-                }
-                Ok(None) => {}
-                Err(_) => {
-                    let error = ErrorResponse { error: "Database query failed".to_string() };
-                    return HttpResponse::InternalServerError().json(error);
-                }
-            };
-        }
-        None => {}
-    };
-    match state.token_collection.insert_one(token_data, None).await {
-        Ok(_) => {},
-        Err(err) => {
-            println!("{}", err);
-            let error = ErrorResponse { error: "Failed to insert data in database".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    };
-    HttpResponse::Ok().body("{'code':1,'msg':'OK'}")
+    }
 }
 
+async fn process_referal(state: &AppState, data: &RequestRegister, token_data: &mut TokenData) -> Option<HttpResponse> {
+    if let Some(referal_code) = &data.from_referal {
+        match state.token_collection.find_one(doc! { "referal_code": referal_code }, None).await {
+            Ok(Some(mut referal_user)) => {
+                referal_user.referals.push(data.id.to_string());
+                if let Err(_) = update_referal_user(&state, &referal_user, referal_code).await {
+                    return Some(HttpResponse::InternalServerError().json(create_error_response("Failed to update document")));
+                }
+                if let Err(_) = update_token_value(&state, &referal_user).await {
+                    return Some(HttpResponse::InternalServerError().json(create_error_response("Failed to update token value")));
+                }
+                token_data.oxi_tokens_value += 25000;
+            }
+            Ok(None) => {}
+            Err(_) => return Some(HttpResponse::InternalServerError().json(create_error_response("Database query failed"))),
+        }
+    }
+    None
+}
+
+async fn update_referal_user(state: &AppState, referal_user: &TokenData, referal_code: &str) -> Result<(), HttpResponse> {
+    let update_doc = doc! { "$set": { "referals": &referal_user.referals } };
+    state.token_collection.update_one(doc! { "referal_code": referal_code }, update_doc, None).await
+        .map_err(|_| HttpResponse::InternalServerError().json(create_error_response("Failed to update document")))?;
+    Ok(())
+}
+
+async fn update_token_value(state: &AppState, referal_user: &TokenData) -> Result<(), HttpResponse> {
+    let update_doc = doc! { "$set": { "oxi_tokens_value": Bson::from(referal_user.oxi_tokens_value as i64) } };
+    state.token_collection.update_one(doc! { "_id": &referal_user._id }, update_doc, None).await
+        .map_err(|err| {
+            println!("{}", err);
+            HttpResponse::InternalServerError().json(create_error_response("Failed to update token value"))
+        })?;
+    Ok(())
+}
+
+async fn insert_token_data(state: &AppState, token_data: TokenData) -> Result<(), HttpResponse> {
+    state.token_collection.insert_one(token_data, None).await
+        .map_err(|err| {
+            println!("{}", err);
+            HttpResponse::InternalServerError().json(create_error_response("Failed to insert data in database"))
+        })?;
+    Ok(())
+}
 async fn get_data(
-    guard: web::Data<Mutex<AppState>>, 
+    guard: web::Data<Mutex<AppState>>,
     query: web::Json<QueryUserData>
 ) -> impl Responder {
     let id = query.id.to_string();
@@ -280,30 +291,20 @@ async fn get_data(
     let data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
         Ok(Some(d)) => d,
         Ok(None) => {
-            let error = ErrorResponse { error: "User not found".to_string() };
-            return HttpResponse::NotFound().json(error);
+            return HttpResponse::NotFound().json(create_error_response("User not found"));
         }
         Err(_) => {
-            let error = ErrorResponse { error: "Database query failed".to_string() };
-            return HttpResponse::InternalServerError().json(error);
+            return HttpResponse::InternalServerError().json(create_error_response("Database query failed"));
         }
     };
 
     let added_tokens = match state.update_tokens_value_vault(&id).await {
         Ok(tokens) => tokens,
         Err(_) => {
-            let error = ErrorResponse { error: "Failed to update token values".to_string() };
-            return HttpResponse::InternalServerError().json(error);
+            return HttpResponse::InternalServerError().json(create_error_response("Failed to update token values"));
         }
     };
 
-    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()] as u64 * 100) as u8;
-
-    let add_add = AddData {
-        added_tokens: added_tokens,
-        vault_use: vault_use,
-        vault_size: state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()],
-    };
 
     let mut upgrades_chapshot = HashMap::new();
     let mut upgrades_chapshot_new = HashMap::new();
@@ -367,61 +368,45 @@ async fn get_data(
             upgrades_chapshot_new.insert(key.to_string(), upgrades_new.clone());
         }
     }
+
     println!("{:?}", upgrades_chapshot);
     println!("{:?}", upgrades_chapshot_new);
 
-    let response = data.build_response(add_add, Some(upgrades_chapshot), Some(upgrades_chapshot_new));
+
+    let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()] as u64 * 100) as u8;
+
+    let add_data = AddData {
+        added_tokens,
+        vault_use,
+        vault_size: state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()],
+    };
+
+    let response = data.build_response(add_data, Some(upgrades_chapshot), Some(upgrades_chapshot_new));
 
     HttpResponse::Ok().json(response)
 }
 
+#[derive(Debug, Deserialize)]
+struct ClaimTokensQuery {
+    id: String,
+}
+
 async fn claim_tokens(
     guard: web::Data<Mutex<AppState>>, 
-    query: web::Query<HashMap<String, String>>
+    query: web::Query<ClaimTokensQuery>
 ) -> impl Responder {
-    let json_str = match query.get("user") {
-        Some(s) => s,
-        None => {
-            let error = ErrorResponse { error: "Missing 'user' query parameter".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
-
-    let json_val: serde_json::Value = match serde_json::from_str(json_str) {
-        Ok(val) => val,
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to parse JSON".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
-
-    let id = match json_val.get("id").and_then(|v| v.as_u64()) {
-        Some(id) => id.to_string(),
-        None => {
-            let error = ErrorResponse { error: "Missing or invalid 'id' in JSON".to_string() };
-            return HttpResponse::BadRequest().json(error);
-        }
-    };
+    let user_id = query.id.clone();
     let state = guard.lock().await;
 
-    let mut data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
+    let mut data = match state.token_collection.find_one(doc! { "_id": &user_id }, None).await {
         Ok(Some(d)) => d,
-        Ok(None) => {
-            let error = ErrorResponse { error: "User not found".to_string() };
-            return HttpResponse::NotFound().json(error);
-        }
-        Err(_) => {
-            let error = ErrorResponse { error: "Database query failed".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
+        Ok(None) => return HttpResponse::NotFound().json(ErrorResponse { error: "User not found".to_string() }),
+        Err(_) => return HttpResponse::InternalServerError().json(ErrorResponse { error: "Database query failed".to_string() }),
     };
-    
-    let added_tokens = match state.update_tokens_value_vault(&id).await {
+
+    let added_tokens = match state.update_tokens_value_vault(&user_id).await {
         Ok(tokens) => tokens,
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to update token values".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
+        Err(_) => return HttpResponse::InternalServerError().json(ErrorResponse { error: "Failed to update token values".to_string() }),
     };
 
     data.oxi_tokens_value += added_tokens as u64;
@@ -429,60 +414,41 @@ async fn claim_tokens(
     let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(duration) => duration.as_secs_f64(),
         Err(_) => {
-            let error = ErrorResponse { error: "Failed to get current time".to_string() };
-            return HttpResponse::InternalServerError().json(error);
+            return HttpResponse::InternalServerError().json(ErrorResponse { error: "Failed to get current time".to_string() });
         }
     };
+    
     data.last_time_update = last_time_update;
 
-    match state.token_collection.replace_one(doc! { "_id": &id }, &data, None).await {
-        Ok(_) => {}
-        Err(_) => {
-            let error = ErrorResponse { error: "Failed to replace data in database".to_string() };
-            return HttpResponse::InternalServerError().json(error);
-        }
-    }
+    match state.token_collection.replace_one(doc! { "_id": &user_id }, &data, None).await {
+        Ok(_) => {},
+        Err(_) => return HttpResponse::InternalServerError().json(ErrorResponse { error: "Failed to replace data in database".to_string() }),
+    };
 
     let vault_use = (data.oxi_tokens_value as u64 / state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()] as u64 * 100) as u8;
 
     let add_data = AddData {
-        added_tokens: added_tokens,
-        vault_use: vault_use,
+        added_tokens,
+        vault_use,
         vault_size: state.vault_size_constant[&data.upgrades.get("vault_main").unwrap()],
     };
 
     let response = data.build_response(add_data, None, None);
-    
+
     HttpResponse::Ok().json(response)
 }
 
 
-#[derive(Debug, Deserialize, Serialize)]
-struct UpdateData {
-    _id: u64,
-    type_update: String,
-    id_update: String
-}
-// USER DATA
-// {"miner_1": 12, "miner_2": 3, "miner_3": 2, "miner_4": 1}
-
-// UPGARDE DATA
-// {"miner": 1: {"buy_price": 13121}}
 
 // async fn update(
-//     state: web::Data<Mutex<AppState>>, 
-//     data: web::Json<UpdateData>
+//     state: web::Data<Mutex<AppState>>,
+//     data: web::Json<UpdateData>,
 // ) -> impl Responder {
-//     // data.type_update => miner, vault
-//     // data.id_update => miner_1, miner_2.. vault_main - значения созхранены в бд user_data
-
-//     // Запрос на повышение уровня на 1 единицу некоторого объекта
-    
 //     let state = state.lock().await;
-//     let id = data._id.to_string();
-//     // Получение данных пользователя по его id (USER DATA)
-//     let data_user = match state.datauser_collection.find_one(doc! { "_id": &id }, None).await {
-//         Ok(Some(d)) => d,
+//     let user_id = data._id.to_string();
+
+//     let mut token_data = match state.token_collection.find_one(doc! { "_id": &user_id }, None).await {
+//         Ok(Some(data)) => data,
 //         Ok(None) => {
 //             let error = ErrorResponse { error: "User not found".to_string() };
 //             return HttpResponse::NotFound().json(error);
@@ -493,57 +459,55 @@ struct UpdateData {
 //         }
 //     };
 
-//     // Получение текущего уровня объекта + 1
-//     let new_level_upgrade = match data_user.upgrades.get(&data.id_update) {
-//         Some(level) => level,
+//     let current_level_upgrade = match token_data.upgrades.get(&data.id_update) {
+//         Some(level) => *level,
 //         None => {
-//             let error = ErrorResponse { error: "User not found".to_string() };
-//             return HttpResponse::NotFound().json(error);
-//         } 
-//     };
-
-//     // // Получение данных что нужно для следюущего уровня
-//     let new_level_data = if &data.type_update == "miner" {
-//         Some(state.upgrades_constant.miner.get(&((new_level_upgrade + 1).to_string())).unwrap())
-//     } else {
-//         None
-//     };
-
-//     let mut token_data = match state.token_collection.find_one(doc! { "_id": &id }, None).await {
-//         Ok(Some(d)) => d,
-//         Ok(None) => {
-//             let error = ErrorResponse { error: "User not found".to_string() };
-//             return HttpResponse::NotFound().json(error);
+//             let error = ErrorResponse { error: "Upgrade not found for the user".to_string() };
+//             return HttpResponse::BadRequest().json(error);
 //         }
-//         Err(_) => {
-//             let error = ErrorResponse { error: "Database query failed".to_string() };
+//     };
+
+//     let new_level_upgrade = current_level_upgrade + 1;
+//     let new_level_data = match &data.type_update {
+//         "miner" => state.upgrades_constant.miner.get(&new_level_upgrade.to_string()),
+//         _ => None, // Add support for other types as needed
+//     };
+
+//     // Check if the user has enough tokens to perform the upgrade
+//     let new_level_data = match new_level_data {
+//         Some(data) => data,
+//         None => {
+//             let error = ErrorResponse { error: "Failed to get upgrade data".to_string() };
 //             return HttpResponse::InternalServerError().json(error);
 //         }
 //     };
 
-//     if token_data.oxi_tokens_value < new_level_data.unwrap().buy_price {
+//     if token_data.oxi_tokens_value < new_level_data.buy_price {
 //         let error = ErrorResponse { error: "Insufficient balance".to_string() };
 //         return HttpResponse::BadRequest().json(error);
-//     } 
-    
-//     token_data.oxi_tokens_value -= new_level_data.unwrap().buy_price;
-//     token_data.tokens_hour += new_level_data.unwrap().tokens_add;
+//     }
 
-//     let new_level_data = if &data.type_update == "miner" {
-//         Some(state.upgrades_constant.miner.get(&((new_level_upgrade + 2).to_string())).unwrap())
-//     } else {
-//         None
-//     };
+//     // Perform the upgrade
+//     token_data.oxi_tokens_value -= new_level_data.buy_price;
+//     token_data.tokens_hour += new_level_data.tokens_add;
 
+//     // Prepare dynamic fields data
+//     let mut dynamic_fields = HashMap::new();
+//     dynamic_fields.insert(data.id_update.clone(), new_level_upgrade.to_string());
+//     dynamic_fields.insert("new_update_price".to_string(), new_level_data.buy_price.to_string());
+//     dynamic_fields.insert("new_update_tokens_add".to_string(), new_level_data.tokens_add.to_string());
 
-//     let mut dynamic_data = HashMap::new();
-//     dynamic_data.insert(data.id_update.to_string(), (new_level_upgrade + 1).to_string());
-//     dynamic_data.insert("new_update_price".to_string(), new_level_data.unwrap().buy_price.to_string());
-//     dynamic_data.insert("new_update_tokens_add".to_string(), new_level_data.unwrap().tokens_add.to_string());
+//     // Update token data with dynamic fields
+//     token_data.dynamic_fields = Some(dynamic_fields);
 
-//     token_data.dynamic_fields = Some(dynamic_data);
-
-//     HttpResponse::Ok().json(token_data)
+//     // Replace updated user data in the database
+//     match state.token_collection.replace_one(doc! { "_id": &user_id }, &token_data, None).await {
+//         Ok(_) => HttpResponse::Ok().json(token_data),
+//         Err(_) => {
+//             let error = ErrorResponse { error: "Failed to update user data".to_string() };
+//             HttpResponse::InternalServerError().json(error)
+//         }
+//     }
 // }
 
 #[derive(Serialize, Deserialize, Debug)]
