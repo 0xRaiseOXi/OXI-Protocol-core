@@ -224,7 +224,7 @@
         const counterVault = document.getElementById('tokens-value-vault');
         const dataContainer = document.getElementById('main-balance');
         const referalsValue = document.getElementById('referals-value');
- 
+
         document.addEventListener("DOMContentLoaded", async () => {
             async function sendDataToServer(dataToSend) {
                 try {
@@ -253,6 +253,8 @@
                 counterVault.textContent = dataUserFromServer['added_tokens'].toLocaleString('en-US');
                 referalCodeContainer.textContent = "oxi_protocol_bot?start=" + dataUserFromServer['referal_code'];
                 referalsValue.textContent = dataUserFromServer['referals_value'];
+                document.getElementById("miner_1_tokens_add").textContent = dataUserFromServer['upgrades_current']['miner_1']['tokens_hour'];
+                document.getElementById("miner_1_lvl").textContent = dataUserFromServer['upgrades_current']['miner_1']['level'];
             }
 
             claimTokensButton.addEventListener('click', async () => {
