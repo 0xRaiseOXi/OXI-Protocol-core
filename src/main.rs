@@ -322,15 +322,20 @@ async fn get_data(
             &0
         }
     };
+    println!("B {}", b);
 
-    let current_level_upgrade = state.upgrades_constant.miner.get(&b.to_string()).unwrap();
+    match state.upgrades_constant.miner.get(&b.to_string()) {
+        Some(v) => {
+            println!("{:?}", v);
+            v
+        }
+        None => panic!("safs")
+    };
     let new_level_upgrade = state.upgrades_constant.miner.get(&(b + 1).to_string()).unwrap();
     // miner_1.insert("level".to_string(), 1);
     // miner_1.insert("tokens_hour".to_string(), 1);
     // miner_1.insert("level".to_string(), 1);
     // upgrades.insert("miner_1");
-    println!("{:?}", current_level_upgrade);
-    println!("{:?}", new_level_upgrade);
 
     HttpResponse::Ok().json(response)
 }
