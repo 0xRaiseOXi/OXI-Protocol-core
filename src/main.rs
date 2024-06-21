@@ -323,8 +323,8 @@ async fn get_data(
         }
     };
     println!("B {}", b);
-    println!("{:?}", state.upgrades_constant.miner);
-    
+
+
     match state.upgrades_constant.miner.get(&b.to_string()) {
         Some(v) => {
             println!("{:?}", v);
@@ -334,6 +334,7 @@ async fn get_data(
     };
 
     let new_level_upgrade = state.upgrades_constant.miner.get(&(b + 1).to_string()).unwrap();
+    println!("{:?}", new_level_upgrade);
     // miner_1.insert("level".to_string(), 1);
     // miner_1.insert("tokens_hour".to_string(), 1);
     // miner_1.insert("level".to_string(), 1);
