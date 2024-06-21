@@ -326,7 +326,7 @@ async fn get_data(
 
         let parts: Vec<&str> = key.split('_').collect();
         println!("{}", parts[0]);
-        
+
         if "miner" == parts[0] { 
             let current_level_upgrade = match state.upgrades_constant.miner.get(&b.to_string()) {
                 Some(v) => v,
@@ -355,15 +355,16 @@ async fn get_data(
                 }
             };
 
-            let new_level_upgrade = match state.upgrades_constant.vault.get(&(b + 1).to_string()) {
-                Some(v) => v,
-                None => {
-                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
-                    return HttpResponse::InternalServerError().json(error);
-                }
-            };
+            // let new_level_upgrade = match state.upgrades_constant.vault.get(&(b + 1).to_string()) {
+            //     Some(v) => v,
+            //     None => {
+            //         let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+            //         return HttpResponse::InternalServerError().json(error);
+            //     }
+            // };
             upgrades_local.insert("volume".to_string(), current_level_upgrade.volume.to_string());
             upgrades_local.insert("level".to_string(), b.to_string());
+            upgrades_chapshot.insert(key, upgrades_local.clone());
         }
     }
     println!("{:?}", upgrades_chapshot);
