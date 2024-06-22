@@ -378,6 +378,9 @@
                 });
                 const result = await response.json();
                 console.log(result);
+                closeMenuUpgrade();
+                loadUpgradesModule(result);
+
             } catch (error) {
                 console.log("Error: ", error);
             }
