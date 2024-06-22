@@ -1,114 +1,114 @@
 {
     "miner": {
         "1": {
-            "buy_price": 1000,
-            "tokens_add": 1000 
+            "buy_price":1,
+            "tokens_add":1 
         },
         "2": {
-            "buy_price": 12000,
-            "tokens_add": 2000 
+            "buy_price": 1,
+            "tokens_add":1 
         },
         "3": {
-            "buy_price": 17000,
+            "buy_price": 1,
             "tokens_add": 3600 
         },
         "4": {
-            "buy_price": 36000,
+            "buy_price": 1,
             "tokens_add": 4200 
         },
         
         "5": {
-            "buy_price": 120000,
-            "tokens_add": 15000 
+            "buy_price": 10,
+            "tokens_add": 1 
         },
         
         "6": {
-            "buy_price": 280000,
-            "tokens_add": 25000 
+            "buy_price": 10,
+            "tokens_add": 1 
         },
         
         "7": {
-            "buy_price": 570000,
-            "tokens_add": 43000 
+            "buy_price": 10,
+            "tokens_add": 1 
         },
         
         "8": {
-            "buy_price": 1200000,
-            "tokens_add": 65000 
+            "buy_price": 100,
+            "tokens_add": 1 
         },
         
         "9": {
-            "buy_price": 3700000,
-            "tokens_add": 120000 
+            "buy_price": 100,
+            "tokens_add": 10 
         },
         
         "10": {
-            "buy_price": 10000000,
-            "tokens_add": 200000
+            "buy_price":10,
+            "tokens_add":100
         },
         
         "11": {
-            "buy_price": 12000,
-            "tokens_add": 1000 
+            "buy_price": 1,
+            "tokens_add":1 
         },
         
         "12": {
-            "buy_price": 12000,
-            "tokens_add": 1000 
+            "buy_price": 1,
+            "tokens_add":1 
         },
         
         "13": {
-            "buy_price": 12000,
-            "tokens_add": 1000 
+            "buy_price": 1,
+            "tokens_add":1 
         },
         
         "14": {
-            "buy_price": 12000,
-            "tokens_add": 1000
+            "buy_price": 1,
+            "tokens_add":1
         },
         
         "15": {
-            "buy_price": 12000,
-            "tokens_add": 1000
+            "buy_price": 1,
+            "tokens_add":1
         },
         
         "16": {
-            "buy_price": 12000,
-            "tokens_add": 1000 
+            "buy_price": 1,
+            "tokens_add":1 
         },
         
         "17": {
-            "buy_price": 12000,
-            "tokens_add": 1000
+            "buy_price": 1,
+            "tokens_add":1
         },
         
         "18": {
-            "buy_price": 12000,
-            "tokens_add": 1000 
+            "buy_price": 1,
+            "tokens_add":1 
         },
         
         "19": {
-            "buy_price": 12000,
-            "tokens_add": 1000 
+            "buy_price": 1,
+            "tokens_add":1 
         },
         
         "20": {
-            "buy_price": 12000,
-            "tokens_add": 1000 
+            "buy_price": 1,
+            "tokens_add":1 
         }
     },
     "buy_miner": {
-        "2": 100000,
-        "3": 5000000,
-        "4": 70000000
+        "2":100,
+        "3":1,
+        "4":10
     },
     "vault": {
         "1": {
-            "volume": 5000
+            "volume":1
             
         },
         "2": {
-            "volume": 50000
+            "volume":10
             
         }
     }
