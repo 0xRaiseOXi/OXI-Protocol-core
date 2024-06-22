@@ -384,11 +384,11 @@
         }
 
         function loadUpgradesModule(dataFromServer) {
-            document.getElementById("miner_1_lvl").textContent = `lvl ${data['upgrades_current']['miner_1']['level']}`;
-            document.getElementById("miner_1_tokens_add").textContent = data['upgrades_current']['miner_1']['tokens_hour'];
-            document.getElementById("miner_1_price").textContent = data['upgrades_new']['miner_1']['price'];
+            document.getElementById("miner_1_lvl").textContent = `lvl ${dataFromServer['upgrades_current']['miner_1']['level']}`;
+            document.getElementById("miner_1_tokens_add").textContent = dataFromServer['upgrades_current']['miner_1']['tokens_hour'];
+            document.getElementById("miner_1_price").textContent = dataFromServer['upgrades_new']['miner_1']['price'];
 
-            document.getElementById("module_1-price-balance").textContent = data['upgrades_new']['miner_1']['price'];
+            document.getElementById("module_1-price-balance").textContent = dataFromServer['upgrades_new']['miner_1']['price'];
         }
 
 
