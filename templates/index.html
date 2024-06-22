@@ -85,10 +85,10 @@
                         </div>
                         <div class="button-upgrade-module", id="upgrade-menu-button">
                             <div class="price-to-upgrade">
-                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;", id="miner_1_price">
-                                <div class="miner_1_price", id="miner_1_price">None</div>
+                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
+                                <div id="miner_1_price">None</div>
                             </div>
-                            <div class="upgrade-text miner_1", id='upgrade-button-module'>Улучшить</div>
+                            <div class="upgrade-text miner_1", id='upgrade-button-module_1'>Улучшить</div>
                         </div>
                     </div>
                 </div>
@@ -108,7 +108,7 @@
                         </div>
                         <div class="button-upgrade-module", id="upgrade-menu-button">
                             <div class="price-to-upgrade">
-                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;", id="miner_1_price">
+                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
                                 <div class="miner_1_price", id="miner_1_price">None</div>
                             </div>
                             <div class="upgrade-text", id='upgrade-button-module'>Улучшить</div>
@@ -135,7 +135,7 @@
                         </div>
                         <div class="button-upgrade-module", id="upgrade-menu-button">
                             <div class="price-to-upgrade">
-                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;", id="miner_1_price">
+                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
                                 <div class="miner_1_price", id="miner_1_price">None</div>
                             </div>
                             <div class="upgrade-text", id='upgrade-button-module'>Улучшить</div>
@@ -162,7 +162,7 @@
                         </div>
                         <div class="button-upgrade-module", id="upgrade-menu-button">
                             <div class="price-to-upgrade">
-                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;", id="miner_1_price">
+                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
                                 <div class="miner_1_price", id="miner_1_price">None</div>
                             </div>
                             <div class="upgrade-text", id='upgrade-button-module'>Улучшить</div>
@@ -190,7 +190,7 @@
                     <div class="moneta-upgrade-module">
                         <img src="/static/images/moneta.png" alt="" style="width: 100%;height: auto;object-fit: cover;">
                     </div>
-                    <div class="price-balance" id="price-balance">500 000</div>
+                    <div class="price-balance" id="module_1-price-balance">500 000</div>
                 </div>
                 <div class="module-name-upgrade">
                     <div class="module-name-confirm">
@@ -289,6 +289,7 @@
                     const userData = { id: user.id };
                     const dataUserFromServer = await sendDataToServer(userData);
                     updateUserData(dataUserFromServer);
+                    loadUpgradesModule(dataUserFromServer);
                 } catch (error) {
                     console.error('Failed to fetch user data', error);
                 }
@@ -298,10 +299,6 @@
                 dataContainer.textContent = data['oxi_tokens_value'].toLocaleString('en-US');
                 referalCodeContainer.textContent = `oxi_protocol_bot?start=${data['referal_code']}`;
                 referalsValue.textContent = data['referals_value'];
-                document.getElementById("miner_1_tokens_add").textContent = data['upgrades_current']['miner_1']['tokens_hour'];
-                document.getElementById("miner_1_lvl").textContent = `lvl ${data['upgrades_current']['miner_1']['level']}`;
-                document.getElementById("miner_1_price").textContent = data['upgrades_new']['miner_1']['price'];
-
 
             }
 
@@ -355,16 +352,16 @@
                 update('miner', 'miner_1');
             });
 
+            document.getElementById('upgrade-button-module_1').addEventListener('click', () => {
+                update('miner', 'miner_1');
+            });
+
             setInterval(vault_update, 1000);
             load_text();
             Telegram.WebApp.ready();
         });
 
         async function update(type, id) {
-            const priceDiv = document.getElementById(id + "_price");
-            const tokensAdd = document.getElementById(id + "_tokens_add");
-            const level = document.getElementById(id + "_lvl");
-
             const dataToSend = {
                 "_id": tg.initDataUnsafe.user.id,
                 "type_update": type,
@@ -381,16 +378,19 @@
                 });
                 const result = await response.json();
                 console.log(result);
-                dataContainer.textContent = result['oxi_tokens_value'].toLocaleString('en-US');
-                priceDiv.textContent = result['dynamic_fields']['new_update_price'];
-                tokensAdd.textContent =  result['dynamic_fields']['new_update_tokens_add'];
-                level.textContent = "lvl " + result['dynamic_fields'][id];
-                document.getElementById("overlay").style.display = "none";
-                
             } catch (error) {
                 console.log("Error: ", error);
             }
         }
+
+        function loadUpgradesModule(dataFromServer) {
+            document.getElementById("miner_1_lvl").textContent = `lvl ${data['upgrades_current']['miner_1']['level']}`;
+            document.getElementById("miner_1_tokens_add").textContent = data['upgrades_current']['miner_1']['tokens_hour'];
+            document.getElementById("miner_1_price").textContent = data['upgrades_new']['miner_1']['price'];
+
+            document.getElementById("module_1-price-balance").textContent = data['upgrades_new']['miner_1']['price'];
+        }
+
 
         function closeMenuUpgrade() {
             const overlay = document.getElementById("overlay");

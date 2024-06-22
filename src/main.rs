@@ -426,7 +426,7 @@ async fn update(
     };
 
     let current_level_upgrade = match token_data.upgrades.get(&data.id_update) {
-        Some(level) => *level,
+        Some(level) => level,
         None => {
             let error = ErrorResponse { error: "Upgrade not found for the user".to_string() };
             return HttpResponse::BadRequest().json(error);
@@ -457,6 +457,7 @@ async fn update(
     // Perform the upgrade
     token_data.oxi_tokens_value -= new_level_data.buy_price;
     token_data.tokens_hour += new_level_data.tokens_add;
+    token_data.upgrades.insert(data.id_update.to_string(), new_level_upgrade);
 
     match state.token_collection.replace_one(doc! { "_id": &user_id }, &token_data, None).await {
         Ok(_) => {}
