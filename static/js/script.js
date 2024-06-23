@@ -269,17 +269,19 @@ function fitTextToContainer(container, textElement) {
     }
 }
 
-// const countdownDate = new Date().getTime() + 2 * 60 * 60 * 1000; // 2 часа от текущего времени
-const countdownDate = new Date().getTime() + 10 * 1000; // 2 часа от текущего времени
+const countdownDate = new Date().getTime() + 8 * 60 * 60 * 1000; // 2 часа от текущего времени
 
 function set_timer() {
     const countdownFunction = setInterval(function() {
         // Получаем текущее время
         // const now = new Date().getTime();
         const now = data_local['last_time_update'] * 1000;
-
+        console.log(now);
+        console.log(countdownDate);
+        
         // Находим разницу между текущим временем и временем обратного отсчета
         const distance = countdownDate - now;
+        console.log(distance);
 
         // Вычисляем время для часов, минут и секунд
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
