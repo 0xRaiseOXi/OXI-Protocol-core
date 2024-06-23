@@ -112,7 +112,7 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: end;
-    width: 20%;
+    width: 30%;
     height: 15%;
     font-weight: 600;
 }
@@ -1201,6 +1201,9 @@ html, body {
     z-index: 5;
     color: #ffffff;
     margin-top: 3%; 
+    white-space: nowrap;         /* Отключаем перенос текста */
+    overflow: hidden;            /* Скрываем переполнение */
+    text-overflow: ellipsis;  
 }
 
 #player-name {
