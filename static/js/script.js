@@ -22,8 +22,7 @@ const elements = {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const user = tg.initDataUnsafe.user;
-    const userData = { id: 1070221127 }; // временное значение для тестирования
+    const userData = { id: tg.initDataUnsafe.user.id }; // временное значение для тестирования
 
     try {
         const dataUserFromServer = await sendDataToServer(userData);
@@ -66,7 +65,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function update(type, id) {
-    const dataToSend = { _id: 1070221127, type_update: type, id_update: id };
+    const dataToSend = { _id: tg.initDataUnsafe.user.id, type_update: type, id_update: id };
     try {
         const response = await fetch('https://oxiprotocol.ru/api/update', {
             method: 'POST',
@@ -105,7 +104,7 @@ async function claimTokens() {
         const response = await fetch('https://oxiprotocol.ru/claim_tokens', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: 1070221127 })
+            body: JSON.stringify({ id: tg.initDataUnsafe.user.id })
         });
         if (!response.ok) {
             elements.claimTokensButton.textContent = "Server Error";
