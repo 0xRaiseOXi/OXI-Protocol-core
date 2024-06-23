@@ -19,6 +19,7 @@ const elements = {
     upgradeButtonModule1: document.getElementById('upgrade-button-module_1'),
     playerName: document.getElementById('player-name'),
     playerNameC: document.querySelector('.player-name-container'),
+    friendsAdd: document.getElementById('friends-add-value'),
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -35,7 +36,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     elements.claimTokensButton.addEventListener('click', async () => {
         const data = await claimTokens();
-        set_timer();
         animateMainCounter(data['oxi_tokens_value']);
         vaultProgressBar(0);
         elements.counterVault.textContent = 0;
@@ -62,7 +62,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     setInterval(vaultUpdate, 1000);
     loadText();
     vaultUpdate();
-    set_timer();
     tg.ready();
 });
 
@@ -137,6 +136,7 @@ function updateUserData(data) {
     elements.dataContainer.textContent = data['oxi_tokens_value'].toLocaleString('en-US');
     elements.referalCodeContainer.textContent = `https://t.me/oxi_protocol_bot?start=${data['referal_code']}`;
     elements.referalsValue.textContent = data['referals_value'];
+    elements.friendsAdd.textContent = data['referals_value'] * 25000;
 }
 
 function loadUpgradesModule(dataFromServer) {
@@ -187,36 +187,14 @@ function vaultProgressBar(percentage) {
 }
 
 function vaultUpdate() {
-    // const currentTime = Math.floor(Date.now() / 1000);
-    // const timeDifference = currentTime - data_local['last_time_update'];
-    // const addedTokens = Math.trunc(timeDifference / 3600 * data_local['tokens_hour']);
-    // const vaultSize = data_local['upgrades_current']['vault_main']['volume'];
-    // const percentage = Math.trunc(addedTokens / vaultSize * 100);
-
-    // elements.counterVault.textContent = addedTokens < vaultSize ? Math.max(0, addedTokens) : vaultSize;
-    // vaultProgressBar(percentage);
     const currentTime = Math.floor(Date.now() / 1000);
     const timeDifference = currentTime - data_local['last_time_update'];
     const addedTokens = Math.trunc(timeDifference / 3600 * data_local['tokens_hour']);
     const vaultSize = data_local['upgrades_current']['vault_main']['volume'];
+    const percentage = Math.trunc(addedTokens / vaultSize * 100);
 
-    // Установим максимальное количество секунд для 100%
-    const maxSeconds = 8 * 3600;
-    const remainingSeconds = maxSeconds - timeDifference;
-
-    // Вычисляем процент относительно оставшегося времени
-    const percentage = Math.trunc((remainingSeconds / maxSeconds) * 100);
-
-    let tokensToDisplay;
-    if (timeDifference > maxSeconds) {
-        tokensToDisplay = data_local['tokens_hour'] * 8;
-    } else {
-        tokensToDisplay = addedTokens;
-    }
-
-    elements.counterVault.textContent = tokensToDisplay;
+    elements.counterVault.textContent = addedTokens < vaultSize ? Math.max(0, addedTokens) : vaultSize;
     vaultProgressBar(percentage);
-
 }
 
 function parseNumber(number) {
@@ -256,8 +234,6 @@ function loadText() {
     const vaultText = document.getElementById('vault-text-main');
     fitTextToContainer(vault, vaultText);
     fitTextToContainer(elements.playerNameC, elements.playerName);
-    fitTextToContainer(document.getElementById('referal-code-container'), document.querySelector('referal-code'));
-
 }
 
 function fitTextToContainer(container, textElement) {
