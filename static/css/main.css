@@ -1209,3 +1209,11 @@ html, body {
     overflow: hidden;            /* Скрываем переполнение */
     text-overflow: ellipsis;  
 }
+
+#timer {
+    position: absolute;
+    color: #ffffff;
+    font-weight: 600;
+    margin-left: 14%;
+    margin-top: 17%;
+}

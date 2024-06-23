@@ -185,14 +185,36 @@ function vaultProgressBar(percentage) {
 }
 
 function vaultUpdate() {
+    // const currentTime = Math.floor(Date.now() / 1000);
+    // const timeDifference = currentTime - data_local['last_time_update'];
+    // const addedTokens = Math.trunc(timeDifference / 3600 * data_local['tokens_hour']);
+    // const vaultSize = data_local['upgrades_current']['vault_main']['volume'];
+    // const percentage = Math.trunc(addedTokens / vaultSize * 100);
+
+    // elements.counterVault.textContent = addedTokens < vaultSize ? Math.max(0, addedTokens) : vaultSize;
+    // vaultProgressBar(percentage);
     const currentTime = Math.floor(Date.now() / 1000);
     const timeDifference = currentTime - data_local['last_time_update'];
     const addedTokens = Math.trunc(timeDifference / 3600 * data_local['tokens_hour']);
     const vaultSize = data_local['upgrades_current']['vault_main']['volume'];
-    const percentage = Math.trunc(addedTokens / vaultSize * 100);
 
-    elements.counterVault.textContent = addedTokens < vaultSize ? Math.max(0, addedTokens) : vaultSize;
+    // Установим максимальное количество секунд для 100%
+    const maxSeconds = 8 * 3600;
+    const remainingSeconds = maxSeconds - timeDifference;
+
+    // Вычисляем процент относительно оставшегося времени
+    const percentage = Math.trunc((remainingSeconds / maxSeconds) * 100);
+
+    let tokensToDisplay;
+    if (timeDifference > maxSeconds) {
+        tokensToDisplay = data_local['tokens_hour'] * 8;
+    } else {
+        tokensToDisplay =addedTokens;
+    }
+
+    elements.counterVault.textContent = tokensToDisplay;
     vaultProgressBar(percentage);
+
 }
 
 function parseNumber(number) {
@@ -244,3 +266,30 @@ function fitTextToContainer(container, textElement) {
         textElement.style.fontSize = fontSize + 'px';
     }
 }
+
+// const countdownDate = new Date().getTime() + 2 * 60 * 60 * 1000; // 2 часа от текущего времени
+const countdownDate = new Date().getTime() + 10 * 1000; // 2 часа от текущего времени
+
+// Обновляем таймер каждую секунду
+const countdownFunction = setInterval(function() {
+    // Получаем текущее время
+    // const now = new Date().getTime();
+    const now = data_local['last_time_update'] * 1000;
+
+    // Находим разницу между текущим временем и временем обратного отсчета
+    const distance = countdownDate - now;
+
+    // Вычисляем время для часов, минут и секунд
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Выводим результат в элемент с id="timer"
+    document.getElementById("timer").innerHTML = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+    // Если обратный отсчет закончился, выводим текст
+    if (distance < 0) {
+        clearInterval(countdownFunction);
+        document.getElementById("timer").innerHTML = "Full";
+    }
+}, 1000);
