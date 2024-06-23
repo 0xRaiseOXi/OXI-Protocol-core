@@ -106,12 +106,19 @@ html, body {
 
 .planet {
     position: absolute;
-    right: 5%;
-    top: 3%;
+    right: 3%;
+    top: 5%;
+    border: 1px solid #ffffff;
     color: #f6f7f8;
-    font-weight: 600;
-    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    width: 20%;
+    height: 15%;
+    /* font-weight: 600; */
+    /* font-size: 20px; */
 }
+
 
 .panels-main {
     position: absolute;
@@ -1189,11 +1196,19 @@ html, body {
 .player-name-container {
     display: flex;
     position: absolute;
-    /* justify-content: center; */
     align-items: center;
     padding-left: 3%;
-    width: 50%;
+    width: 40%;
     height: 4%;
     z-index: 5;
     color: #ffffff;
+    margin-top: 3%;
+    border: 1px solid #ffffff;
+    
+}
+
+#player-name {
+    white-space: nowrap;         /* Отключаем перенос текста */
+    overflow: hidden;            /* Скрываем переполнение */
+    text-overflow: ellipsis;  
 }
