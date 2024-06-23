@@ -108,15 +108,13 @@ html, body {
     position: absolute;
     right: 3%;
     top: 5%;
-    border: 1px solid #ffffff;
     color: #f6f7f8;
     display: flex;
     align-items: center;
     justify-content: end;
     width: 20%;
     height: 15%;
-    /* font-weight: 600; */
-    /* font-size: 20px; */
+    font-weight: 600;
 }
 
 
@@ -1202,9 +1200,7 @@ html, body {
     height: 4%;
     z-index: 5;
     color: #ffffff;
-    margin-top: 3%;
-    border: 1px solid #ffffff;
-    
+    margin-top: 3%; 
 }
 
 #player-name {
