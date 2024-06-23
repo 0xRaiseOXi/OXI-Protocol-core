@@ -629,7 +629,7 @@ html, body {
     cursor: pointer;
 }
 
-.invite-friends-button {
+#invite-friends-button {
     width: 90%;
     left: 5%;
     position: absolute;
@@ -661,7 +661,7 @@ html, body {
     padding-left: 10%;
 }
 
-#referal-code {
+.referal-code-container {
     position: absolute;
     display: flex;
     align-items: center;
@@ -676,6 +676,8 @@ html, body {
     background-color: #063580;
     border-radius: 15px;
     text-decoration: underline;
+    padding-left: 5%;
+    padding-right: 5%;
 }
 
 
@@ -1182,4 +1184,16 @@ html, body {
     align-items: center;
     justify-content: center;
     border-radius: 15px;
+}
+
+.player-name-container {
+    display: flex;
+    position: absolute;
+    /* justify-content: center; */
+    align-items: center;
+    padding-left: 5%;
+    width: 50%;
+    height: 4%;
+    z-index: 5;
+    color: #ffffff;
 }

@@ -38,7 +38,7 @@ struct TokenData {
     language: String,
     oxi_tokens_value: u64,
     last_time_update: f64,
-    tokens_hour: u64,
+    tokens_hour: u32,
     referal_code: String,
     referals: Vec<String>,
 }
@@ -47,11 +47,13 @@ struct TokenData {
 struct MainResponse {
     _id: String,
     username: Option<String>,
+    first_name: Option<String>,
+    last_name: Option<String>,
     upgrades_current: Option<HashMap<String, HashMap<String, String>>>,
     upgrades_new: Option<HashMap<String, HashMap<String, String>>>,
     oxi_tokens_value: u64,
     last_time_update: f64,
-    tokens_hour: u64,
+    tokens_hour: u32,
     referal_code: String,
     referals: Vec<String>,
     referals_value: String,
@@ -62,6 +64,8 @@ impl TokenData {
         MainResponse {
             _id: self._id.clone(),
             username: self.username.clone(),
+            first_name: self.first_name.clone(),
+            last_name: self.last_name.clone(),
             upgrades_current: upgrades_chapshot,
             upgrades_new: upgrades_chapshot_new,
             oxi_tokens_value: self.oxi_tokens_value,
@@ -76,7 +80,6 @@ impl TokenData {
 
 struct AppState {
     token_collection: mongodb::Collection<TokenData>,
-    vault_size_constant: HashMap<u8, u32>,
     upgrades_constant: Config,
     password: String
 }
@@ -104,21 +107,19 @@ struct SuccessResponse {
 
 impl AppState {
     async fn update_tokens_value_vault(&self, id: &str) -> Result<u64, UpdateError> {
-        let filter = doc! { "_id": id };
-  
-        let data_result = self.token_collection.find_one(filter.clone(), None).await;
+        let data_result = self.token_collection.find_one(doc! { "_id": id }, None).await;
         let data = match data_result {
             Ok(Some(doc)) => doc,
             Ok(None) => return Err(UpdateError::NotFound),
             Err(_) => return Err(UpdateError::DatabaseError),
         };
-        
+
         let current_time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs_f64();
         let time_difference = current_time - data.last_time_update;
         let time_difference_in_hours = time_difference / 3600.0;
-        let added_tokens = (time_difference_in_hours * 1000.0) as u64;
-        let vault_size = self.vault_size_constant[&data.upgrades.get("vault_main").unwrap()] as u64;
-    
+        let added_tokens = (time_difference_in_hours * data.tokens_hour as f64) as u64;
+        let vault_size = self.upgrades_constant.vault.get(&data.upgrades.get("vault_main").unwrap().to_string()).unwrap().volume as u64;
+
         if added_tokens > vault_size {
             return Ok(vault_size);
         }
@@ -279,7 +280,8 @@ async fn get_data(
         Ok(None) => {
             return HttpResponse::NotFound().json(create_error_response("User not found"));
         }
-        Err(_) => {
+        Err(e) => {
+            println!("{}", e);
             return HttpResponse::InternalServerError().json(create_error_response("Database query failed"));
         }
     };
@@ -288,14 +290,11 @@ async fn get_data(
     let mut upgrades_chapshot_new = HashMap::new();
 
     for (key, b) in &data.upgrades {
-        println!("{} {}", key, b);
 
         let mut upgrades_local = HashMap::new();
         let mut upgrades_new = HashMap::new();
 
         let parts: Vec<&str> = key.split('_').collect();
-        println!("{}", parts[0]);
-
         if "miner" == parts[0] { 
             let current_level_upgrade = match state.upgrades_constant.miner.get(&b.to_string()) {
                 Some(v) => v,
@@ -346,9 +345,6 @@ async fn get_data(
             upgrades_chapshot_new.insert(key.to_string(), upgrades_new.clone());
         }
     }
-
-    println!("{:?}", upgrades_chapshot);
-    println!("{:?}", upgrades_chapshot_new);
 
     let response = data.build_response(Some(upgrades_chapshot), Some(upgrades_chapshot_new));
 
@@ -394,7 +390,66 @@ async fn claim_tokens(
         Err(_) => return HttpResponse::InternalServerError().json(ErrorResponse { error: "Failed to replace data in database".to_string() }),
     };
 
-    let response = data.build_response(None, None);
+    let mut upgrades_chapshot = HashMap::new();
+    let mut upgrades_chapshot_new = HashMap::new();
+
+    for (key, b) in &data.upgrades {
+        let mut upgrades_local = HashMap::new();
+        let mut upgrades_new = HashMap::new();
+
+        let parts: Vec<&str> = key.split('_').collect();
+        if "miner" == parts[0] { 
+            let current_level_upgrade = match state.upgrades_constant.miner.get(&b.to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+
+            let new_level_upgrade = match state.upgrades_constant.miner.get(&(b + 1).to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+            upgrades_local.insert("tokens_hour".to_string(), current_level_upgrade.tokens_add.to_string());
+            upgrades_local.insert("level".to_string(), b.to_string());
+
+            upgrades_new.insert("tokens_hour".to_string(), new_level_upgrade.tokens_add.to_string());
+            upgrades_new.insert("price".to_string(), new_level_upgrade.buy_price.to_string());
+
+            upgrades_chapshot.insert(key.to_string(), upgrades_local.clone());
+            upgrades_chapshot_new.insert(key.to_string(), upgrades_new.clone());
+
+        } else if parts[0] == "vault" {
+            let current_level_upgrade = match state.upgrades_constant.vault.get(&b.to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+
+            let new_level_upgrade = match state.upgrades_constant.vault.get(&(b + 1).to_string()) {
+                Some(v) => v,
+                None => {
+                    let error = ErrorResponse { error: "Failed to Data Base".to_string() };
+                    return HttpResponse::InternalServerError().json(error);
+                }
+            };
+            upgrades_local.insert("volume".to_string(), current_level_upgrade.volume.to_string());
+            upgrades_local.insert("level".to_string(), b.to_string());
+
+            upgrades_new.insert("volume".to_string(), new_level_upgrade.volume.to_string());
+
+            upgrades_chapshot.insert(key.to_string(), upgrades_local.clone());
+            upgrades_chapshot_new.insert(key.to_string(), upgrades_new.clone());
+        }
+    }
+
+    let response = data.build_response(Some(upgrades_chapshot), Some(upgrades_chapshot_new));
 
     HttpResponse::Ok().json(response)
 }
@@ -434,14 +489,35 @@ async fn update(
     };
 
     let new_level_upgrade = current_level_upgrade + 1;
+    if data.type_update == "miner" {
+        if new_level_upgrade == 19 {
+            let error = ErrorResponse { error: "Max level".to_string() };
+            return HttpResponse::Ok().json(error);
+        }
+    };
+
     let new_level_data = if &data.type_update == "miner" {
         Some(state.upgrades_constant.miner.get(&((new_level_upgrade).to_string())).unwrap())
     } else {
         None
     };
 
+    let current_level_data = if &data.type_update == "miner" {
+        Some(state.upgrades_constant.miner.get(&((current_level_upgrade).to_string())).unwrap())
+    } else {
+        None
+    };
+
     // Check if the user has enough tokens to perform the upgrade
     let new_level_data = match new_level_data {
+        Some(data) => data,
+        None => {
+            let error = ErrorResponse { error: "Failed to get upgrade data".to_string() };
+            return HttpResponse::InternalServerError().json(error);
+        }
+    };
+
+    let current_level_data = match current_level_data {
         Some(data) => data,
         None => {
             let error = ErrorResponse { error: "Failed to get upgrade data".to_string() };
@@ -456,7 +532,7 @@ async fn update(
 
     // Perform the upgrade
     token_data.oxi_tokens_value -= new_level_data.buy_price;
-    token_data.tokens_hour += new_level_data.tokens_add;
+    token_data.tokens_hour += new_level_data.tokens_add - current_level_data.tokens_add;
     token_data.upgrades.insert(data.id_update.to_string(), new_level_upgrade);
 
     match state.token_collection.replace_one(doc! { "_id": &user_id }, &token_data, None).await {
@@ -471,13 +547,11 @@ async fn update(
     let mut upgrades_chapshot_new = HashMap::new();
 
     for (key, b) in &token_data.upgrades {
-        println!("{} {}", key, b);
 
         let mut upgrades_local = HashMap::new();
         let mut upgrades_new = HashMap::new();
 
         let parts: Vec<&str> = key.split('_').collect();
-        println!("{}", parts[0]);
 
         if "miner" == parts[0] { 
             let current_level_upgrade = match state.upgrades_constant.miner.get(&b.to_string()) {
@@ -530,9 +604,6 @@ async fn update(
         }
     }
 
-    println!("{:?}", upgrades_chapshot);
-    println!("{:?}", upgrades_chapshot_new);
-
     let response = token_data.build_response(Some(upgrades_chapshot), Some(upgrades_chapshot_new));
 
     HttpResponse::Ok().json(response)
@@ -541,7 +612,7 @@ async fn update(
 #[derive(Serialize, Deserialize, Debug)]
 struct MinerConfig {
     buy_price: u64,
-    tokens_add: u64,
+    tokens_add: u32,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -575,12 +646,6 @@ async fn main() -> std::io::Result<()> {
 
     let token_collection = db.collection::<TokenData>("OXI_tokens");
 
-    let vault_size_constant = HashMap::from([
-        (1, 5000), (2, 12000), (3, 50000), (4, 120000), 
-        (5, 450000), (6, 800000), (7, 1600000), 
-        (8, 3500000), (9, 5000000), (10, 10000000)
-    ]);
-    
     let upgrades_constant = match load_config("config/config.json") {
         Ok(c) => c,
         Err(e) => {
@@ -593,7 +658,6 @@ async fn main() -> std::io::Result<()> {
 
     let state = web::Data::new(Mutex::new(AppState { 
         token_collection, 
-        vault_size_constant,
         upgrades_constant,
         password: password.to_string()
     }));

@@ -1,0 +1,91 @@
+[
+    {
+        "_id": "1070221127",
+        "username": "maximusnescafe",
+        "first_name": null,
+        "last_name": null,
+        "register_in_game": 1718456305.2138424,
+        "upgrades": {
+            "miner_1": 20,
+            "vault_main": 1
+        },
+        "language": "ru",
+        "oxi_tokens_value": 51237,
+        "last_time_update": 1719089006.688733,
+        "tokens_hour": 16924,
+        "referal_code": "c2edb6",
+        "referals": [
+            "5294101328",
+            "1030365162",
+            "357518747"
+        ]
+    },
+    {
+        "_id": "5294101328",
+        "username": "Test",
+        "first_name": null,
+        "last_name": "Djomkina",
+        "register_in_game": 1718456391.5961165,
+        "upgrades": {
+            "vault_main": 1,
+            "miner_1": 2
+        },
+        "language": "ru",
+        "oxi_tokens_value": 51922,
+        "last_time_update": 1719085571.7206028,
+        "tokens_hour": 3000,
+        "referal_code": "70a847",
+        "referals": []
+    },
+    {
+        "_id": "1030365162",
+        "language": "ru",
+        "oxi_tokens_value": 5358,
+        "last_time_update": 1718812576.6776266,
+        "tokens_hour": 1000,
+        "username": "km95392",
+        "first_name": null,
+        "last_name": null,
+        "register_in_game": 1718567645.6557744,
+        "upgrades": {
+            "miner_1": 1,
+            "vault_main": 1
+        },
+        "referal_code": "dbeb17",
+        "referals": []
+    },
+    {
+        "_id": "357518747",
+        "language": "ru",
+        "oxi_tokens_value": 25029,
+        "last_time_update": 1718610744.8638203,
+        "tokens_hour": 1000,
+        "username": "madam_lyi",
+        "first_name": null,
+        "last_name": null,
+        "register_in_game": 1718610623.0507429,
+        "upgrades": {
+            "miner_1": 1,
+            "vault_main": 1
+        },
+        "referal_code": "c55269",
+        "referals": []
+    },
+    {
+        "_id": "5019090029",
+        "username": "qwinkky",
+        "first_name": null,
+        "last_name": null,
+        "register_in_game": 1718895511.8786676,
+        "upgrades": {
+            "miner_1": 20,
+            "vault_main": 1
+        },
+        "language": "ru",
+        "oxi_tokens_value": 27555,
+        "last_time_update": 1719089011.7300894,
+        "tokens_hour": 8925,
+        "referal_code": "537bd3",
+        "referals": []
+    }
+]
