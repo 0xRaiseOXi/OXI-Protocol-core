@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     elements.closeMenuUpgradeImg.addEventListener('click', closeMenuUpgrade);
     elements.confirmUpdateButton.addEventListener('click', () => update('miner', 'miner_1'));
     elements.upgradeButtonModule1.addEventListener('click', () => update('miner', 'miner_1'));
-    
+
     setUserName();
 
     setInterval(vaultUpdate, 1000);
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function update(type, id) {
     const dataToSend = { _id: 1070221127, type_update: type, id_update: id };
     try {
-        const response = await fetch('http://127.0.0.1:8080/api/update', {
+        const response = await fetch('https://oxiprotocol.ru/api/update', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataToSend)
@@ -85,7 +85,7 @@ async function update(type, id) {
 
 async function sendDataToServer(dataToSend) {
     try {
-        const response = await fetch('http://127.0.0.1:8080/api/data', {
+        const response = await fetch('https://oxiprotocol.ru/api/data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataToSend)
@@ -102,7 +102,7 @@ async function sendDataToServer(dataToSend) {
 
 async function claimTokens() {
     try {
-        const response = await fetch('http://127.0.0.1:8080/claim_tokens', {
+        const response = await fetch('https://oxiprotocol.ru/claim_tokens', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: 1070221127 })
