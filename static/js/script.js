@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     elements.claimTokensButton.addEventListener('click', async () => {
         const data = await claimTokens();
+        set_timer();
         animateMainCounter(data['oxi_tokens_value']);
         vaultProgressBar(0);
         elements.counterVault.textContent = 0;
@@ -209,7 +210,7 @@ function vaultUpdate() {
     if (timeDifference > maxSeconds) {
         tokensToDisplay = data_local['tokens_hour'] * 8;
     } else {
-        tokensToDisplay =addedTokens;
+        tokensToDisplay = addedTokens;
     }
 
     elements.counterVault.textContent = tokensToDisplay;
@@ -270,26 +271,27 @@ function fitTextToContainer(container, textElement) {
 // const countdownDate = new Date().getTime() + 2 * 60 * 60 * 1000; // 2 часа от текущего времени
 const countdownDate = new Date().getTime() + 10 * 1000; // 2 часа от текущего времени
 
-// Обновляем таймер каждую секунду
-const countdownFunction = setInterval(function() {
-    // Получаем текущее время
-    // const now = new Date().getTime();
-    const now = data_local['last_time_update'] * 1000;
+function set_timer() {
+    const countdownFunction = setInterval(function() {
+        // Получаем текущее время
+        // const now = new Date().getTime();
+        const now = data_local['last_time_update'] * 1000;
 
-    // Находим разницу между текущим временем и временем обратного отсчета
-    const distance = countdownDate - now;
+        // Находим разницу между текущим временем и временем обратного отсчета
+        const distance = countdownDate - now;
 
-    // Вычисляем время для часов, минут и секунд
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        // Вычисляем время для часов, минут и секунд
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    // Выводим результат в элемент с id="timer"
-    document.getElementById("timer").innerHTML = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        // Выводим результат в элемент с id="timer"
+        document.getElementById("timer").innerHTML = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-    // Если обратный отсчет закончился, выводим текст
-    if (distance < 0) {
-        clearInterval(countdownFunction);
-        document.getElementById("timer").innerHTML = "Full";
-    }
-}, 1000);
+        // Если обратный отсчет закончился, выводим текст
+        if (distance < 0) {
+            clearInterval(countdownFunction);
+            document.getElementById("timer").innerHTML = "Full";
+        }
+    }, 1000);
+}
