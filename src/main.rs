@@ -120,7 +120,7 @@ impl AppState {
         let time_difference = current_time - data.last_time_update;
         let time_difference_in_hours = time_difference / 3600.0;
         let added_tokens = (time_difference_in_hours * 1000.0) as u64;
-        let vault_size = self.vault_size_constant[&data.upgrades.get("vault_main").unwrap()] as u64;
+        let vault_size = 5000;
     
         if added_tokens > vault_size {
             return Ok(vault_size);
