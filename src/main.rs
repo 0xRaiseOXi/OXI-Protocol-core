@@ -107,21 +107,23 @@ struct SuccessResponse {
 
 impl AppState {
     async fn update_tokens_value_vault(&self, id: &str) -> Result<u64, UpdateError> {
-        let data_result = self.token_collection.find_one(doc! { "_id": id }, None).await;
+        let filter = doc! { "_id": id };
+  
+        let data_result = self.token_collection.find_one(filter.clone(), None).await;
         let data = match data_result {
             Ok(Some(doc)) => doc,
             Ok(None) => return Err(UpdateError::NotFound),
             Err(_) => return Err(UpdateError::DatabaseError),
         };
-
+        
         let current_time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs_f64();
         let time_difference = current_time - data.last_time_update;
         let time_difference_in_hours = time_difference / 3600.0;
-        let added_tokens = (time_difference_in_hours * data.tokens_hour as f64) as u64;
-  
-        if time_difference > 8.0 * 60.0 * 60.0 {
-            let added_tokens = (8 * data.tokens_hour) as u64;
-            return Ok(added_tokens);
+        let added_tokens = (time_difference_in_hours * 1000.0) as u64;
+        let vault_size = self.vault_size_constant[&data.upgrades.get("vault_main").unwrap()] as u64;
+    
+        if added_tokens > vault_size {
+            return Ok(vault_size);
         }
         
         Ok(added_tokens)
@@ -672,7 +674,7 @@ async fn main() -> std::io::Result<()> {
             .route("/newaccount", web::post().to(create_new_account))
             .service(actix_files::Files::new("/static", "./static").show_files_listing())
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("127.0.0.1", 8081))?
     .run()
     .await
 }
