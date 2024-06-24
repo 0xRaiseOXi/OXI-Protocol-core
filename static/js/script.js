@@ -128,8 +128,9 @@ function setUserName() {
             playerName.textContent = data_local['first_name'] + " " + data_local['last_name'];   
         }
         playerName.textContent = data_local['first_name'];   
+    } else {
+        playerName.textContent = data_local['username']; 
     }
-    playerName.textContent = data_local['username']; 
 }
 
 function updateUserData(data) {
