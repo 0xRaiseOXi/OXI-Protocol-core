@@ -1,5 +1,9 @@
 {
     "miner": {
+        "0": {
+            "buy_price": 0,
+            "tokens_add": 0 
+        },
         "1": {
             "buy_price": 1000,
             "tokens_add": 1000 

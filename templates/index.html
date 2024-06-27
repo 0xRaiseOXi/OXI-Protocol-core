@@ -3,25 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OXI Protocol</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <title>OXI Mining Protocol</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body>
-    <section class="container content-section-show", id="section-main">
-        <div class="player-name-container">
-            <img src="/static/images/user.png" alt="" style="width: 20px;height: 20px;object-fit: cover;filter: invert(1);margin-right: 2%;">
-            <div id="player-name">Test Test </div>
+
+    <section class="container content-section-show" id="section-main">
+
+        <div class="module-main-1-mine-hour">
+            <div class="mine-hour-text">Добыча в час</div>
+            <div class="mine-module-view">
+                <div id="mine-in-hour">+1k</div>
+                <div class="mine-module-oxi">OXI</div>
+            </div>
         </div>
-        <div class="content">
-            <div class="planet">Planet XR-1</div>
-            <div class="league">Bronze</div>
+
+        <div class="module-main-2-user-profile">
+            <div class="player-name-container">
+                <img src="/static/images/user.png" alt="" class="user-main-png">
+                <div id="player-name">Test Test </div>
+            </div>
+            <div class="player-level">1</div>
+            <div class="player-progress-bar-container">
+                <div class="player-progress-bar"></div>
+            </div>
+        </div>
+
+        <div class="module-main-3-war">
+            <div class="war-module-text">Боевая мощь</div>
+            <div id="war">0</div>
+        </div>
+
+        <div class="content-main">
+            <div class="league">
+                <img src="/static/images/league.png" alt="" class="main-module-img">
+                <div>Bronze ></div>
+            </div>
+            <!-- <div class="energy">
+                <img src="/static/images/energy.png" alt="" style="width: 20px;height: 20px;object-fit: cover;filter: invert(1);margin-right: 1%;">
+                Энергия 90/100e
+            </div> -->
+            <div class="guard">
+                <img src="/static/images/guard.png" alt="" class="main-module-img">
+                Щит 100%
+            </div>
             <div id="data-in-load-tokens", class="data-in-load-tokens">
                 <img src="/static/images/moneta.png" alt="", class="moneta-main-balance">
                 <div id="main-balance"></div>
             </div>
         </div>
+
         <div class="panels-main"> </div>
         <div class="vault-main", id="panel-1-coins">
             <div class="progress-container">
@@ -32,20 +64,87 @@
                     <div id="vault-text-main">Хранилище</div>
                 </div>
             </div>
-            <!-- <div id="timer">00:00:00</div> -->
-            <!-- <div class="vault-level">lvl 1</div> -->
+            <div id="timer">00:00:00</div>
             <div class="tokens-value-vault">
                 <div id="tokens-value-vault"></div>
                 <div class="tokens-value-vault-text">OXI</div>
             </div>  
         </div>
-        
-        <div class="claim-tokens-button", id="claim-tokens-button">Собрать OXI</div>
+        <div class="module-line-1-1">
+            <div class="module-line-1-2"></div>
         </div>
+        <div class="module-line-2-1">
+            <div class="module-line-1-2"></div>
+        </div>
+        <div class="module-line-3-1">
+            <div class="module-line-1-2"></div>
+        </div>
+        <div class="module-1-1" >
+            <img src="/static/images/dron.png" alt="", style="width: 70px;height: 70px;object-fit: cover;filter: invert(1);">
+            <div class="dron-text">Дроны</div>
+        </div>
+        <div class="module-1-2">
+            <img src="/static/images/fabric.png" alt="", style="width: 70px;height: 70px;object-fit: cover;filter: invert(1);">
+            <div class="fabric-text">Производство</div>
+        </div>
+        <div class="module-1-3">
+            <img src="/static/images/award.png" alt="", style="width: 70px;height: 70px;object-fit: cover;filter: invert(1);">
+            <div class="dron-text">Награды</div>
+        </div>
+        <div class="claim-tokens-button deactive", id="claim-tokens-button">Собрать OXI</div>
+        </div>
+
+        <div id="overlay-fabric" class="overlay-fabric">
+            <div class="menu-to-buy-fabric">
+                <div id="close-menu-buy-fabric">
+                    <img src="/static/images/krestic.png" alt="" id="close-menu-upgrade-img" style="width:100%;height:auto;object-fit:cover;filter: invert(1);">
+                </div>
+                <div class="text-upgrade-menu">Покупка</div>
+                <div class="confirm-buy-fabric-button">В разработке</div>
+                <div class="upgrade-module-price">
+                    <div class="moneta-upgrade-module">
+                        <img src="/static/images/moneta.png" alt="" style="width: 100%;height: auto;object-fit: cover;">
+                    </div>
+                    <div class="price-balance">500,000,000</div>
+                </div>
+                <div class="module-name-upgrade">
+                    <div class="module-name-confirm">
+                        <img src="/static/images/fabric.png" alt="", class="img-miner-module">
+                        Фабрика
+                    </div>
+                </div>
+                <div class="miner-text-price">Производит дроны, атакующие ракеты и ускорители. <br><br>Снижает эффективность щита до 80%. </div>
+               
+            </div>
+        </div> 
+
+        <div id="overlay-drone" class="overlay-drone">
+            <div class="menu-to-buy-fabric">
+                <div id="close-menu-buy-drone">
+                    <img src="/static/images/krestic.png" alt="" id="close-menu-upgrade-img" style="width:100%;height:auto;object-fit:cover;filter: invert(1);">
+                </div>
+                <div class="text-upgrade-menu">Покупка</div>
+                <div class="confirm-buy-fabric-button">В разработке</div>
+                <div class="upgrade-module-price">
+                    <div class="moneta-upgrade-module">
+                        <img src="/static/images/moneta.png" alt="" style="width: 100%;height: auto;object-fit: cover;">
+                    </div>
+                    <div class="price-balance">200,000,000</div>
+                </div>
+                <div class="module-name-upgrade">
+                    <div class="module-name-confirm">
+                        <img src="/static/images/dron.png" alt="", class="img-miner-module">
+                        Станция дронов
+                    </div>
+                </div>
+                <div class="miner-text-price">Дроны увеличивают размер хранилища, автоматически собирают токены. Боевые дроны можно использовать для атаки игроков. Позволяют активировать ускорители </div>
+            </div>
+        </div> 
+
     </section>
 
 
-    <section class="container-friends content-section-show", id="section-friends", style="display: none;">
+    <section class="container-friends content-section-show" id="section-friends", style="display: none;">
         <div class="text-friends">Друзья</div>
         <div class="text-friends-text">Вы и ваш друг получите бонусы</div>
         <div class="friends-add">
@@ -66,152 +165,271 @@
     </section>
 
 
-    <section class="container-upgrades content-section-show", id="section-upgrades", style="display: none;">
+    <section class="container-upgrades content-section-show", id="section-upgrades" style="display: none;">
         <div class="main-text-upgrades-in">Улучшения</div>
         <div class="content-container-upgrades">
-            <div class="navbar-module-update">
-                <div class="button-switch", style="margin-left: 2%;">Майнеры</div>
-                <div class="button-switch">Основные</div>
-                <div class="button-switch", style="margin-right: 2%;">Доп</div>
-            </div>
             <div class="bar-container">
 
-                <div class="data-upgarde-module-lock">
-                    <div class="lock-sloi">
-                        <div class="module-value">1</div>
-                        <div class="module-name">
-                            <img src="/static/images/miner.png" alt="", class="img-miner-module">
-                            Bronze Miner
-                        </div>
-                        <div class="level-miner", id="miner_1_lvl">None</div>
-                        <div class="last-value-mine">
-                            <div class="mine-text">Добыча в час:</div>
+                <div class="data-upgarde-module-lock miner_1">
+                    <div class="module-value">1</div>
+                    <div class="module-name">
+                        <img src="/static/images/miner.png" alt="" class="img-miner-module">
+                        Bronze Miner
+                    </div>
+                    <div class="level-miner", id="miner_1_lvl">None</div> <!----> <!----> 
+                    <div class="last-value-mine">
+                        <div class="mine-text">Добыча в час:</div>
+                        <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
+                        <div id="miner_1_tokens_add">None</div> <!----> <!----> 
+                    </div>
+                    <div class="button-upgrade-module", id="miner_1_upgrade_button"> <!---->  
+                        <div class="price-to-upgrade">
                             <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
-                            <div id="miner_1_tokens_add">None</div>
+                            <div id="miner_1_price">None</div> <!----> <!----> 
                         </div>
-                        <div class="button-upgrade-module", id="upgrade-menu-button">
-                            <div class="price-to-upgrade">
-                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
-                                <div id="miner_1_price">None</div>
-                            </div>
-                            <div class="upgrade-text miner_1", id='upgrade-button-module_1'>Улучшить</div>
-                        </div>
+                        <div class="upgrade-text">Улучшить</div> 
+                    </div>
+
+                    <div class="lock-text-sloi" id="miner_1_lock">
+                        <img src="/static/images/zamok.png" alt="", class="img-lock">
+                        <div class="lock-text">Закрыто</div>
+                        <div class="unlock-module-upgrade" id="miner_1_unlock-module">Разблокировать</div> <!----> 
                     </div>
                 </div>
 
-                <div class="data-upgarde-module-lock">
-                    <div class="lock-sloi">
-                        <div class="module-value">2</div>
-                        <div class="module-name">
-                            <img src="/static/images/miner.png" alt="", class="img-miner-module">
-                            Bronze Miner
-                        </div>
-                        <div class="level-miner", id="miner_2_lvl">None</div>
-                        <div class="last-value-mine">
-                            <div class="mine-text">Добыча в час:</div>
-                            <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
-                            <div id="miner_1_tokens_add">None</div>
-                        </div>
-                        <div class="button-upgrade-module", id="upgrade-menu-button">
-                            <div class="price-to-upgrade">
-                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
-                                <div class="miner_1_price", id="miner_1_price">None</div>
-                            </div>
-                            <div class="upgrade-text", id='upgrade-button-module'>Улучшить</div>
-                        </div>
+                <div class="data-upgarde-module-lock miner_2">
+                    <div class="module-value">2</div>
+                    <div class="module-name">
+                        <img src="/static/images/miner.png" alt="", class="img-miner-module">
+                        Gold Miner
                     </div>
-                    <div class="lock-text-sloi">
+                    <div class="level-miner" id="miner_2_lvl">None</div> <!----> 
+                    <div class="last-value-mine">
+                        <div class="mine-text">Добыча в час:</div>
+                        <img src="/static/images/moneta.png" alt="" style="width: 20px;height: 20px;object-fit: cover;">
+                        <div id="miner_2_tokens_add">None</div> <!----> 
+                    </div>
+                    <div class="button-upgrade-module" id="miner_2_upgrade_button"><!----> 
+                        <div class="price-to-upgrade">
+                            <img src="/static/images/moneta.png" alt="" style="width: 20px;height: 20px;object-fit: cover;">
+                            <div id="miner_2_price">None</div> <!----> 
+                        </div>
+                        <div class="upgrade-text">Улучшить</div>
+                    </div>
+                    
+                    <div class="lock-text-sloi"  id="miner_2_lock">
                         <img src="/static/images/zamok.png" alt="", class="img-lock">
                         <div class="lock-text">Закрыто</div>
+                        <div class="unlock-module-upgrade" id="miner_2_unlock-module">Разблокировать</div> <!----> 
                     </div>
                 </div>
 
-                <div class="data-upgarde-module-lock">
-                    <div class="lock-sloi">
-                        <div class="module-value">1</div>
-                        <div class="module-name">
-                            <img src="/static/images/miner.png" alt="", class="img-miner-module">
-                            Bronze Miner
-                        </div>
-                        <div class="level-miner", id="miner_1_lvl">None</div>
-                        <div class="last-value-mine">
-                            <div class="mine-text">Добыча в час:</div>
-                            <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
-                            <div id="miner_1_tokens_add">None</div>
-                        </div>
-                        <div class="button-upgrade-module", id="upgrade-menu-button">
-                            <div class="price-to-upgrade">
-                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
-                                <div class="miner_1_price", id="miner_1_price">None</div>
-                            </div>
-                            <div class="upgrade-text", id='upgrade-button-module'>Улучшить</div>
-                        </div>
+                <div class="data-upgarde-module-lock miner_3">
+                    <div class="module-value">3</div>
+                    <div class="module-name">
+                        <img src="/static/images/miner.png" alt="" class="img-miner-module">
+                        Diamond Miner
                     </div>
-                    <div class="lock-text-sloi">
-                        <img src="/static/images/zamok.png" alt="", class="img-lock">
+                    <div class="level-miner", id="miner_3_lvl">None</div> <!----> 
+                    <div class="last-value-mine">
+                        <div class="mine-text">Добыча в час:</div>
+                        <img src="/static/images/moneta.png" alt="" style="width: 20px;height: 20px;object-fit: cover;">
+                        <div id="miner_3_tokens_add">None</div> <!----> 
+                    </div>
+                    <div class="button-upgrade-module" id="miner_3_upgrade_button"> <!----> 
+                        <div class="price-to-upgrade">
+                            <img src="/static/images/moneta.png" alt="" style="width: 20px;height: 20px;object-fit: cover;">
+                            <div id="miner_3_price">None</div> <!----> 
+                        </div>
+                        <div class="upgrade-text">Улучшить</div> <!----> 
+                    </div>
+               
+                    <div class="lock-text-sloi" id="miner_3_lock">
+                        <img src="/static/images/zamok.png" alt="" class="img-lock">
                         <div class="lock-text">Закрыто</div>
+                        <div class="unlock-module-upgrade" id="miner_3_unlock-module">Разблокировать</div> <!----> 
                     </div>
                 </div>
 
-                <div class="data-upgarde-module-lock">
-                    <div class="lock-sloi">
-                        <div class="module-value">1</div>
-                        <div class="module-name">
-                            <img src="/static/images/miner.png" alt="", class="img-miner-module">
-                            Bronze Miner
-                        </div>
-                        <div class="level-miner", id="miner_1_lvl">None</div>
-                        <div class="last-value-mine">
-                            <div class="mine-text">Добыча в час:</div>
-                            <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
-                            <div id="miner_1_tokens_add">None</div>
-                        </div>
-                        <div class="button-upgrade-module", id="upgrade-menu-button">
-                            <div class="price-to-upgrade">
-                                <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
-                                <div class="miner_1_price", id="miner_1_price">None</div>
-                            </div>
-                            <div class="upgrade-text", id='upgrade-button-module'>Улучшить</div>
-                        </div>
+                <div class="data-upgarde-module-lock miner_4">
+                    <div class="module-value">4</div>
+                    <div class="module-name">
+                        <img src="/static/images/miner.png" alt="" class="img-miner-module">
+                        Super Miner
                     </div>
-                    <div class="lock-text-sloi">
+                    <div class="level-miner", id="miner_4_lvl">None</div> <!----> 
+                    <div class="last-value-mine">
+                        <div class="mine-text">Добыча в час:</div>
+                        <img src="/static/images/moneta.png" alt="" style="width: 20px;height: 20px;object-fit: cover;">
+                        <div id="miner_4_tokens_add">None</div> <!----> 
+                    </div>
+                    <div class="button-upgrade-module", id="miner_4_upgrade_button"> <!----> 
+                        <div class="price-to-upgrade">
+                            <img src="/static/images/moneta.png" alt="", style="width: 20px;height: 20px;object-fit: cover;">
+                            <div id="miner_4_price">None</div> <!----> 
+                        </div>
+                        <div class="upgrade-text">Улучшить</div>
+                    </div>
+                    
+                    <div class="lock-text-sloi" id="miner_4_lock">
                         <img src="/static/images/zamok.png" alt="", class="img-lock">
                         <div class="lock-text">Закрыто</div>
+                        <div class="unlock-module-upgrade" id="miner_4_unlock-module">Разблокировать</div> <!----> 
                     </div>
                 </div>
 
             </div>
         </div>
 
-        <div id="overlay" class="overlay">
-
-
+        <div id="miner_1_overlay" class="overlay">
             <div class="menu-to-confirm-upgrarde">
-                <div id="close-menu-upgrade">
+                <div id="close-menu-upgrade" id="miner_1_close_overlay">
                     <img src="/static/images/krestic.png" alt="" id="close-menu-upgrade-img" style="width:100%;height:auto;object-fit:cover;filter: invert(1);">
                 </div>
                 <div class="text-upgrade-menu">Улучшение</div>
-                <div class="confirm-update-button">Подтвердить</div>
+                <div class="confirm-update-button miner_1" id="miner_1_confirm-update-button">Подтвердить</div> <!----> 
                 <div class="upgrade-module-price">
                     <div class="moneta-upgrade-module">
                         <img src="/static/images/moneta.png" alt="" style="width: 100%;height: auto;object-fit: cover;">
                     </div>
-                    <div class="price-balance" id="module_1-price-balance">500 000</div>
+                    <div class="price-balance" id="miner_1_price-buy">500 000</div>
                 </div>
                 <div class="module-name-upgrade">
                     <div class="module-name-confirm">
-                        <img src="/static/images/miner.png" alt="", class="img-miner-module">
+                        <img src="/static/images/miner.png" alt="" class="img-miner-module">
                         Bronze Miner
                     </div>
                 </div>
                 <div class="miner-text-price">Добывает монетки пока вы занимаетесь своими делами.</div>
-                <div class="upgrade-module-tokens-add">Добыча в час:</div>
+                <!-- <div class="upgrade-module-tokens-add">Добыча в час:</div> -->
             </div>
+        </div>
+        
+        <div id="miner_2_overlay" class="overlay">
+            <div class="menu-to-confirm-upgrarde">
+                <div id="close-menu-upgrade" id="miner_2_close_overlay">
+                    <img src="/static/images/krestic.png" alt="" id="close-menu-upgrade-img" style="width:100%;height:auto;object-fit:cover;filter: invert(1);">
+                </div>
+                <div class="text-upgrade-menu">Улучшение</div>
+                <div class="confirm-update-button miner_2" id="miner_2_confirm-update-button">Подтвердить</div>
+                <div class="upgrade-module-price">
+                    <div class="moneta-upgrade-module">
+                        <img src="/static/images/moneta.png" alt="" style="width: 100%;height: auto;object-fit: cover;">
+                    </div>
+                    <div class="price-balance" id="miner_2_price-buy">500 000</div>
+                </div>
+                <div class="module-name-upgrade">
+                    <div class="module-name-confirm">
+                        <img src="/static/images/miner.png" alt="" class="img-miner-module">
+                        Gold Miner
+                    </div>
+                </div>
+                <div class="miner-text-price">Добывает монетки пока вы занимаетесь своими делами.</div>
+                <!-- <div class="upgrade-module-tokens-add">Добыча в час:</div> -->
+            </div>
+        </div>
+        
+        <div id="miner_3_overlay" class="overlay">
+            <div class="menu-to-confirm-upgrarde">
+                <div id="close-menu-upgrade" id="miner_3_close_overlay">
+                    <img src="/static/images/krestic.png" alt="" id="close-menu-upgrade-img" style="width:100%;height:auto;object-fit:cover;filter: invert(1);">
+                </div>
+                <div class="text-upgrade-menu">Улучшение</div>
+                <div class="confirm-update-button miner_3" id="miner_3_confirm-update-button">Подтвердить</div>
+                <div class="upgrade-module-price">
+                    <div class="moneta-upgrade-module">
+                        <img src="/static/images/moneta.png" alt="" style="width: 100%;height: auto;object-fit: cover;">
+                    </div>
+                    <div class="price-balance" id="miner_3_price-buy">500 000</div>
+                </div>
+                <div class="module-name-upgrade">
+                    <div class="module-name-confirm">
+                        <img src="/static/images/miner.png" alt="" class="img-miner-module">
+                        Diamond Miner
+                    </div>
+                </div>
+                <div class="miner-text-price">Добывает монетки пока вы занимаетесь своими делами.</div>
+                <!-- <div class="upgrade-module-tokens-add">Добыча в час:</div> -->
+            </div>
+        </div> 
 
-
-        </div>        
+        <div id="miner_4_overlay" class="overlay">
+            <div class="menu-to-confirm-upgrarde">
+                <div id="close-menu-upgrade" id="miner_4_close_overlay">
+                    <img src="/static/images/krestic.png" alt="" id="close-menu-upgrade-img" style="width:100%;height:auto;object-fit:cover;filter: invert(1);">
+                </div>
+                <div class="text-upgrade-menu">Улучшение</div>
+                <div class="confirm-update-button miner_4" id="miner_4_confirm-update-button">Подтвердить</div>
+                <div class="upgrade-module-price">
+                    <div class="moneta-upgrade-module">
+                        <img src="/static/images/moneta.png" alt="" style="width: 100%;height: auto;object-fit: cover;">
+                    </div>
+                    <div class="price-balance" id="miner_4_price-buy">500 000</div>
+                </div>
+                <div class="module-name-upgrade">
+                    <div class="module-name-confirm">
+                        <img src="/static/images/miner.png" alt="" class="img-miner-module">
+                        Super Miner
+                    </div>
+                </div>
+                <div class="miner-text-price">Добывает монетки пока вы занимаетесь своими делами.</div>
+                <!-- <div class="upgrade-module-tokens-add">Добыча в час:</div> -->
+            </div>
+        </div> 
     </section>
 
+     
+
+    <section class="container content-section-show", id="section-fabric" style="display: none;">
+        <!-- <div class="line-container">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+        <div class="line-container2">
+            <div class="line2"></div>
+        </div> -->
+        <div class="fabric-text-main">Производство</div>
+        <div class="line-container"></div>
+        <div class="line-container2"></div>
+        <div class="line-container3"></div>
+        <div class="module-to-start-fabric">
+            <div class="cell-fabtic-start">
+                <div class="cell-text">Пусто</div>
+            </div>
+
+        </div>
+        <div class="module-to-confirm-fabric"></div>
+        <!-- </div> -->
+        <div class="module-to-choose-fabric"></div>
+    </section>
+
+    <section class="container content-section-show", id="section-war" style="display: none;">
+        <div class="war-container">
+            <img src="/static/images/zamok.png" alt="", style="width: 50px;height: auto;object-fit: cover;filter: invert(1);">
+            Пока нельзя.
+        </div>
+    </section>
+
+    <section class="container content-section-show", id="section-market" style="display: none;">
+        <div class="war-container">
+            <img src="/static/images/zamok.png" alt="", style="width: 50px;height: auto;object-fit: cover;filter: invert(1);">
+            Пока закрыто.
+        </div>
+    </section>
+
+    <section class="container content-section-show", id="section-profile" style="display: none;">
+        
+            <div class="container-profile">
+                <div class="profile-container">
+                    <div class="profile-user-img">
+                        <img src="/static/images/user.png" alt="", style="width: 50px;height: auto;object-fit: cover;filter: invert(1);">
+                    </div>
+                    <div class="profile-user-text">Test Test</div>
+                </div>
+            </div>
+        
+    </section>
 
     <div class="main-menu-buttons">
         <div class="button-menu-buttons", onclick="showSection('section-main', this)">
@@ -226,31 +444,27 @@
             </div>
             <div class="text-menu-button">Друзья</div>
         </div>
-        <!-- <div class="button-menu-buttons big-button", onclick="showSection('section-upgrades', this)">
+        <div class="button-menu-buttons big-button", onclick="showSection('section-upgrades', this)">
             <div class="moneta-navigation-bar">
                 <img src="/static/images/upgrade.png" alt="", style="width: 100%;height: auto;filter: invert(1);object-fit: cover;">
             </div>
             <div class="text-menu-button">Улучшения</div>
-        </div> -->
-        <div class="button-menu-buttons big-button">
-            <div class="moneta-navigation-bar">
-                <img src="/static/images/zamok.png" alt="", style="width: 100%;height: auto;filter: invert(1);object-fit: cover;">
-            </div>
-            <div class="text-menu-button">Улучшения</div>
         </div>
         <div class="button-menu-buttons">
-            <div class="moneta-navigation-bar">
-                <img src="/static/images/zamok.png" alt="", style="width: 100%;height: auto;filter: invert(1);object-fit: cover;">
+            <div class="moneta-navigation-bar" onclick="showSection('section-market', this)">
+                <img src="/static/images/market.png" alt="", style="width: 100%;height: auto;filter: invert(1);object-fit: cover;">
             </div>
             <div class="text-menu-button">Рынок</div>
         </div>
-        <div class="button-menu-buttons">
+        <div class="button-menu-buttons" onclick="showSection('section-war', this)">
             <div class="moneta-navigation-bar">
-                <img src="/static/images/zamok.png" alt="", style="width: 100%;height:auto;filter: invert(1);object-fit: cover;">
+                <img src="/static/images/war.png" alt="", style="width: 100%;height:auto;filter: invert(1);object-fit: cover;">
             </div>
             <div class="text-menu-button">Атака</div>
         </div>
     </div>
+
+    <div id="notification" class="notification">This is a notification!</div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="/static/js/script.js"></script>

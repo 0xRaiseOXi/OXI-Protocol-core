@@ -41,6 +41,7 @@ struct TokenData {
     tokens_hour: u32,
     referal_code: String,
     referals: Vec<String>,
+    level: u32,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -57,10 +58,17 @@ struct MainResponse {
     referal_code: String,
     referals: Vec<String>,
     referals_value: String,
+    level: u32,
+    war: u64,
 }
 
 impl TokenData {
     fn build_response(&self, upgrades_chapshot: Option<HashMap<String, HashMap<String, String>>>, upgrades_chapshot_new: Option<HashMap<String, HashMap<String, String>>>) -> MainResponse {
+        let mut war = 0;
+        war += self.oxi_tokens_value / 1000;
+        war += self.level as u64;
+        war += self.referals.len() as u64 * 100;
+
         MainResponse {
             _id: self._id.clone(),
             username: self.username.clone(),
@@ -73,7 +81,9 @@ impl TokenData {
             tokens_hour: self.tokens_hour,
             referal_code: self.referal_code.clone(),
             referals: self.referals.clone(),
-            referals_value: self.referals.len().to_string()
+            referals_value: self.referals.len().to_string(),
+            level: self.level,
+            war: war
         }
     }
 }
@@ -107,9 +117,7 @@ struct SuccessResponse {
 
 impl AppState {
     async fn update_tokens_value_vault(&self, id: &str) -> Result<u64, UpdateError> {
-        let filter = doc! { "_id": id };
-  
-        let data_result = self.token_collection.find_one(filter.clone(), None).await;
+        let data_result = self.token_collection.find_one(doc! { "_id": id }, None).await;
         let data = match data_result {
             Ok(Some(doc)) => doc,
             Ok(None) => return Err(UpdateError::NotFound),
@@ -117,13 +125,13 @@ impl AppState {
         };
         
         let current_time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs_f64();
+
         let time_difference = current_time - data.last_time_update;
         let time_difference_in_hours = time_difference / 3600.0;
-        let added_tokens = (time_difference_in_hours * 1000.0) as u64;
-        let vault_size = 5000;
+        let added_tokens = (time_difference_in_hours * data.tokens_hour as f64) as u64;
     
-        if added_tokens > vault_size {
-            return Ok(vault_size);
+        if time_difference > 8.0 * 60.0 * 60.0 {
+            return Ok((data.tokens_hour * 8) as u64);
         }
         
         Ok(added_tokens)
@@ -198,6 +206,7 @@ async fn create_new_account(
         tokens_hour: 1000,
         referal_code: generate_invite_code(data.id.to_string()),
         referals: Vec::new(),
+        level: 10
     };
 
     match &data.from_referal {
@@ -380,6 +389,7 @@ async fn claim_tokens(
     };
 
     data.oxi_tokens_value += added_tokens as u64;
+    data.level += 50;
 
     let last_time_update = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(duration) => duration.as_secs_f64(),
@@ -488,8 +498,10 @@ async fn update(
     let current_level_upgrade = match token_data.upgrades.get(&data.id_update) {
         Some(level) => level,
         None => {
-            let error = ErrorResponse { error: "Upgrade not found for the user".to_string() };
-            return HttpResponse::BadRequest().json(error);
+            token_data.upgrades.insert(data.id_update.to_string(), 0);
+            &0
+            // let error = ErrorResponse { error: "Upgrade not found for the user".to_string() };
+            // return HttpResponse::BadRequest().json(error);
         }
     };
 
@@ -537,6 +549,7 @@ async fn update(
 
     // Perform the upgrade
     token_data.oxi_tokens_value -= new_level_data.buy_price;
+    token_data.level += 100 * new_level_upgrade as u32;
     token_data.tokens_hour += new_level_data.tokens_add - current_level_data.tokens_add;
     token_data.upgrades.insert(data.id_update.to_string(), new_level_upgrade);
 
