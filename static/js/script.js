@@ -158,7 +158,7 @@ async function update(type, id) {
         return;
     }
     try {
-            const response = await fetch('http://127.0.0.1:8081/api/update', {
+            const response = await fetch('https://oxiprotocol.ru/api/update', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataToSend)
@@ -178,7 +178,7 @@ async function update(type, id) {
 
 async function sendDataToServer(dataToSend) {
     try {
-            const response = await fetch('http://127.0.0.1:8081/api/data', {
+            const response = await fetch('https://oxiprotocol.ru/api/data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataToSend)
@@ -195,7 +195,7 @@ async function sendDataToServer(dataToSend) {
 
 async function claimTokens() {
     try {
-            const response = await fetch('http://127.0.0.1:8081/claim_tokens', {
+            const response = await fetch('https://oxiprotocol.ru/claim_tokens', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: tg.initDataUnsafe.id })
