@@ -494,7 +494,7 @@ async fn update(
 
     // Perform the upgrade
     token_data.oxi_tokens_value -= buy_price;
-    token_data.level += 100 * new_level_upgrade as u32;
+    token_data.level += 100;
     token_data.tokens_hour += new_tokens_add - tokens_add;
     token_data.upgrades.insert(data.id_update.to_string(), new_level_upgrade);
 
