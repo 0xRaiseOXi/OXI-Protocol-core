@@ -241,7 +241,6 @@ async fn create_new_account(
         _id: data.id.to_string(),
         register_in_game: last_time_update,
         upgrades: upgrades,
-        language: data.language.clone(),
         oxi_tokens_value: 0,
         last_time_update: last_time_update,
         tokens_hour: 1000,
