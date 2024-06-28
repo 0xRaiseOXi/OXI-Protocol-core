@@ -529,7 +529,7 @@ function progeressXpLevel() {
     let nextLevelXP = levels[0];
     let currentXP = data_local['level'];
 
-    for (let i = 0; i < levels.length; i++) {
+    for (let i = 1; i < levels.length; i++) {
         if (currentXP < levels[i]) {
             nextLevelXP = levels[i];
             break;
