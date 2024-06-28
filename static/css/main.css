@@ -152,6 +152,7 @@ html, body {
     align-items: center;
     flex-direction: column;
     padding: 3%;
+    border-right: 3px solid #ffffff;
 }
 
 .vault-text {
@@ -1231,7 +1232,7 @@ html, body {
 
 
 #timer {
-    font-size: 90%;
+    font-size: 70%;
     color: #ffffff;
     font-weight: 600;
 }
