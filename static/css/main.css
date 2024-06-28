@@ -60,7 +60,7 @@ html, body {
 
 .data-in-load-tokens {
     color: #f6f7f8;
-    font-size: 40px;
+    font-size: 200%;
     display: flex;
     justify-content: center; 
     align-items: center; 
@@ -152,7 +152,6 @@ html, body {
     align-items: center;
     flex-direction: column;
     padding: 3%;
-    border: 1px solid #ffffff;
 }
 
 .vault-text {
@@ -325,14 +324,14 @@ html, body {
 }
 
 .moneta-main-balance {
-    width: 70px;
-    height: 70px;
-    margin-right: 1%;
+    width: 50%;
+    height: auto;
+    object-fit: cover;
 }
 
-#main-balance {
+/* #main-balance {
     text-align: center;
-}
+} */
 
 .friends-all {
     font-size: 14px;
@@ -455,12 +454,13 @@ html, body {
 
 .league {
     color: #ffffff;
-    font-size: 50%;
+    font-size: 70%;
     font-weight: 500;
     display: flex;
-    /* width: 100%; */
     justify-content: center;
-
+    width: 30%;
+    justify-content: center;
+    align-items: center;
 }
 
 .container-upgrades {
@@ -1797,11 +1797,11 @@ html, body {
 }
 
 .main-module-img {
-    width: 5%;
+    width: 18%;
     height: auto;
     object-fit: cover;
     filter: invert(1);
-    margin-right: 1%;
+    margin-right: 5%;
 }
 
 .main-module-img-guard {
@@ -1810,4 +1810,13 @@ html, body {
     object-fit: cover;
     filter: invert(1);
     margin-right: 1%;
+}
+
+.main-balance-container {
+    display: flex;
+    width: 30%;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-size: 130%;
 }
