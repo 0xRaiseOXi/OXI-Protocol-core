@@ -111,11 +111,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             await update("miner", minerClass);
             overlay.style.display = "none";
             
-            document.getElementById(minerClass + "_lvl").textContent = "lvl " + data_local['upgrades_current'][minerClass]['level'];
-            document.getElementById(minerClass + "_tokens_add").textContent = data_local['upgrades_current'][minerClass]['tokens_hour'];
-            document.getElementById(minerClass + "_price").textContent = data_local['upgrades_new'][minerClass]['price'];
-            document.getElementById(minerClass + "_price-buy").textContent = data_local['upgrades_new'][minerClass]['price'];
-
+            if (data_local['upgrades_current'][minerClass]['level'] == 10) {
+                document.getElementById(minerClass + "_lvl").textContent = "lvl " + data_local['upgrades_current'][minerClass]['level'];
+                document.getElementById(minerClass + "_tokens_add").textContent = data_local['upgrades_current'][minerClass]['tokens_hour'];
+                document.getElementById(minerClass + "_price").style.display = "none";
+                document.getElementById(minerClass + "_price-buy").style.display = "none";
+            } else {
+                document.getElementById(minerClass + "_lvl").textContent = "lvl " + data_local['upgrades_current'][minerClass]['level'];
+                document.getElementById(minerClass + "_tokens_add").textContent = data_local['upgrades_current'][minerClass]['tokens_hour'];
+                document.getElementById(minerClass + "_price").textContent = data_local['upgrades_new'][minerClass]['price'];
+                document.getElementById(minerClass + "_price-buy").textContent = data_local['upgrades_new'][minerClass]['price'];
+            }
+    
             document.getElementById(minerClass + "_lock").style.display = "none";
 
             document.getElementById(minerClass + "_upgrade_button").addEventListener('click', () => {
@@ -158,6 +165,10 @@ async function update(type, id) {
         notification("Недостаточный баланс");
         return;
     }
+    if (data_local['upgrades_current'][minerClass]['level'] == 10) {
+        notification("Максимальный уровень");
+    }
+
     try {
             const response = await fetch('https://oxiprotocol.ru/api/update', {
             method: 'POST',

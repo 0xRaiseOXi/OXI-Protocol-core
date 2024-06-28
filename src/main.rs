@@ -433,7 +433,7 @@ async fn update(
 
     let new_level_upgrade = current_level_upgrade + 1;
     if data.type_update == "miner" {
-        if new_level_upgrade == 19 {
+        if new_level_upgrade == 51 {
             let error = ErrorResponse { error: "Max level".to_string() };
             return HttpResponse::Ok().json(error);
         }
@@ -569,7 +569,7 @@ async fn main() -> std::io::Result<()> {
             .route("/newaccount", web::post().to(create_new_account))
             .service(actix_files::Files::new("/static", "./static").show_files_listing())
     })
-    .bind(("127.0.0.1", 8081))?
+    .bind(("127.0.0.1", 8080))?
     .run()
     .await
 }
