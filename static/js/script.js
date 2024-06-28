@@ -377,9 +377,17 @@ function vaultUpdate() {
     const vaultSize = data_local['tokens_hour'] * 8;
     
     if (addedTokens > vaultSize) {
-        elements.counterVault.textContent = vaultSize.toLocaleString('en-US');
+        if (vaultSize > 100000) {
+            elements.counterVault.textContent = formatNumber(vaultSize);
+        } else {
+            elements.counterVault.textContent = vaultSize.toLocaleString('en-US');
+        }
     } else {
-        elements.counterVault.textContent = Math.max(0, addedTokens).toLocaleString('en-US');
+        if (addedTokens > 100000) {
+            elements.counterVault.textContent = formatNumber(addedTokens);
+        } else {
+            elements.counterVault.textContent = Math.max(0, addedTokens).toLocaleString('en-US');
+        }
     }
 }
 
