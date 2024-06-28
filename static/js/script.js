@@ -514,18 +514,19 @@ function formatNumber(num) {
 
 function progeressXpLevel() {
     const totalLevels = 60;
-    const increasePercentage = 1.2; 
+    const increasePercentage = 1.2;
     const initialExp = 100;
 
     const levels = [initialExp];
 
+    // Generate the levels starting from 1
     for (let i = 1; i < totalLevels; i++) {
         const previousLevelExp = levels[i - 1];
         const newLevelExp = Math.floor(previousLevelExp * increasePercentage);
         levels.push(newLevelExp);
     }
 
-    let currentLevel = 0;
+    let currentLevel = 1; // Start currentLevel from 1
     let nextLevelXP = levels[0];
     let currentXP = data_local['level'];
 
@@ -534,13 +535,14 @@ function progeressXpLevel() {
             nextLevelXP = levels[i];
             break;
         }
-        currentLevel = i + 1;
+        currentLevel = i + 1; // Increment currentLevel by 1
     }
 
-    const previousLevelXP = currentLevel > 0 ? levels[currentLevel - 1] : 0;
+    const previousLevelXP = currentLevel > 1 ? levels[currentLevel - 2] : 0; // Adjust for starting from 1
     const xpInCurrentLevel = currentXP - previousLevelXP;
     const xpNeededForNextLevel = nextLevelXP - previousLevelXP;
     const progressPercentage = (xpInCurrentLevel / xpNeededForNextLevel) * 100;
+
     document.querySelector('.player-progress-bar').style.width = progressPercentage + '%';
     document.querySelector('.player-level').textContent = currentLevel;
 }
