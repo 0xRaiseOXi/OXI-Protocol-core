@@ -142,7 +142,7 @@ html, body {
 
 .vault-text-container {
     color: #ffffff;
-    font-size: 100%;
+    font-size: 130%;
     font-weight: 600;
     width: 38%;
     height: 100%;
@@ -151,7 +151,6 @@ html, body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    border-right: 2px solid #ffffff;
     padding: 3%;
     border: 1px solid #ffffff;
 }
@@ -1232,11 +1231,9 @@ html, body {
 
 
 #timer {
-    font-size: 100%;
+    font-size: 90%;
     color: #ffffff;
     font-weight: 600;
-    
-  
 }
 
 .deactive {
