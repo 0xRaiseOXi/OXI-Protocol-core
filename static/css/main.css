@@ -1235,6 +1235,8 @@ html, body {
     font-size: 70%;
     color: #ffffff;
     font-weight: 600;
+    /* position: relative; */
+    left: 0;
 }
 
 .deactive {
@@ -1536,7 +1538,7 @@ html, body {
     height: 50%;
     color: #ffffff;
     font-weight: 600;
-    font-size: 100%;
+    font-size: 3vw;
 }
 
 .mine-module-view {
