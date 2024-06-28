@@ -1225,7 +1225,7 @@ html, body {
     overflow: hidden;            /* Скрываем переполнение */
     text-overflow: ellipsis;  
     font-weight: 600;
-    font-size: 3.2vw;
+    font-size: 3.4vw;
 }
 
 #player-name {
@@ -1518,7 +1518,7 @@ html, body {
     height: 50%;
     color: #ffffff;
     font-weight: 600;
-    font-size: 3.6vw;
+    font-size: 3.4vw;
 }
 
 #war {
@@ -1544,7 +1544,7 @@ html, body {
     height: 50%;
     color: #ffffff;
     font-weight: 600;
-    font-size: 3.7vw;
+    font-size: 3.4vw;
 }
 
 .mine-module-view {
