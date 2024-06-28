@@ -1527,8 +1527,8 @@ html, body {
 }
 
 .mine-hour-text {
-    width: 90%;
-    left: 5%;
+    width: 80%;
+    left: 10%;
     position: absolute;
     display: flex;
     justify-content: center;
