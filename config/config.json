@@ -1,114 +1,212 @@
 {
     "miner": {
         "0": {
-            "buy_price": 0,
-            "tokens_add": 0 
+            "buy_price": 3000,
+            "tokens_add": 1000
         },
         "1": {
-            "buy_price": 1000,
-            "tokens_add": 1000 
+            "buy_price": 3900,
+            "tokens_add": 1100
         },
         "2": {
-            "buy_price": 3000,
-            "tokens_add": 1500
+            "buy_price": 5070,
+            "tokens_add": 1210
         },
         "3": {
-            "buy_price": 8000,
-            "tokens_add": 2300
+            "buy_price": 6591,
+            "tokens_add": 1331
         },
         "4": {
-            "buy_price": 12000,
-            "tokens_add": 3500
+            "buy_price": 8568,
+            "tokens_add": 1464
         },
-        
         "5": {
-            "buy_price": 15000,
-            "tokens_add": 4700
+            "buy_price": 11139,
+            "tokens_add": 1611
         },
-        
         "6": {
-            "buy_price": 19000,
-            "tokens_add": 5000 
+            "buy_price": 14480,
+            "tokens_add": 1772
         },
-        
         "7": {
-            "buy_price": 23000,
-            "tokens_add": 5400 
+            "buy_price": 18825,
+            "tokens_add": 1949
         },
-        
         "8": {
-            "buy_price": 50000,
-            "tokens_add": 6300 
+            "buy_price": 24472,
+            "tokens_add": 2144
         },
-        
         "9": {
-            "buy_price": 70000,
-            "tokens_add": 8900 
+            "buy_price": 31813,
+            "tokens_add": 2358
         },
-        
         "10": {
-            "buy_price":120000,
-            "tokens_add": 9300
+            "buy_price": 41358,
+            "tokens_add": 2594
         },
-        
         "11": {
-            "buy_price": 130000,
-            "tokens_add":10000
+            "buy_price": 53765,
+            "tokens_add": 2853
         },
-        
         "12": {
-            "buy_price": 170000,
-            "tokens_add":10500 
+            "buy_price": 69894,
+            "tokens_add": 3138
         },
-        
         "13": {
-            "buy_price": 230000,
-            "tokens_add": 11000 
+            "buy_price": 90863,
+            "tokens_add": 3452
         },
-        
         "14": {
-            "buy_price": 450000,
-            "tokens_add": 12000 
+            "buy_price": 118121,
+            "tokens_add": 3797
         },
-        
         "15": {
-            "buy_price": 600000,
-            "tokens_add": 15000
+            "buy_price": 153558,
+            "tokens_add": 4177
         },
-        
         "16": {
-            "buy_price": 800000,
-            "tokens_add": 16000
+            "buy_price": 199625,
+            "tokens_add": 4595
         },
-        
         "17": {
-            "buy_price": 900000,
-            "tokens_add": 17000
+            "buy_price": 259512,
+            "tokens_add": 5054
         },
-        
         "18": {
-            "buy_price": 1100000,
-            "tokens_add": 18000
+            "buy_price": 337366,
+            "tokens_add": 5560
         },
-        
         "19": {
-            "buy_price": 2500000,
-            "tokens_add": 20000
+            "buy_price": 438576,
+            "tokens_add": 6116
         },
-        
         "20": {
-            "buy_price": 5000000,
-            "tokens_add": 21000
-        }
-    },
-    "vault": {
-        "1": {
-            "volume": 5000
-            
+            "buy_price": 570149,
+            "tokens_add": 6727
         },
-        "2": {
-            "volume":10
-            
+        "21": {
+            "buy_price": 741194,
+            "tokens_add": 7400
+        },
+        "22": {
+            "buy_price": 963552,
+            "tokens_add": 8140
+        },
+        "23": {
+            "buy_price": 1252617,
+            "tokens_add": 8954
+        },
+        "24": {
+            "buy_price": 1628402,
+            "tokens_add": 9850
+        },
+        "25": {
+            "buy_price": 2116923,
+            "tokens_add": 10835
+        },
+        "26": {
+            "buy_price": 2752000,
+            "tokens_add": 11918
+        },
+        "27": {
+            "buy_price": 3577600,
+            "tokens_add": 13110
+        },
+        "28": {
+            "buy_price": 4650880,
+            "tokens_add": 14421
+        },
+        "29": {
+            "buy_price": 6046144,
+            "tokens_add": 15863
+        },
+        "30": {
+            "buy_price": 7859987,
+            "tokens_add": 17449
+        },
+        "31": {
+            "buy_price": 10217983,
+            "tokens_add": 19194
+        },
+        "32": {
+            "buy_price": 13283378,
+            "tokens_add": 21114
+        },
+        "33": {
+            "buy_price": 17268391,
+            "tokens_add": 23225
+        },
+        "34": {
+            "buy_price": 22448909,
+            "tokens_add": 25548
+        },
+        "35": {
+            "buy_price": 29183581,
+            "tokens_add": 28102
+        },
+        "36": {
+            "buy_price": 37938656,
+            "tokens_add": 30913
+        },
+        "37": {
+            "buy_price": 49320252,
+            "tokens_add": 34004
+        },
+        "38": {
+            "buy_price": 64116328,
+            "tokens_add": 37404
+        },
+        "39": {
+            "buy_price": 83351226,
+            "tokens_add": 41145
+        },
+        "40": {
+            "buy_price": 108356594,
+            "tokens_add": 45259
+        },
+        "41": {
+            "buy_price": 140863573,
+            "tokens_add": 49785
+        },
+        "42": {
+            "buy_price": 183122645,
+            "tokens_add": 54764
+        },
+        "43": {
+            "buy_price": 238059438,
+            "tokens_add": 60240
+        },
+        "44": {
+            "buy_price": 309477269,
+            "tokens_add": 66264
+        },
+        "45": {
+            "buy_price": 402320450,
+            "tokens_add": 72890
+        },
+        "46": {
+            "buy_price": 523016585,
+            "tokens_add": 80180
+        },
+        "47": {
+            "buy_price": 679921561,
+            "tokens_add": 88197
+        },
+        "48": {
+            "buy_price": 883898029,
+            "tokens_add": 97017
+        },
+        "49": {
+            "buy_price": 1149067438,
+            "tokens_add": 106719
+        },
+        "50": {
+            "buy_price": 1500000000,
+            "tokens_add": 150000
+        },
+        "51": {
+            "buy_price": 1500000000,
+            "tokens_add": 150000
         }
     }
 }

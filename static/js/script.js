@@ -92,8 +92,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 minerClass = cls;
             }
         });
-
-        document.getElementById(minerClass + "_price-buy").textContent = 1000*3;
+        const mineId = minerClass.split("_")[1];
+        document.getElementById(minerClass + "_price-buy").textContent = 3000*mineId;
 
         const overlay = document.getElementById(minerClass + "_overlay");
         overlay.addEventListener("click", (event) => {
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
 
-        document.getElementById(minerClass + "_unlock-module").addEventListener('click', async () => {
+        document.getElementById(minerClass + "_unlock-module").addEventListener('click', () => {
             overlay.style.display = "flex";
         });
 
@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             await update("miner", minerClass);
             overlay.style.display = "none";
             
-            if (data_local['upgrades_current'][minerClass]['level'] == 10) {
+            if (data_local['upgrades_current'][minerClass]['level'] == 50) {
                 document.getElementById(minerClass + "_lvl").textContent = "lvl " + data_local['upgrades_current'][minerClass]['level'];
                 document.getElementById(minerClass + "_tokens_add").textContent = data_local['upgrades_current'][minerClass]['tokens_hour'];
                 document.getElementById(minerClass + "_price").style.display = "none";
@@ -126,6 +126,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById(minerClass + "_lock").style.display = "none";
 
             document.getElementById(minerClass + "_upgrade_button").addEventListener('click', () => {
+                // if data_local['upgrades_current'][minerClass]['level'];
+                // document.getElementById(minerClass + "_upgrade-text")
                 overlay.style.display = "flex";
             });
         });
@@ -165,8 +167,9 @@ async function update(type, id) {
         notification("Недостаточный баланс");
         return;
     }
-    if (data_local['upgrades_current'][minerClass]['level'] == 10) {
+    if (data_local['upgrades_current'][id]['level'] == 50) {
         notification("Максимальный уровень");
+        return;
     }
 
     try {
