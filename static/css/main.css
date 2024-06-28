@@ -1760,6 +1760,8 @@ html, body {
     background-color: #003afa;
     border-radius: 20px;
     cursor: pointer;
+    z-index: 5;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #close-menu-buy-drone {
