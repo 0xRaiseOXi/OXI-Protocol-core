@@ -426,9 +426,9 @@ function showA() {
 function loadText() {
     const vault = document.getElementById('vault-text');
     const vaultText = document.getElementById('vault-text-main');
-    fitTextToContainer(vault, vaultText);
-    fitTextToContainer(document.querySelector('.mine-hour-text'), document.getElementById('mine-text-in-container'));
-    fitTextToContainer(elements.playerNameC, elements.playerName);
+    // fitTextToContainer(vault, vaultText);
+    // fitTextToContainer(document.querySelector('.mine-hour-text'), document.getElementById('mine-text-in-container'));
+    // fitTextToContainer(elements.playerNameC, elements.playerName);
     // fitTextToContainer(document.getElementById("mine-hour-text"), document.getElementById("mine-text-in-container"));
 
 }

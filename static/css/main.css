@@ -43,7 +43,7 @@ html, body {
     align-items: center;
     border-bottom-left-radius: 50px;
     border-bottom-right-radius: 50px;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.6);
     z-index: -1;
 }
 
@@ -142,7 +142,7 @@ html, body {
 
 .vault-text-container {
     color: #ffffff;
-    font-size: 130%;
+    /* font-size: 130%; */
     font-weight: 600;
     width: 38%;
     height: 100%;
@@ -153,6 +153,7 @@ html, body {
     flex-direction: column;
     padding: 3%;
     border-right: 3px solid #ffffff;
+    font-size: 4.2vw;
 }
 
 .vault-text {
@@ -235,7 +236,8 @@ html, body {
 
 .tokens-value-vault {
     color: #f6f7f8;
-    font-size: 150%;
+    /* font-size: 150%; */
+    font-size: 3.5vw;
     font-weight: 500;
     display: flex;
     width: 50%;
@@ -246,7 +248,8 @@ html, body {
 
 .tokens-value-vault-text {
     padding-left: 5px;
-    font-size: 16px;
+    /* font-size: 16px; */
+    font-size: 3vw;
     padding-top: 7px;
 }
 
@@ -325,9 +328,10 @@ html, body {
 }
 
 .moneta-main-balance {
-    width: 50%;
+    width: 40%;
     height: auto;
     object-fit: cover;
+    margin-right: 1%;
 }
 
 /* #main-balance {
@@ -1221,6 +1225,7 @@ html, body {
     overflow: hidden;            /* Скрываем переполнение */
     text-overflow: ellipsis;  
     font-weight: 600;
+    font-size: 3.2vw;
 }
 
 #player-name {
@@ -1232,9 +1237,12 @@ html, body {
 
 
 #timer {
-    font-size: 70%;
+    font-size: 3vw;
     color: #ffffff;
     font-weight: 600;
+    position: absolute;
+    left: 13%;
+    top: 65%;
 }
 
 .deactive {
@@ -1510,7 +1518,7 @@ html, body {
     height: 50%;
     color: #ffffff;
     font-weight: 600;
-    font-size: 3vw;
+    font-size: 3.2vw;
 }
 
 #war {
@@ -1536,6 +1544,7 @@ html, body {
     height: 50%;
     color: #ffffff;
     font-weight: 600;
+    font-size: 3.2vw;
 }
 
 .mine-module-view {
@@ -1799,11 +1808,11 @@ html, body {
 }
 
 .main-module-img {
-    width: 18%;
+    width: 14%;
     height: auto;
     object-fit: cover;
     filter: invert(1);
-    margin-right: 5%;
+    margin-right: 2%;
 }
 
 .main-module-img-guard {
