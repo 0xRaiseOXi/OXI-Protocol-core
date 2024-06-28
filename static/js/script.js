@@ -525,7 +525,7 @@ function progeressXpLevel() {
         levels.push(newLevelExp);
     }
 
-    let currentLevel = 0;
+    let currentLevel = 1;
     let nextLevelXP = levels[0];
     let currentXP = data_local['level'];
 
