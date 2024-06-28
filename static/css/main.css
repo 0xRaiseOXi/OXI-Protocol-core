@@ -153,7 +153,7 @@ html, body {
     flex-direction: column;
     padding: 3%;
     border-right: 3px solid #ffffff;
-    font-size: 4.2vw;
+    font-size: 4.5vw;
 }
 
 .vault-text {
@@ -237,7 +237,7 @@ html, body {
 .tokens-value-vault {
     color: #f6f7f8;
     /* font-size: 150%; */
-    font-size: 3.5vw;
+    font-size: 5vw;
     font-weight: 500;
     display: flex;
     width: 50%;
