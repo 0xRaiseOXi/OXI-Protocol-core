@@ -12,7 +12,9 @@
     <section class="container content-section-show" id="section-main">
 
         <div class="module-main-1-mine-hour">
-            <div class="mine-hour-text">Добыча в час</div>
+            <div class="mine-hour-text">
+                <div id="mine-text-in-container">Добыча в час</div>
+            </div>
             <div class="mine-module-view">
                 <div id="mine-in-hour">+1k</div>
                 <div class="mine-module-oxi">OXI</div>
@@ -36,35 +38,38 @@
         </div>
 
         <div class="content-main">
-            <div class="league">
-                <img src="/static/images/league.png" alt="" class="main-module-img">
-                <div>Bronze</div>
-            </div>
+            
             <!-- <div class="energy">
                 <img src="/static/images/energy.png" alt="" style="width: 20px;height: 20px;object-fit: cover;filter: invert(1);margin-right: 1%;">
                 Энергия 90/100e
             </div> -->
             <div class="guard">
-                <img src="/static/images/guard.png" alt="" class="main-module-img">
+                <img src="/static/images/guard.png" alt="" class="main-module-img-guard">
                 Щит 100%
             </div>
             <div id="data-in-load-tokens", class="data-in-load-tokens">
                 <img src="/static/images/moneta.png" alt="", class="moneta-main-balance">
                 <div id="main-balance"></div>
+
+                <div class="league">
+                    <img src="/static/images/league.png" alt="" class="main-module-img">
+                    <div>Bronze</div>
+                </div>
+
             </div>
         </div>
 
         <div class="panels-main"> </div>
         <div class="vault-main", id="panel-1-coins">
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
+            <div class="main-progress-bar-container">
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
             </div>
             <div class="vault-text-container">
                 <div class="vault-text", id="vault-text">
                     <div id="vault-text-main">Хранилище</div>
                 </div>
-            </div>
-            <div class="timer-container">
                 <div id="timer">00:00:00</div>
             </div>
             <div class="tokens-value-vault">
