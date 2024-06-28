@@ -1627,7 +1627,8 @@ html, body {
     color: #ffffff;
     font-weight: 600;
     margin-top: 5%;
-    font-size: 90%;
+    /* font-size: 90%; */
+    font-size: 3vw;
 }
 
 .energy {
@@ -1663,7 +1664,7 @@ html, body {
 
 .dron-text {
     color: #ffffff;
-    font-size: 100%;
+    font-size: 3vw;
     font-weight: 600;
 }
 
