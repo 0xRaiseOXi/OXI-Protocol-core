@@ -237,7 +237,7 @@ html, body {
 .tokens-value-vault {
     color: #f6f7f8;
     /* font-size: 150%; */
-    font-size: 5vw;
+    font-size: 5.5vw;
     font-weight: 500;
     display: flex;
     width: 50%;
@@ -249,7 +249,7 @@ html, body {
 .tokens-value-vault-text {
     padding-left: 5px;
     /* font-size: 16px; */
-    font-size: 3vw;
+    font-size: 3.5vw;
     padding-top: 7px;
 }
 
@@ -1241,7 +1241,7 @@ html, body {
     color: #ffffff;
     font-weight: 600;
     position: absolute;
-    left: 13%;
+    left: 12%;
     top: 65%;
 }
 
@@ -1544,7 +1544,7 @@ html, body {
     height: 50%;
     color: #ffffff;
     font-weight: 600;
-    font-size: 3.2vw;
+    font-size: 3.5vw;
 }
 
 .mine-module-view {
