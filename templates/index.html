@@ -38,7 +38,7 @@
         <div class="content-main">
             <div class="league">
                 <img src="/static/images/league.png" alt="" class="main-module-img">
-                <div>Bronze ></div>
+                <div>Bronze</div>
             </div>
             <!-- <div class="energy">
                 <img src="/static/images/energy.png" alt="" style="width: 20px;height: 20px;object-fit: cover;filter: invert(1);margin-right: 1%;">
@@ -64,7 +64,9 @@
                     <div id="vault-text-main">Хранилище</div>
                 </div>
             </div>
-            <div id="timer">00:00:00</div>
+            <div class="timer-container">
+                <div id="timer">00:00:00</div>
+            </div>
             <div class="tokens-value-vault">
                 <div id="tokens-value-vault"></div>
                 <div class="tokens-value-vault-text">OXI</div>
@@ -138,6 +140,29 @@
                     </div>
                 </div>
                 <div class="miner-text-price">Дроны увеличивают размер хранилища, автоматически собирают токены. Боевые дроны можно использовать для атаки игроков. Позволяют активировать ускорители </div>
+            </div>
+        </div> 
+
+        <div id="overlay-awards" class="overlay-awards">
+            <div class="menu-to-buy-fabric">
+                <div id="close-menu-buy-awards">
+                    <img src="/static/images/krestic.png" alt="" id="close-menu-upgrade-img" style="width:100%;height:auto;object-fit:cover;filter: invert(1);">
+                </div>
+                <div class="text-upgrade-menu">В разработке</div>
+                <!-- <div class="confirm-buy-fabric-button">В разработке</div> -->
+                <div class="upgrade-module-price">
+                    <!-- <div class="moneta-upgrade-module">
+                        <img src="/static/images/moneta.png" alt="" style="width: 100%;height: auto;object-fit: cover;">
+                    </div> -->
+                    <!-- <div class="price-balance">200,000,000</div> -->
+                </div>
+                <div class="module-name-upgrade">
+                    <div class="module-name-confirm">
+                        <img src="/static/images/award.png" alt="", class="img-miner-module">
+                        Награды и задания
+                    </div>
+                </div>
+                <div class="miner-text-price">Пока недоступно.</div>
             </div>
         </div> 
 
@@ -428,8 +453,9 @@
                     <div class="profile-user-text">Test Test</div>
                 </div>
             </div>
-        
+    
     </section>
+
 
     <div class="main-menu-buttons">
         <div class="button-menu-buttons", onclick="showSection('section-main', this)">

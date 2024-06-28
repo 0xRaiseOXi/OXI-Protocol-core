@@ -828,6 +828,7 @@ html, body {
     color: #ffffff;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    background-color: rgba(0, 0, 255, 0.5); /* Временный фон для проверки */
 }
 
 .img-miner-module {
@@ -996,6 +997,18 @@ html, body {
     background-color: rgba(0,0,0,0.8);
 }
 
+.overlay-awards {
+    display: none;
+    margin: 0;
+    position: absolute;
+    width: 100%;
+    height: 80%;
+    z-index: 5;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0,0,0,0.8);
+}
+
 .menu-to-confirm-upgrarde {
     width: 65%;
     height: 50%;
@@ -1035,6 +1048,7 @@ html, body {
     background-color: #003afa;
     border-radius: 20px;
     cursor: pointer;
+    z-index: 1000; /* добавлено */
 }
 
 #close-menu-upgrade {
@@ -1062,6 +1076,21 @@ html, body {
     z-index: 999;
     cursor: pointer;
 }
+
+
+#close-menu-buy-awards {
+    position: absolute;
+    width: 20%;
+    height: 12%;
+    right: 0;
+    top: 1%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    cursor: pointer;
+}
+
 
 .upgrade-module-price {
     width: 100%;
@@ -1191,14 +1220,24 @@ html, body {
     overflow: hidden;            /* Скрываем переполнение */
     text-overflow: ellipsis;  
 }
+.timer-container {
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    display: flex;  
+    padding-right: 5%;
+}
 
 #timer {
-    position: absolute;
+    /* position: absolute; */
     color: #ffffff;
     font-weight: 600;
-    margin-left: 15%;
+    /* margin-left: 15%;
     margin-top: 17%;
-    font-size: 15px;
+    font-size: 15px; */
 }
 
 .deactive {

@@ -21,6 +21,7 @@ const elements = {
     mineHour: document.getElementById('mine-in-hour'),
     overlayFabric: document.getElementById('overlay-fabric'),
     overlayDrone: document.getElementById('overlay-drone'),
+    overlayAwards: document.getElementById('overlay-awards'),
     claimTokensButton: document.getElementById("claim-tokens-button"),
 };
 
@@ -67,7 +68,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    // updateViewUpgrade();
+
+    document.querySelector(".module-1-3").addEventListener("click", () => {
+        elements.overlayAwards.style.display = "flex";
+    });
+
+    document.getElementById("close-menu-buy-awards").addEventListener("click", () => {
+        elements.overlayAwards.style.display = "none";
+    });
+
+    elements.overlayAwards.addEventListener("click", (event) => {
+        if (event.target === elements.overlayAwards) {
+            elements.overlayAwards.style.display = "none";
+        }
+    });
 
     const miners = document.querySelectorAll(".data-upgarde-module-lock");
     miners.forEach(miner => {
@@ -179,6 +193,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function update(type, id) {
     const dataToSend = { _id: 1070221127, type_update: type, id_update: id };
+    if (data_local['oxi_tokens_value'] < document.getElementById(id + "_price-buy").textContent) {
+        notification("Недостаточный баланс");
+        return;
+    }
     try {
             const response = await fetch('http://127.0.0.1:8081/api/update', {
             method: 'POST',
@@ -249,13 +267,20 @@ function setStartData(dataFromServer) {
     document.getElementById('friends-add-value').textContent = formatNumber(dataFromServer['referals_value'] * 25000);
 
     const playerName = document.getElementById("player-name");
-    if (data_local['first_name']) {
-        if (data_local['last_name']) {
-            playerName.textContent = data_local['first_name'] + " " + data_local['last_name'];   
-        }
-        playerName.textContent = data_local['first_name'];   
+
+    const username = tg.initDataUnsafe.username;
+    const first_name = tg.initDataUnsafe.first_name;
+    const last_name = tg.initDataUnsafe.last_name;
+
+    if (username) {
+        playerName.textContent = username; 
     } else {
-        playerName.textContent = data_local['username']; 
+        if (first_name) {
+            if (last_name) {
+                playerName.textContent = first_name + " " + last_name;  
+            } 
+        }
+        playerName.textContent = first_name;   
     }
     
     elements.mineHour.textContent = "+" + formatNumber(dataFromServer['tokens_hour']);
@@ -312,7 +337,7 @@ function setEventOverlay(module) {
 
 function updateWar(level) {
     if (level < 10000) {
-        document.getElementById(' war').textContent = level; 
+        document.getElementById('war').textContent = level; 
     } else {
         document.getElementById('war').textContent = formatNumber(level); 
     }
@@ -375,10 +400,11 @@ function vaultUpdate() {
     const timeDifference = currentTime - data_local['last_time_update'];
     const addedTokens = Math.trunc(timeDifference / 3600 * data_local['tokens_hour']);
     const vaultSize = data_local['tokens_hour'] * 8;
+    
     if (addedTokens > vaultSize) {
         elements.counterVault.textContent = vaultSize.toLocaleString('en-US');
     } else {
-        elements.counterVault.textContent = addedTokens.toLocaleString('en-US');
+        elements.counterVault.textContent = Math.max(0, addedTokens).toLocaleString('en-US');
     }
 }
 
@@ -459,7 +485,7 @@ function set_timer() {
             let remaining = Math.floor((end - now) / 1000);
             let elapsed = (8 * 60 * 60) - remaining;
             let percentElapsed = (elapsed / (8 * 60 * 60)) * 100;
-            if (percentElapsed > 0.3) {
+            if (percentElapsed > 80) {
                 if (document.getElementById("claim-tokens-button").classList.contains("deactive")) {
                     document.getElementById("claim-tokens-button").classList.remove("deactive");
                 }
@@ -526,11 +552,21 @@ function formatNumber(num) {
 }
 
 function progeressXpLevel() {
-    const levels = [0, 100, 1000, 5000, 10000]; // Add more levels as needed
-    const currentXP = data_local['level'];
+    const totalLevels = 60;
+    const increasePercentage = 1.2; 
+    const initialExp = 100;
 
-    let currentLevel = 0;
+    const levels = [initialExp];
+
+    for (let i = 1; i < totalLevels; i++) {
+        const previousLevelExp = levels[i - 1];
+        const newLevelExp = Math.floor(previousLevelExp * increasePercentage);
+        levels.push(newLevelExp);
+    }
+
+    let currentLevel = 1;
     let nextLevelXP = levels[0];
+    let currentXP = data_local['level'];
 
     for (let i = 0; i < levels.length; i++) {
         if (currentXP < levels[i]) {
@@ -544,8 +580,6 @@ function progeressXpLevel() {
     const xpInCurrentLevel = currentXP - previousLevelXP;
     const xpNeededForNextLevel = nextLevelXP - previousLevelXP;
     const progressPercentage = (xpInCurrentLevel / xpNeededForNextLevel) * 100;
-    const progressBar = document.querySelector('.player-progress-bar');
-    progressBar.style.width = progressPercentage + '%';
-    const progressLLevel = document.querySelector('.player-level');
-    progressLLevel.textContent = currentLevel;
+    document.querySelector('.player-progress-bar').style.width = progressPercentage + '%';
+    document.querySelector('.player-level').textContent = currentLevel;
 }
