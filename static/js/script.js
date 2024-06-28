@@ -26,7 +26,8 @@ const elements = {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const userData = { id: tg.initDataUnsafe.id }; 
+    const userData = { id: tg.initDataUnsafe.user.id }; 
+    console.log(userData);
     const dataUserFromServer = await sendDataToServer(userData);
     setStartData(dataUserFromServer);
 
@@ -152,7 +153,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function update(type, id) {
-    const dataToSend = { _id: tg.initDataUnsafe.id, type_update: type, id_update: id };
+    const dataToSend = { _id: tg.initDataUnsafe.user.id, type_update: type, id_update: id };
     if (data_local['oxi_tokens_value'] < document.getElementById(id + "_price-buy").textContent) {
         notification("Недостаточный баланс");
         return;
@@ -198,7 +199,7 @@ async function claimTokens() {
             const response = await fetch('https://oxiprotocol.ru/claim_tokens', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: tg.initDataUnsafe.id })
+            body: JSON.stringify({ id: tg.initDataUnsafe.user.id })
         });
         if (!response.ok) {
             return;
