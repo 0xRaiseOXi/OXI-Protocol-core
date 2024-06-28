@@ -229,9 +229,9 @@ function setStartData(dataFromServer) {
 
     const playerName = document.getElementById("player-name");
 
-    const username = tg.initDataUnsafe.username;
-    const first_name = tg.initDataUnsafe.first_name;
-    const last_name = tg.initDataUnsafe.last_name;
+    const username = tg.initDataUnsafe.user.username;
+    const first_name = tg.initDataUnsafe.user.first_name;
+    const last_name = tg.initDataUnsafe.user.last_name;
 
     if (username) {
         playerName.textContent = username; 
@@ -525,7 +525,7 @@ function progeressXpLevel() {
         levels.push(newLevelExp);
     }
 
-    let currentLevel = 1;
+    let currentLevel = 0;
     let nextLevelXP = levels[0];
     let currentXP = data_local['level'];
 
