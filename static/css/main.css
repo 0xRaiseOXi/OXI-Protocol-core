@@ -152,14 +152,13 @@ html, body {
     align-items: center;
     flex-direction: column;
     border-right: 2px solid #ffffff;
-    /* margin-left: 10%; */
-    padding: 10%;
+    padding: 3%;
     border: 1px solid #ffffff;
 }
 
 .vault-text {
     color: #ffffff;
-    font-size: 23px;
+    /* font-size: 23px; */
     font-weight: 600;
     position: relative;
     display: flex;
