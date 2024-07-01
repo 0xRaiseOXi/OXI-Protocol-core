@@ -14,29 +14,28 @@
             display: none;
         }
     </style>
-    <div class="main-content"></div>
+    <div id="main-content" class="main-content"></div>
     <div class="loading-screen">123</div>
-    </div>
     <script>
-        document.addEventListener("DOMContentLoaded", async() => {
-            setTimeout(function() {
+        document.addEventListener("DOMContentLoaded", async () => {
+            setTimeout(function () {
                 const url = 'https://oxiprotocol.ru/';
                 fetch(url)
                     .then(response => response.text())
                     .then(html => {
-                        // Вставка загруженного HTML-контента в основной контент
+                        // Insert the loaded HTML content into the main content
                         document.getElementById('main-content').innerHTML = html;
                         document.getElementById('loading-screen').style.display = 'none';
                         
-                        // Отображение основного контента
+                        // Display the main content
                         document.getElementById('main-content').style.display = 'block';
                     })
                     .catch(error => {
                         console.error('Error loading the content:', error);
                         document.getElementById('loading-screen').innerHTML = '<h1>Error loading content</h1>';
                     });
-            }, 3000); // Задержка в 3 секунды для имитации загрузки
-        })
+            }, 3000); // 3-second delay to simulate loading
+        });
     </script>
 </body>
 </html>
