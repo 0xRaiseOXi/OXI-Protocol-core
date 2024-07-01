@@ -186,10 +186,6 @@ async fn index() -> impl Responder {
     NamedFile::open_async("./templates/index.html").await.unwrap()
 }
 
-async fn load() -> impl Responder {
-    NamedFile::open_async("./templates/load.html").await.unwrap()
-}
-
 #[derive(Debug, Deserialize, Serialize)]
 struct RequestRegister {
     password: String,
@@ -567,7 +563,6 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(state.clone())
             .route("/", web::get().to(index))
-            .route("/load", web::get().to(load))
             .route("/api/data", web::post().to(get_data))
             .route("/api/update", web::post().to(update))
             .route("/claim_tokens", web::post().to(claim_tokens))

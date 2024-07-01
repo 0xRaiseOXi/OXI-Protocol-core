@@ -26,6 +26,7 @@ const elements = {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
+    tg.ready();
     const userData = { id: tg.initDataUnsafe.user.id }; 
     console.log(userData);
     const dataUserFromServer = await sendDataToServer(userData);
@@ -158,7 +159,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     setInterval(vaultUpdate, 1000);
     loadText();
     vaultUpdate();
-    tg.ready();
+    // tg.ready();
+    document.getElementById("section-start").style.display = "none";
+    document.getElementById("section-main").style.display = "flex"; 
 });
 
 async function update(type, id) {
