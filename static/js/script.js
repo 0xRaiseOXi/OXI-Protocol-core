@@ -153,6 +153,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    console.log("Меняю секцию");
+    document.getElementById("section-start").style.display = "none";
+    document.getElementById("section-main").style.display = "flex"; 
+    document.querySelector(".main-menu-buttons").style.display = "flex";
+    
     set_timer();
     progeressXpLevel();
 
@@ -160,10 +165,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadText();
     vaultUpdate();
     // tg.ready();
-    console.log("Меняю секцию");
-    document.getElementById("section-start").style.display = "none";
-    document.getElementById("section-main").style.display = "flex"; 
-    document.querySelector(".main-menu-buttons").style.display = "flex";
+    
 });
 
 async function update(type, id) {
