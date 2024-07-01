@@ -26,8 +26,9 @@ const elements = {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
+    console.log("1");
     tg.ready();
-
+    console.log("1");
     const userData = { id: tg.initDataUnsafe.user.id }; 
     console.log(userData);
     const dataUserFromServer = await sendDataToServer(userData);
@@ -41,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         notification("Токены OXI собраны");
     });
 
-
+    console.log("2");
     elements.overlayFabric.addEventListener("click", (event) => {
         if (event.target === elements.overlayFabric) {
             elements.overlayFabric.style.display = "none";
