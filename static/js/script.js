@@ -164,7 +164,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     setInterval(vaultUpdate, 1000);
     loadText();
     vaultUpdate();
-    // tg.ready();
 });
 
 async function update(type, id) {
