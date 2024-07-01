@@ -27,6 +27,7 @@ const elements = {
 
 document.addEventListener("DOMContentLoaded", async () => {
     tg.ready();
+
     const userData = { id: tg.initDataUnsafe.user.id }; 
     console.log(userData);
     const dataUserFromServer = await sendDataToServer(userData);
@@ -69,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             elements.overlayDrone.style.display = "none";
         }
     });
-
+    console.log("3");
 
     document.querySelector(".module-1-3").addEventListener("click", () => {
         elements.overlayAwards.style.display = "flex";
@@ -84,7 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             elements.overlayAwards.style.display = "none";
         }
     });
-
+    console.log("4");
     const miners = document.querySelectorAll(".data-upgarde-module-lock");
     miners.forEach(miner => {
         let minerClass = '';
@@ -157,7 +158,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("section-start").style.display = "none";
     document.getElementById("section-main").style.display = "flex"; 
     document.querySelector(".main-menu-buttons").style.display = "flex";
-    
+
     set_timer();
     progeressXpLevel();
 
