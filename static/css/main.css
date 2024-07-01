@@ -120,7 +120,7 @@ html, body {
     border-radius: 20px;
     display: flex;
     border: 1px solid #0088f8;
-    position: relative;
+    position: absolute;
     z-index: 1;
 }
 
@@ -189,7 +189,7 @@ html, body {
     flex-direction: column;
     padding-bottom: 10px;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 2.8vw;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     position: relative;
@@ -298,8 +298,7 @@ html, body {
     top: 15%;
     color: #f6f7f8;
     font-weight: 600;
-    /* font-size: 32px; */
-    font-size: 6vw;
+    font-size: 7vw;
 }
 
 .friends-add {
@@ -325,7 +324,6 @@ html, body {
     width: 100%;
     top: 21%;
     color: #f6f7f8;
-    /* font-size: 20px; */
     font-size: 5vw;
 }
 
@@ -341,7 +339,6 @@ html, body {
 } */
 
 .friends-all {
-    /* font-size: 14px; */
     font-size: 3vw;
     display: flex;
     align-items: center;
@@ -371,7 +368,7 @@ html, body {
     border-radius: 12px;
     justify-content: center;
     align-items: center;
-    font-size: 15px;
+    font-size: 3vw;
     font-weight: 500;
 }
 
@@ -590,25 +587,11 @@ html, body {
     padding-left: 7%;
     font-weight: 600;
     color: #fcfcfc;
-    font-size: 18px;
+    font-size: 3.8vw;
     border: 1px solid #ffffff;
 }
 
 .level-miner {
-    /* color: #ffffff;
-    font-weight: 500;
-    position: absolute;
-    width: 15%;
-    /* right: 3%; */
-    /* left: 25%;
-    top: 5%;
-    height: 25px;
-    font-size: 15px;
-    background-color: #f18202;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px; */ 
     display: none;
 }
 
@@ -642,7 +625,7 @@ html, body {
     justify-content: center;
     color: #f6f7f8;
     background-color: #0562f8;
-    font-size: 20px;
+    font-size: 4vw;
     font-weight: 500;
     cursor: pointer;
     bottom: 12%;
@@ -673,7 +656,7 @@ html, body {
     top: 51%;
     color: #f6f7f8;
     font-weight: 400;
-    font-size: 12px;
+    font-size: 2.5vw;
     background-color: #063580;
     border-radius: 15px;
     text-decoration: underline;
@@ -787,7 +770,7 @@ html, body {
     justify-content: center;
     align-items: center;
     color: #ffffff;
-    font-size: 20px;
+    font-size: 4vw;
 }
 
 .module-name {
@@ -798,7 +781,7 @@ html, body {
     justify-content: center;
     align-items: center;
     color: #ffffff;
-    font-size: 20px;
+    font-size: 4vw;
     font-weight: 600;
     top: 3%;
 }
@@ -838,7 +821,7 @@ html, body {
     border-top: 1px solid #053ffd;
     justify-content: center;
     align-items: center;
-    font-size: 15px;
+    font-size: 3.5vw;
     font-weight: 600;
     color: #ffffff;
     cursor: pointer;
@@ -862,7 +845,7 @@ html, body {
     position: absolute;
     width: 17%;
     height: 20%;
-    font-size: 15px;
+    font-size: 3.5vw;
     background-color: #f18202;
     display: flex;
     align-items: center;
@@ -879,7 +862,7 @@ html, body {
 
 .lock-text {
     color: #ffffff;
-    font-size: 21px;
+    font-size: 4vw;
     font-weight: 600;
 }
 
@@ -915,7 +898,7 @@ html, body {
 }
 
 .main-text-upgrades-in {
-    font-size: 25px;
+    font-size: 5vw;
     font-weight: 600;
     left: 5%;
     position: absolute;
@@ -929,7 +912,7 @@ html, body {
 }
 
 .last-value-mine {
-    font-size: 16px;
+    font-size: 3.6vw;
     position: absolute;
     width: 100%;
     height: 100%;
@@ -967,7 +950,6 @@ html, body {
     height: 100%; 
     position: absolute;
     display: flex;
-    /* justify-content: center; */
     left: 10%;
     align-items: center;
 }
@@ -1042,7 +1024,7 @@ html, body {
     justify-content: center;
     align-items: center;
     font-weight: 600;
-    font-size: 21px;
+    font-size: 4vw;
     border-bottom: 1px solid rgb(0, 60, 255);
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
@@ -1057,7 +1039,7 @@ html, body {
     justify-content: center;
     align-items: center;
     font-weight: 600;
-    font-size: 21px;
+    font-size: 4vw;
     margin-left: 5%;
     bottom: 5%;
     background-color: #003afa;
@@ -1119,7 +1101,7 @@ html, body {
 
 .price-balance {
     color: #ffffff;
-    font-size: 23px;
+    font-size: 4.3vw;
     font-weight: 600;
 }
 
@@ -1150,7 +1132,7 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 20px;
+    border-radius: 4vw;
 }
 
 .upgrade-module-tokens-add {
@@ -1169,7 +1151,7 @@ html, body {
     color: #ffffff;
     width: 100%;
     position: relative;
-    font-size: 14px;
+    font-size: 3vw;
     padding-left: 10%;
     padding-right: 10%;
     top: 32%;
@@ -1262,16 +1244,15 @@ html, body {
     visibility: hidden;
     width: 70%;
     height: 30px;
-    /* background-color: #6b6a6a; */
     background-color: #ffffff;
     color: #000000;
     text-align: center;
     border-radius: 20px;
     position: fixed;
     z-index: 1;
-    right: -250px; /* Start off-screen to the right */
+    right: -250px; 
     top: 30px;
-    font-size: 17px;
+    font-size: 3.4vw;
     transition: right 0.5s ease-in-out, opacity 0.5s ease-in-out;
     opacity: 0;
     display: flex;
@@ -1436,7 +1417,7 @@ html, body {
 .module-1-1 {
     width: 25%;
     height: 12%;
-    position: absolute;
+    position: relative;
     background-color: #0044fd;
     z-index: 1;
     border-radius: 15px;
@@ -1612,7 +1593,7 @@ html, body {
 
 .war-container {
     color: #ffffff;
-    font-size: 30px;
+    font-size: 7vw;
     width: 100%;
     height: 80%;
     display: flex;
@@ -1664,6 +1645,7 @@ html, body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    
 }
 
 .dron-text {
@@ -1801,7 +1783,7 @@ html, body {
     justify-content: center;
     align-items: center;
     margin-top: 3%;
-    font-size: 18px;
+    font-size: 3.8vw;
 }
 
 .user-main-png {
@@ -1835,4 +1817,36 @@ html, body {
     align-items: center;
     position: relative;
     font-size: 130%;
+}
+
+.start-container {
+    width: 100%;
+    height: 100%;
+    background-color: #0e0d6b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    font-size: 5vw;
+    font-weight: 600;
+    flex-direction: column;
+}
+
+.loader {
+    border: 2px solid #f3f3f3; 
+    border-top: 2px solid #00eeff; 
+    border-radius: 50%;
+    width: 17vw;
+    height: 17vw;
+    animation: spin 2s linear infinite;
+}
+
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loader-text {
+    margin-top: 1%;
 }

@@ -7,7 +7,7 @@ tg.setHeaderColor("#000000");
 const elements = {
     counterVault: document.getElementById('tokens-value-vault'),
     dataContainer: document.getElementById('main-balance'),
-
+    loaderText: document.getElementById('loader-text'),
     referalCodeContainer: document.getElementById('referal-code'),
     menuButton: document.getElementById("upgrade-menu-button"),
     overlay: document.getElementById("overlay"),
@@ -27,10 +27,13 @@ const elements = {
 
 document.addEventListener("DOMContentLoaded", async () => {
     tg.ready();
-    setTimeout(2000);
 
+    document.getElementById("section-start").style.display = "none";
+    document.getElementById("section-main").style.display = "flex"; 
+    document.querySelector(".main-menu-buttons").style.display = "flex";
+
+    
     const userData = { id: tg.initDataUnsafe.user.id }; 
-    console.log(userData);
     const dataUserFromServer = await sendDataToServer(userData);
     setStartData(dataUserFromServer);
 
@@ -42,7 +45,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         notification("Токены OXI собраны");
     });
 
-    console.log("2");
     elements.overlayFabric.addEventListener("click", (event) => {
         if (event.target === elements.overlayFabric) {
             elements.overlayFabric.style.display = "none";
@@ -128,8 +130,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById(minerClass + "_lock").style.display = "none";
 
             document.getElementById(minerClass + "_upgrade_button").addEventListener('click', () => {
-                // if data_local['upgrades_current'][minerClass]['level'];
-                // document.getElementById(minerClass + "_upgrade-text")
                 overlay.style.display = "flex";
             });
         });
@@ -204,9 +204,10 @@ async function sendDataToServer(dataToSend) {
             body: JSON.stringify(dataToSend)
         });
         const result = await response.json();
+        if (!response.ok) {
+            elements.loaderText.textContent = "Ошибка 1";
+        }
         data_local = result;
-        console.log("get");
-        console.log(result);
         return result;
     } catch (error) {
         console.log("Error: ", error);
