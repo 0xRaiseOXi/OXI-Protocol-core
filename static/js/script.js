@@ -160,6 +160,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadText();
     vaultUpdate();
     // tg.ready();
+    console.log("Меняю секцию");
     document.getElementById("section-start").style.display = "none";
     document.getElementById("section-main").style.display = "flex"; 
 });
