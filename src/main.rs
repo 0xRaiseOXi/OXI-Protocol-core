@@ -10,12 +10,6 @@ use std::io::BufReader;
 use sha2::{Sha256, Digest};
 use hex::encode;
 
-use actix_web::{web, App, HttpServer, Responder, HttpResponse};
-use actix_limitation::RateLimiter;
-use std::sync::{Arc, Mutex};
-use std::time::Duration;
-use sysinfo::{NetworkExt, ProcessorExt, System, SystemExt};
-use tokio::time;
 fn generate_invite_code(id: String) -> String {
     let mut hasher = Sha256::new();
     hasher.update(id.as_bytes());
