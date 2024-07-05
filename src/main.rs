@@ -567,7 +567,6 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            .wrap(RateLimiter::new(100, Duration::from_secs(60))) // 100 запросов в минуту
             .app_data(state.clone())
             .route("/", web::get().to(index))
             .route("/api/data", web::post().to(get_data))
