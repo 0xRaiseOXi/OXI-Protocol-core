@@ -28,6 +28,9 @@ const elements = {
 document.addEventListener("DOMContentLoaded", async () => {
     tg.ready();
 
+    const userAgent = navigator.userAgent;
+    console.log(userAgent);
+
     document.getElementById("section-start").style.display = "none";
     document.getElementById("section-main").style.display = "flex"; 
     document.querySelector(".main-menu-buttons").style.display = "flex";

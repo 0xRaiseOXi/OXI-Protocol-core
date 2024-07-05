@@ -10,7 +10,12 @@ use std::io::BufReader;
 use sha2::{Sha256, Digest};
 use hex::encode;
 
-
+use actix_web::{web, App, HttpServer, Responder, HttpResponse};
+use actix_limitation::RateLimiter;
+use std::sync::{Arc, Mutex};
+use std::time::Duration;
+use sysinfo::{NetworkExt, ProcessorExt, System, SystemExt};
+use tokio::time;
 fn generate_invite_code(id: String) -> String {
     let mut hasher = Sha256::new();
     hasher.update(id.as_bytes());
@@ -532,6 +537,12 @@ fn load_config(file_path: &str) -> Result<Config, Box<dyn std::error::Error>> {
     Ok(config)
 }
 
+
+
+
+
+
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
@@ -561,6 +572,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
+            .wrap(RateLimiter::new(100, Duration::from_secs(60))) // 100 запросов в минуту
             .app_data(state.clone())
             .route("/", web::get().to(index))
             .route("/api/data", web::post().to(get_data))
