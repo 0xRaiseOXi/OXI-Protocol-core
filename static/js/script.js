@@ -157,9 +157,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    document.getElementById("section-start").style.display = "none";
-    document.getElementById("section-main").style.display = "flex"; 
-    document.querySelector(".main-menu-buttons").style.display = "flex";
+    if (elements.loaderText.textContent === "Загрузка...") {
+        document.getElementById("section-start").style.display = "none";
+        document.getElementById("section-main").style.display = "flex"; 
+        document.querySelector(".main-menu-buttons").style.display = "flex";
+    };
 
     set_timer();
     progeressXpLevel();
