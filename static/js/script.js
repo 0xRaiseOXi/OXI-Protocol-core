@@ -30,11 +30,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const userAgent = navigator.userAgent;
     console.log(userAgent);
-
-    document.getElementById("section-start").style.display = "none";
-    document.getElementById("section-main").style.display = "flex"; 
-    document.querySelector(".main-menu-buttons").style.display = "flex";
-
     
     const userData = { id: tg.initDataUnsafe.user.id }; 
     const dataUserFromServer = await sendDataToServer(userData);
