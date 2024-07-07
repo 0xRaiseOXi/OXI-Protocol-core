@@ -28,13 +28,8 @@ const elements = {
 document.addEventListener("DOMContentLoaded", async () => {
     tg.ready();
 
-    const userAgent = navigator.userAgent;
-    console.log(userAgent);
-    
-    // const userData = { id: tg.initDataUnsafe.user.id }; 
-    const userData = { id: 7440011764 }; 
+    const userData = { id: tg.initDataUnsafe.user.id }; 
     const dataUserFromServer = await sendDataToServer(userData);
-    console.log(dataUserFromServer);
     setStartData(dataUserFromServer);
 
     elements.claimTokensButton.addEventListener('click', async () => {
@@ -203,8 +198,7 @@ async function update(type, id) {
 
 async function sendDataToServer(dataToSend) {
     try {
-            // const response = await fetch('https://oxiprotocol.ru/api/data', {
-                const response = await fetch('http://127.0.0.1:8080/api/data', {
+            const response = await fetch('https://oxiprotocol.ru/api/data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataToSend)
