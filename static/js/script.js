@@ -31,8 +31,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const userAgent = navigator.userAgent;
     console.log(userAgent);
     
-    const userData = { id: tg.initDataUnsafe.user.id }; 
+    // const userData = { id: tg.initDataUnsafe.user.id }; 
+    const userData = { id: 7440011764 }; 
     const dataUserFromServer = await sendDataToServer(userData);
+    console.log(dataUserFromServer);
     setStartData(dataUserFromServer);
 
     elements.claimTokensButton.addEventListener('click', async () => {
@@ -144,10 +146,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 overlay.style.display = "flex";
             });
 
-            // console.log(minerClass + "_close_overlay");
-            // document.getElementById(minerClass + "_close_overlay").addEventListener('click', () => {
-            //     overlay.style.display = "none";
-            // });
+            console.log(minerClass + "_close_overlay");
+            document.getElementById(minerClass + "_close_overlay").addEventListener('click', () => {
+                overlay.style.display = "none";
+            });
 
         }
     });
@@ -172,9 +174,12 @@ async function update(type, id) {
         notification("Недостаточный баланс");
         return;
     }
-    if (data_local['upgrades_current'][id]['level'] == 50) {
-        notification("Максимальный уровень");
-        return;
+
+    if (data_local['upgrades_current'][id]) {
+        if (data_local['upgrades_current'][id]['level'] == 50) {
+            notification("Максимальный уровень");
+            return;
+        }
     }
 
     try {
@@ -198,7 +203,8 @@ async function update(type, id) {
 
 async function sendDataToServer(dataToSend) {
     try {
-            const response = await fetch('https://oxiprotocol.ru/api/data', {
+            // const response = await fetch('https://oxiprotocol.ru/api/data', {
+                const response = await fetch('http://127.0.0.1:8080/api/data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataToSend)

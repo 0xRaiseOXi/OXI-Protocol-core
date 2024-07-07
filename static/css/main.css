@@ -1048,7 +1048,7 @@ html, body {
     z-index: 1000; /* добавлено */
 }
 
-#close-menu-upgrade {
+.close-menu-upgrade {
     position: absolute;
     width: 20%;
     height: 12%;
@@ -1059,6 +1059,7 @@ html, body {
     align-items: center;
     z-index: 999;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #close-menu-buy-fabric {
@@ -1784,6 +1785,7 @@ html, body {
     align-items: center;
     margin-top: 3%;
     font-size: 3.8vw;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .user-main-png {
